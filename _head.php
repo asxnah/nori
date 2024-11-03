@@ -5,3 +5,16 @@
 <link rel="stylesheet"
   href="./css/<?php echo pathinfo(basename($_SERVER['PHP_SELF']), PATHINFO_FILENAME); ?>.css">
 <script src="scripts/main.js" defer></script>
+<?php
+$file_title = basename($_SERVER['PHP_SELF'], ".php");
+
+if (
+  ($file_title == "index")
+  || ($file_title == "quiz")
+) {
+  echo <<<html
+  <script src="scripts/{$file_title}.js" defer></script>
+  html;
+}
+;
+?>

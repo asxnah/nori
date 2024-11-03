@@ -1,0 +1,231 @@
+/* --------- УДАЛИТЬ --------- */
+:root {
+	--gray-light: #f1f1f1;
+	--gray: #dedede;
+	--gray-dark: #787878;
+	--color-main: #8560d9;
+
+	/* белый и его оттенки */
+	--white: rgba(250, 250, 250, 1);
+	--card-text: rgba(250, 250, 250, 0.75);
+	--input-text: rgba(250, 250, 250, 0.5);
+	--ts-card-bg: rgba(250, 250, 250, 0.25);
+	--ts-input-bg: rgba(250, 250, 250, 0.05);
+
+	/* черный и его оттенки */
+	--black: rgba(50, 50, 50, 1);
+	--color-img-overlay: rgba(50, 50, 50, 0.6);
+}
+/* --------- УДАЛИТЬ --------- */
+
+/* баннер */
+#intro {
+	padding: 8rem;
+
+	display: flex;
+	align-items: center;
+	gap: 4rem;
+
+	background: linear-gradient(
+			to left,
+			rgba(133, 96, 217, 0.5) 0%,
+			rgba(133, 96, 217, 0) 75%
+		),
+		url('../assets/base.jpg');
+	background-size: cover;
+	background-position: center;
+}
+
+#intro #heading {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+#intro #heading img {
+	width: 205px;
+	height: 85px;
+}
+
+#intro #heading p {
+	font-size: 1.5rem;
+	color: var(--white);
+}
+
+#intro #heading .group {
+	margin-top: 2rem;
+
+	display: flex;
+	gap: 1rem;
+}
+
+#intro #how-to {
+	gap: 2rem;
+	backdrop-filter: blur(0.5rem);
+}
+
+#intro #how-to :is(h2, p) {
+	color: var(--white);
+}
+
+#intro #how-to p span {
+	font-weight: 600;
+}
+
+#quizes-con {
+	padding: 2rem 8rem;
+
+	min-height: 80vh;
+}
+
+#searchbar {
+	margin-bottom: 1rem;
+	padding: 1rem 2rem;
+
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+
+	border: 0.1rem solid var(--gray);
+	border-radius: 4rem;
+}
+
+#query {
+	font-size: 1rem;
+	width: 100%;
+}
+
+#query:focus-visible {
+	outline: none;
+}
+
+#quizes {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.card-quiz {
+	/* чтобы растягивалась карточка при переносе */
+	flex: 1 0 0;
+	/* чтобы перенос вообще был */
+	min-width: 16rem;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.card-quiz header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+/* question-count класс просто для понимания */
+.card-quiz header .question-count {
+	color: var(--card-text);
+}
+
+.card-quiz header img {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.card-quiz h3 {
+	margin-top: 5rem;
+	margin-bottom: 0.5rem;
+
+	font-size: 1.75rem;
+}
+
+.card-quiz footer {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.card-quiz footer * {
+	color: var(--card-text);
+	font-size: 1rem;
+}
+
+/* псевдоклассы */
+
+/* для пк */
+@media (hover: hover) {
+	.card-quiz:hover {
+		scale: 1.05;
+	}
+}
+
+/* для тачпадов */
+@media (hover: none) {
+	.card-quiz:active {
+		scale: 1.05;
+	}
+}
+
+/* адаптивность */
+
+@media (max-width: 1150px) {
+	#intro {
+		flex-direction: column;
+	}
+}
+
+@media (max-width: 800px) {
+	#intro,
+	#quizes-con {
+		padding: 2rem 1rem;
+	}
+}
+
+@media (max-width: 600px) {
+	#intro {
+		gap: 1rem;
+	}
+
+	#intro #heading p {
+		font-size: 1rem;
+	}
+
+	#intro #heading .group {
+		margin-top: 0;
+
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.card-quiz {
+		padding: 1rem;
+		min-width: 8rem;
+
+		border-radius: 1rem;
+	}
+
+	.card-quiz header .question-count {
+		font-size: 0.75rem;
+	}
+
+	.card-quiz header img {
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.card-quiz h3 {
+		margin-top: 2rem;
+
+		font-size: 1rem;
+	}
+
+	.card-quiz footer {
+		row-gap: 0;
+	}
+
+	.card-quiz footer * {
+		font-size: 0.75rem;
+	}
+}

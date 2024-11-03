@@ -1,0 +1,326 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+	--gray-light: #f1f1f1;
+	--gray: #dedede;
+	--gray-dark: #787878;
+	--color-main: #8560d9;
+
+	/* белый и его оттенки */
+	--white: rgba(250, 250, 250, 1);
+	--card-text: rgba(250, 250, 250, 0.75);
+	--input-text: rgba(250, 250, 250, 0.5);
+	--ts-card-bg: rgba(250, 250, 250, 0.25);
+	--ts-input-bg: rgba(250, 250, 250, 0.05);
+
+	/* черный и его оттенки */
+	--black: rgba(50, 50, 50, 1);
+	--color-img-overlay: rgba(50, 50, 50, 0.6);
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box !important;
+	font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont,
+		'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+		sans-serif;
+	list-style: none;
+	border: none;
+	background: none;
+	transition: all 0.2s;
+}
+
+body {
+	/* для шапки */
+	position: relative;
+
+	accent-color: var(--color-main);
+	background: var(--white);
+}
+
+h1,
+h2 {
+	font-family: 'Montserrat Alternates', system-ui, -apple-system,
+		BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+		'Open Sans', 'Helvetica Neue';
+}
+
+h2 {
+	font-size: 1.5rem;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+button {
+	cursor: pointer;
+	font-size: 1rem;
+}
+
+textarea {
+	padding: 2rem;
+
+	width: 100%;
+
+	background: var(--white);
+	border: 0.1rem solid var(--gray);
+	border-radius: 2rem;
+	font-size: 1rem;
+
+	resize: none;
+}
+
+textarea::placeholder {
+	color: var(--gray-dark);
+}
+
+/* классы элементов в виде кнопок */
+
+[class^='btn-'] {
+	padding: 1rem 2rem;
+
+	display: flex;
+	justify-content: center;
+	width: 100%;
+
+	border-radius: 4rem;
+	font-weight: 500;
+}
+
+.btn-ts {
+	background: rgba(250, 250, 250, 0.25);
+	color: var(--white);
+	backdrop-filter: blur(0.5rem);
+}
+
+.btn-black {
+	background: var(--black);
+	color: var(--white);
+}
+
+.btn-light {
+	background: var(--gray-light);
+	color: var(--black);
+}
+
+.btn-accent {
+	background: var(--color-main);
+	color: var(--white);
+}
+
+/* классы карточек */
+
+[class^='card-'] {
+	padding: 2rem;
+
+	display: flex;
+	flex-direction: column;
+
+	border-radius: 2rem;
+}
+
+[class^='card-'] :is(header, footer) {
+	padding: 0;
+	background: none;
+}
+
+.card-ts {
+	background: rgba(250, 250, 250, 0.25);
+}
+
+.card-quiz {
+	background: var(--color-main);
+}
+
+.card-quiz * {
+	color: var(--white);
+}
+
+header {
+	padding: 1rem 8rem;
+
+	position: sticky;
+	top: 0;
+	left: 0;
+	z-index: 99;
+
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	background: var(--white);
+}
+
+/* логотип */
+header img {
+	width: 107px;
+	height: 42px;
+}
+
+/* навигация */
+header ul {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+header a {
+	font-weight: 500;
+}
+
+header a[href='./create.php'],
+header a[href='./auth.php'] {
+	padding: 0.5rem 1.25rem;
+
+	border-radius: 4rem;
+}
+
+/* ссылка профиль */
+header a[href='./user.php'] {
+	font-size: 1.5rem;
+}
+
+/* подвал */
+
+footer {
+	padding: 2rem 8rem;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+
+	background: #f1f1f1;
+}
+
+footer #up {
+	font-size: 2rem;
+}
+
+footer a,
+footer p {
+	text-align: center;
+}
+
+footer a {
+	font-size: 0.75rem;
+	font-weight: bold;
+}
+
+footer p {
+	font-size: 0.5rem;
+}
+
+footer p span {
+	font-weight: bold;
+}
+
+/* псевдоклассы */
+
+*:focus-visible {
+	outline: 0.2rem solid var(--color-main);
+}
+
+/* для пк */
+@media (hover: hover) {
+	.btn-ts:hover {
+		background: var(--black);
+	}
+
+	.btn-black:hover {
+		background: var(--color-main);
+	}
+
+	.btn-light:hover {
+		background: var(--gray);
+	}
+
+	.btn-accent:hover {
+		background: var(--black);
+	}
+
+	/* [class^='btn-']:hover, */
+	footer #up:hover {
+		scale: 1.05;
+	}
+
+	header a[href='./create.php']:hover,
+	header a[href='./auth.php']:hover {
+		background: none;
+	}
+
+	header a[href='./create.php']:hover {
+		color: var(--black);
+	}
+
+	header a[href='./auth.php']:hover {
+		color: var(--color-main);
+	}
+
+	footer a:hover {
+		color: var(--color-main);
+	}
+}
+
+/* для тачпадов */
+@media (hover: none) {
+	.btn-ts:active {
+		background: var(--black);
+	}
+
+	.btn-black:active {
+		background: var(--color-main);
+	}
+
+	.btn-light:active {
+		background: var(--gray);
+	}
+
+	.btn-accent:active {
+		background: var(--black);
+	}
+
+	/* [class^='btn-']:active, */
+	footer #up:active {
+		scale: 1.05;
+	}
+
+	header a[href='./create.php']:active,
+	header a[href='./auth.php']:active {
+		background: none;
+	}
+
+	header a[href='./create.php']:active {
+		color: var(--black);
+	}
+
+	header a[href='./auth.php']:active {
+		color: var(--color-main);
+	}
+
+	footer a:active {
+		color: var(--color-main);
+	}
+}
+
+/* адаптивность */
+
+@media (width <= 800px) {
+	header {
+		padding: 1rem;
+	}
+
+	footer {
+		padding: 2rem 1rem;
+	}
+}
+
+@media (width <= 600px) {
+	/* ссылка создать спрятана */
+	header li:first-child a {
+		display: none;
+	}
+}

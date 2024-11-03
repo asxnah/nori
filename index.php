@@ -2,11 +2,11 @@
 <html lang="en">
 
 	<head>
-		<?php require_once '_head.php'; ?>
+		<?php require_once "_head.php"; ?>
 	</head>
 
 	<body>
-		<?php require_once '_header.php'; ?>
+		<?php require_once "_header.php"; ?>
 
 		<main>
 			<section id="intro">
@@ -46,15 +46,15 @@
 				<!-- викторины -->
 				<div id="quizes" aria-label="список викторин">
 					<?php
-					require_once '_config.php';
+					require_once "_config.php";
 
 					// основной запрос для получения данных о викторинах и кол-ва вопросов
 					$base = $conn->prepare(
-						'SELECT q.quiz_id, q.title, q.tag_1, q.tag_2, q.tag_3, q.cover, COUNT(ques.question_id) AS question_count 
+						"SELECT q.quiz_id, q.title, q.tag_1, q.tag_2, q.tag_3, q.cover, COUNT(ques.question_id) AS question_count 
 						FROM quizes q
 						LEFT JOIN questions ques ON q.quiz_id = ques.quiz_id
 						GROUP BY q.quiz_id
-						LIMIT 3'
+						LIMIT 3"
 					);
 					$base->execute();
 					$result = $base->get_result();

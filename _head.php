@@ -3,10 +3,10 @@
 <title>Nori — создавайте, настраивайте и проходите викторины онлайн</title>
 <link rel="stylesheet" href="./css/main.css">
 <link rel="stylesheet"
-  href="./css/<?php echo pathinfo(basename($_SERVER['PHP_SELF']), PATHINFO_FILENAME); ?>.css">
+  href="./css/<?php echo pathinfo(basename($_SERVER["PHP_SELF"]), PATHINFO_FILENAME); ?>.css">
 <script src="scripts/main.js" defer></script>
 <?php
-$file_title = basename($_SERVER['PHP_SELF'], ".php");
+$file_title = basename($_SERVER["PHP_SELF"], ".php");
 
 if (
   ($file_title == "index")

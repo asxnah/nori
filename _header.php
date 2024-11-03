@@ -7,7 +7,7 @@
           title="Создать викторину">Создать</a>
       </li>
       <?php
-      if (empty($_SESSION['user_id'])) {
+      if (empty($_SESSION["user_id"])) {
         echo <<<HTML
         <li>
           <a href="./auth.php" class="btn-accent" title="Войти или зарегистрироваться">Войти</a>

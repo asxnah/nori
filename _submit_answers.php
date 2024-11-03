@@ -27,6 +27,5 @@ foreach ($answers as $question_id => $user_answer) {
   $stmt->execute();
 }
 
-// Перенаправление на страницу результатов или благодарности
 header("Location: result.php?quiz_id={$quiz_id}");
 exit;

@@ -22,7 +22,8 @@
           </div>
           <div class="input">
             <label for="password" hidden></label>
-            <input type="password" id="password" name="password" placeholder="Пароль">
+            <input type="password" id="password" name="password"
+              placeholder="Пароль">
           </div>
         </div>
         <div id="info">

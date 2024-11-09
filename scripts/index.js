@@ -43,7 +43,7 @@ document.querySelector(`#query`).addEventListener(`blur`, () => {
 });
 
 // поиск
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', () => {
 	let queryInput = document.getElementById(`query`);
 	let searchButton = document.getElementById(`search`);
 	let quizesContainer = document.getElementById(`quizes`);

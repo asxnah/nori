@@ -9,17 +9,16 @@ function is_valid_username($username)
 
 function is_valid_password($password)
 {
-  // содержит ли пароль хотя бы одну строчную, прописную букву, цифру и спецсимвол
-  return preg_match('/[a-z]/', $password) && // строчные буквы
-    preg_match('/[A-Z]/', $password) && // прописные буквы
-    preg_match('/[0-9]/', $password) && // цифры
-    preg_match('/[\W_]/', $password);   // специальные символы
+  return preg_match('/[a-z]/', $password) &&
+    preg_match('/[A-Z]/', $password) &&
+    preg_match('/[0-9]/', $password) &&
+    preg_match('/[\W_]/', $password);
 }
 
-// вход
+// Обработка входа
 if (isset($_POST['login'])) {
-  $username = htmlspecialchars($_POST['username']);
-  $password = htmlspecialchars($_POST['password']);
+  $username = trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING));
+  $password = trim($_POST['password']);
 
   if (!is_valid_username($username)) {
     echo "Логин может содержать только латинские буквы, цифры и нижнее подчеркивание (_)";
@@ -45,10 +44,10 @@ if (isset($_POST['login'])) {
   }
 }
 
-// регистрация
+// Обработка регистрации
 if (isset($_POST['register'])) {
-  $username = htmlspecialchars($_POST['username']);
-  $password = htmlspecialchars($_POST['password']);
+  $username = trim(filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING));
+  $password = trim($_POST['password']);
 
   if (!is_valid_username($username)) {
     echo "Логин может содержать только латинские буквы, цифры и нижнее подчеркивание (_)";
@@ -70,7 +69,7 @@ if (isset($_POST['register'])) {
     exit();
   }
 
-  $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+  $hashed_password = password_hash($password, PASSWORD_ARGON2I);
 
   $stmt = $conn->prepare('INSERT INTO users (username, name, password) VALUES (?, ?, ?)');
   $stmt->bind_param('sss', $username, $username, $hashed_password);

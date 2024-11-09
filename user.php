@@ -8,7 +8,11 @@
   <body>
     <?php require_once '_header.php'; ?>
 
-    <main></main>
+    <main>
+      <form action="_auth.php" method="post">
+        <button name="logout">выйти</button>
+      </form>
+    </main>
 
     <?php require_once '_footer.php'; ?>
   </body>

@@ -1,3 +1,8 @@
+<?php
+require_once '_config.php';
+session_start();
+?>
+
 <header id="header-pc">
   <a href="index.php"><img src="./assets/logo.png" alt="логотип nori"></a>
   <nav>

@@ -52,7 +52,7 @@ main {
 	color: var(--color-main);
 }
 
-#heading #show-more {
+#heading #show-detailed {
 	width: fit-content;
 }
 
@@ -122,6 +122,82 @@ main {
 	gap: 8rem;
 }
 
+.answers.true_false .group label {
+	padding: 1rem;
+
+	width: fit-content;
+	height: fit-content;
+
+	display: block;
+}
+
 .answers.true_false img {
 	width: 3.75rem;
+}
+
+input[id*='true'] ~ label,
+input[id*='false'] ~ label {
+	border-radius: 4rem;
+}
+
+input[id*='true'] ~ label.btn-accent,
+input[id*='false'] ~ label.btn-accent {
+	outline: 0.5rem solid var(--color-main);
+	background: none;
+}
+
+input[id*='true'] ~ label.btn-black,
+input[id*='false'] ~ label.btn-black {
+	outline: none;
+	background: none;
+}
+
+#detailed {
+	display: none;
+}
+
+#detailed.shown {
+	padding: 2rem;
+
+	max-width: 30%;
+
+	position: fixed;
+	bottom: 1rem;
+	right: 0;
+	/* значение 2 занято #heading */
+	z-index: 3;
+
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+
+	border: 0.1rem solid var(--gray);
+	border-radius: 2rem;
+	background: var(--white);
+}
+
+#detailed header {
+	padding: 0;
+
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 4rem;
+}
+
+#detailed img {
+	width: fit-content;
+	height: 1rem;
+
+	cursor: pointer;
+}
+
+#detailed h2 {
+	font-size: 1.5rem;
+}
+
+#detailed .btn-accent {
+	padding: 1rem 2rem;
+
+	border-radius: 4rem;
 }

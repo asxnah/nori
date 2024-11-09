@@ -33,7 +33,7 @@ $result = $stmt->get_result();
             <?php echo $title; ?>
           </h2>
         </div>
-        <button id="show-more" class="btn-light">Подробнее</button>
+        <button id="show-detailed" class="btn-light">Подробнее</button>
       </section>
 
       <form id="quiz" method="post" action="_submit_answers.php">
@@ -131,9 +131,36 @@ $result = $stmt->get_result();
         ?>
         <button class="btn-accent" type="submit">Завершить</button>
       </form>
+
+      <section id="detailed">
+        <header>
+          <h2><?php echo $title; ?></h2>
+          <img src="./assets/cross.svg" class="close-detailed" alt="X (закрыть)">
+        </header>
+        <p>
+          <?php
+          // описание викторины по quiz_id
+          $desc_query = "SELECT description FROM quizes WHERE quiz_id = ?";
+          $desc_stmt = $conn->prepare($desc_query);
+          $desc_stmt->bind_param("i", $quiz_id);
+          $desc_stmt->execute();
+          $desc_result = $desc_stmt->get_result();
+
+          while ($desc_row = $desc_result->fetch_assoc()) {
+            if ($desc_row['description'] === $title) {
+              echo "Описания нет.";
+            } else {
+              echo htmlspecialchars($desc_row['description']);
+            }
+          }
+          ?>
+        </p>
+        <button class="close-detailed btn-accent">Понятно!</button>
+      </section>
     </main>
 
     <?php require_once "_footer.php"; ?>
+
   </body>
 
 </html>

@@ -107,13 +107,12 @@ menu hr {
 }
 
 #tabs .tab {
-	padding: 1rem 2rem;
-
+	border: 0.1rem solid transparent;
 	border-radius: 1rem 1rem 0 0;
 }
 
 #tabs .tab.active {
-	border: 0.1rem solid var(--gray);
+	border-color: var(--gray);
 	border-bottom: 0;
 }
 
@@ -123,7 +122,13 @@ menu hr {
 	color: var(--color-main);
 }
 
-#quizes a {
+#tabs .tab a {
+	padding: 1rem 2rem;
+
+	display: block;
+}
+
+#quizes a.btn-black {
 	width: fit-content;
 }
 

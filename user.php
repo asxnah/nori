@@ -81,8 +81,12 @@
       <section id="quizes">
         <menu>
           <ul id="tabs">
-            <li id="tab-created" class="tab active">Созданные</li>
-            <li id="tab-finished" class="tab">Пройденные</li>
+            <li id="tab-created" class="tab">
+              <a href="./user.php?tab=created">Созданные</a>
+            </li>
+            <li id="tab-finished" class="tab">
+              <a href="./user.php?tab=finished">Пройденные</a>
+            </li>
           </ul>
           <hr />
           <a href="./create.php" class="btn-black">
@@ -92,6 +96,43 @@
         </menu>
         <section id="quiz-list">
           <!-- список викторин через fetch js -->
+          <!-- идея в том, что по умолчанию будет created -->
+          <!-- а по клику на li будут ссылки: ?tab='...' -->
+          <?php
+          if (empty($_GET["tab"])) {
+            $base = $conn->prepare(
+              "SELECT q.quiz_id, q.title, q.tag_1, q.tag_2, q.tag_3, q.cover, COUNT(ques.question_id) AS question_count 
+              FROM quizes q
+              LEFT JOIN questions ques ON q.quiz_id = ques.quiz_id
+              WHERE q.author = ?
+              GROUP BY q.quiz_id
+              LIMIT 3"
+            );
+
+            $base->bind_param('i', $_SESSION["user_id"]);
+            $base->execute();
+            $result = $base->get_result();
+
+            while ($row = $result->fetch_assoc()) {
+              echo <<<html
+              <!-- карточка -->
+              <a 
+                href="quiz.php?quiz_id={$row['quiz_id']}&title={$row['title']}" 
+              >
+                <p>{$row['question_count']}</p>
+                <h3>{$row['title']}</h3>
+                <p>{$row['tag_1']}</p>
+                <p>{$row['tag_2']}</p>
+                <p>{$row['tag_3']}</p>
+              </a>
+              html;
+            }
+          } else {
+            $tab = $_GET["tab"];
+            echo $tab;
+          }
+          ?>
+          </>
         </section>
       </section>
     </main>

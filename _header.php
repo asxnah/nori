@@ -4,7 +4,7 @@ session_start();
 ?>
 
 <header id="header-pc">
-  <a href="index.php"><img src="./assets/logo.png" alt="логотип nori"></a>
+  <a href="index.php"><img src="./assets/logo.svg" alt="логотип nori"></a>
   <nav>
     <ul>
       <li>

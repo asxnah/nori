@@ -11,7 +11,7 @@
 		<main>
 			<section id="intro">
 				<div id="heading">
-					<img src="./assets/logo-white.png" alt="логотип nori">
+					<img src="./assets/logo-white.svg" alt="логотип nori">
 					<p>Создавайте, настраивайте и проходите викторины онлайн</p>
 					<div class="group">
 						<a href="./create.php" class="btn-ts">Создать</a>

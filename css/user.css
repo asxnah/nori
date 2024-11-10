@@ -1,0 +1,132 @@
+:root {
+	--gray-light: #f1f1f1;
+	--gray: #dedede;
+	--gray-dark: #787878;
+	--color-main: #8560d9;
+
+	/* белый и его оттенки */
+	--white: rgba(250, 250, 250, 1);
+	--card-text: rgba(250, 250, 250, 0.75);
+	--input-text: rgba(250, 250, 250, 0.5);
+	--ts-card-bg: rgba(250, 250, 250, 0.25);
+	--ts-input-bg: rgba(250, 250, 250, 0.05);
+
+	/* черный и его оттенки */
+	--black: rgba(50, 50, 50, 1);
+	--color-img-overlay: rgba(50, 50, 50, 0.6);
+}
+
+main {
+	padding: 2rem 8rem;
+
+	display: flex;
+	gap: 2rem;
+}
+
+#info {
+	padding: 2rem;
+
+	width: 22rem;
+
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+
+	border: 0.1rem solid var(--gray);
+	border-radius: 2rem;
+}
+
+#info #heading {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+}
+
+#info #name p {
+	margin-bottom: 0.5rem;
+
+	color: var(--gray-dark);
+}
+
+hr {
+	height: 0.1rem;
+
+	border: none;
+	border-radius: 0.5rem;
+}
+
+#info > hr {
+	width: 100%;
+
+	background: var(--gray);
+}
+
+#stats .group:first-child {
+	margin-bottom: 1rem;
+}
+
+#stats .group {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+}
+
+#stats .group hr {
+	flex: 1;
+
+	background: var(--gray-light);
+}
+
+#logout {
+	width: 100%;
+
+	font-weight: 500;
+	color: var(--gray-dark);
+	text-align: center;
+}
+
+#quizes {
+	flex: 1;
+}
+
+menu {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+}
+
+menu hr {
+	flex: 1;
+
+	background: var(--gray);
+}
+
+#tabs {
+	display: flex;
+}
+
+#tabs .tab {
+	padding: 1rem 2rem;
+
+	border-radius: 1rem 1rem 0 0;
+}
+
+#tabs .tab.active {
+	border: 0.1rem solid var(--gray);
+	border-bottom: 0;
+}
+
+#tabs .tab:not(.active) {
+	border-bottom: 0.1rem solid var(--gray);
+
+	color: var(--color-main);
+}
+
+#quizes a {
+	width: fit-content;
+}
+
+#quizes a img {
+	margin-right: 0.5rem;
+}

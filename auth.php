@@ -17,7 +17,7 @@
 
     <main>
       <div id="heading">
-        <img src="./assets/logo-white.png" alt="логотип nori">
+        <img src="./assets/logo-white.svg" alt="логотип nori">
         <p>Создавайте, настраивайте и проходите викторины онлайн</p>
       </div>
       <form method="post" action="_auth.php" id="auth" class="card-ts">

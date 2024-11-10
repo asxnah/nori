@@ -1,24 +1,3 @@
-/* --------- УДАЛИТЬ --------- */
-:root {
-	--gray-light: #f1f1f1;
-	--gray: #dedede;
-	--gray-dark: #787878;
-	--color-main: #8560d9;
-
-	/* белый и его оттенки */
-	--white: rgba(250, 250, 250, 1);
-	--card-text: rgba(250, 250, 250, 0.75);
-	--input-text: rgba(250, 250, 250, 0.5);
-	--ts-card-bg: rgba(250, 250, 250, 0.25);
-	--ts-input-bg: rgba(250, 250, 250, 0.05);
-
-	/* черный и его оттенки */
-	--black: rgba(50, 50, 50, 1);
-	--color-img-overlay: rgba(50, 50, 50, 0.6);
-}
-/* --------- УДАЛИТЬ --------- */
-
-/* баннер */
 main {
 	padding: 2rem 8rem;
 

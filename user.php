@@ -26,7 +26,7 @@
 
           while ($user = $result->fetch_assoc()) {
             echo <<<html
-            <p aria-label="Логин">{$user["username"]}</p>
+            <p aria-label="Логин">@{$user["username"]}</p>
             <h1 aria-label="Имя">{$user["name"]}</h1>
             html;
           }
@@ -55,33 +55,34 @@
             $stmt->close();
             ?></p>
           </div>
-          <div class="group"></div>
-          <p>Создано</p>
-          <hr />
-          <p><?php
-          $stmt = $conn->prepare("SELECT COUNT(*) AS quizes_created FROM quizes WHERE author = ?");
-          $stmt->bind_param('i', $_SESSION["user_id"]);
-          $stmt->execute();
-          $result = $stmt->get_result();
+          <div class="group">
+            <p>Создано</p>
+            <hr />
+            <p><?php
+            $stmt = $conn->prepare("SELECT COUNT(*) AS quizes_created FROM quizes WHERE author = ?");
+            $stmt->bind_param('i', $_SESSION["user_id"]);
+            $stmt->execute();
+            $result = $stmt->get_result();
 
-          if ($user = $result->fetch_assoc()) {
-            echo $user['quizes_created'];
-          }
+            if ($user = $result->fetch_assoc()) {
+              echo $user['quizes_created'];
+            }
 
-          $stmt->close();
-          ?></p>
+            $stmt->close();
+            ?></p>
+          </div>
         </section>
         <hr />
         <form action="_auth.php" method="post">
-          <button name="logout">Выйти из аккаунта</button>
+          <button name="logout" id="logout">Выйти из аккаунта</button>
         </form>
       </section>
 
       <section id="quizes">
         <menu>
           <ul id="tabs">
-            <li id="tab-created" class="active">Созданные</li>
-            <li id="tab-finished">Пройденные</li>
+            <li id="tab-created" class="tab active">Созданные</li>
+            <li id="tab-finished" class="tab">Пройденные</li>
           </ul>
           <hr />
           <a href="./create.php" class="btn-black">

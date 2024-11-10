@@ -19,6 +19,8 @@
 main {
 	padding: 2rem 8rem;
 
+	min-height: 80vh;
+
 	display: flex;
 	gap: 2rem;
 }
@@ -27,6 +29,7 @@ main {
 	padding: 2rem;
 
 	width: 22rem;
+	height: fit-content;
 
 	display: flex;
 	flex-direction: column;
@@ -91,6 +94,8 @@ hr {
 }
 
 menu {
+	margin-bottom: 1rem;
+
 	display: flex;
 	align-items: flex-end;
 	justify-content: space-between;
@@ -134,4 +139,10 @@ menu hr {
 
 #quizes a img {
 	margin-right: 0.5rem;
+}
+
+#alert {
+	margin-top: 3rem;
+
+	text-align: center;
 }

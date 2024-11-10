@@ -96,43 +96,52 @@
         </menu>
         <section id="quiz-list">
           <!-- список викторин через fetch js -->
-          <!-- идея в том, что по умолчанию будет created -->
-          <!-- а по клику на li будут ссылки: ?tab='...' -->
           <?php
           if (empty($_GET["tab"])) {
-            $base = $conn->prepare(
-              "SELECT q.quiz_id, q.title, q.tag_1, q.tag_2, q.tag_3, q.cover, COUNT(ques.question_id) AS question_count 
-              FROM quizes q
-              LEFT JOIN questions ques ON q.quiz_id = ques.quiz_id
-              WHERE q.author = ?
-              GROUP BY q.quiz_id
-              LIMIT 3"
-            );
-
-            $base->bind_param('i', $_SESSION["user_id"]);
-            $base->execute();
-            $result = $base->get_result();
-
-            while ($row = $result->fetch_assoc()) {
-              echo <<<html
-              <!-- карточка -->
-              <a 
-                href="quiz.php?quiz_id={$row['quiz_id']}&title={$row['title']}" 
-              >
-                <p>{$row['question_count']}</p>
-                <h3>{$row['title']}</h3>
-                <p>{$row['tag_1']}</p>
-                <p>{$row['tag_2']}</p>
-                <p>{$row['tag_3']}</p>
-              </a>
-              html;
+            // вывести созданные викторины
+            $stmt = $conn->prepare("SELECT * FROM quizes WHERE author = ?");
+            $stmt->bind_param('i', $_SESSION["user_id"]);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            while ($quiz = $result->fetch_assoc()) {
+              echo "<div class='quiz'>{$quiz['title']}</div>";
             }
+
+            $stmt->close();
           } else {
             $tab = $_GET["tab"];
-            echo $tab;
+            // вывести викторины в зависимости от $tab (created или finished)
+            switch ($tab) {
+              case 'created':
+                $stmt = $conn->prepare("SELECT * FROM quizes WHERE author = ?");
+                break;
+              case 'finished':
+                $stmt = $conn->prepare("SELECT DISTINCT q.quiz_id, q.title 
+                FROM quizes q
+                JOIN questions qs ON qs.quiz_id = q.quiz_id
+                JOIN user_answers ua ON ua.question_id = qs.question_id
+                WHERE ua.user_id = ? AND ua.selected_answer_id IS NOT NULL");
+                break;
+            }
+
+            $stmt->bind_param('i', $_SESSION["user_id"]);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+              while ($quiz = $result->fetch_assoc()) {
+                echo <<<html
+                <div class='quiz'>{$quiz['title']}</div>
+                html;
+              }
+            } else {
+              echo <<<html
+              <h3 id="alert">Ничего нет.</h3>
+              html;
+            }
+            $stmt->close();
           }
           ?>
-          </>
         </section>
       </section>
     </main>

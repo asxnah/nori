@@ -23,7 +23,14 @@ $result = $stmt->get_result();
   </head>
 
   <body>
-    <?php require_once "_header.php"; ?>
+    <?php
+    require_once '_header.php';
+
+    // session_start(); есть в header
+    if (!isset($_SESSION["user_id"])) {
+      header("Location: auth.php");
+    }
+    ?>
 
     <main>
       <section id="heading">

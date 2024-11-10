@@ -1,6 +1,6 @@
 <?php
-session_start();
 require_once "_config.php";
+session_start();
 
 $user_id = $_SESSION["user_id"];
 $quiz_id = (int) $_POST["quiz_id"];

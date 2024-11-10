@@ -11,6 +11,7 @@ $file_title = basename($_SERVER["PHP_SELF"], ".php");
 if (
   ($file_title == "index")
   || ($file_title == "quiz")
+  || ($file_title == "user")
 ) {
   echo <<<html
   <script src="scripts/{$file_title}.js" defer></script>

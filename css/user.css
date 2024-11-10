@@ -51,6 +51,11 @@ main {
 	color: var(--gray-dark);
 }
 
+#info img {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
 hr {
 	height: 0.1rem;
 

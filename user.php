@@ -34,7 +34,9 @@
           $stmt->close();
           ?></div>
           <button id="edit"
-            aria-label="Редактировать данные аккаунта">✏️</button>
+            aria-label="Редактировать данные аккаунта">
+            <img src="./assets/violet-pencil.svg" alt="икнока карандаша">
+          </button>
         </section>
         <hr />
         <h3>Статистика</h3>

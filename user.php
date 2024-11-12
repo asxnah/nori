@@ -26,8 +26,8 @@
 
           while ($user = $result->fetch_assoc()) {
             echo <<<html
-            <p aria-label="Логин">@{$user["username"]}</p>
-            <h1 aria-label="Имя">{$user["name"]}</h1>
+            <p aria-label="Логин" id="label-username">@{$user["username"]}</p>
+            <h1 aria-label="Имя" id="label-name">{$user["name"]}</h1>
             html;
           }
 
@@ -35,7 +35,7 @@
           ?></div>
           <button id="edit"
             aria-label="Редактировать данные аккаунта">
-            <img src="./assets/violet-pencil.svg" alt="икнока карандаша">
+            <img src="./assets/pencil-purple.png" alt="икнока карандаша">
           </button>
         </section>
         <hr />
@@ -103,12 +103,69 @@
           <?php
           if (empty($_GET["tab"])) {
             // вывести созданные викторины
-            $stmt = $conn->prepare("SELECT * FROM quizes WHERE author = ?");
+            $stmt = $conn->prepare("SELECT q.quiz_id, q.title, q.tag_1, q.tag_2, q.tag_3, q.cover, COUNT(ques.question_id) AS question_count 
+            FROM quizes q
+            LEFT JOIN questions ques ON q.quiz_id = ques.quiz_id
+            WHERE q.author = ?
+            GROUP BY q.quiz_id
+            LIMIT 3");
             $stmt->bind_param('i', $_SESSION["user_id"]);
             $stmt->execute();
             $result = $stmt->get_result();
             while ($quiz = $result->fetch_assoc()) {
-              echo "<div class='quiz'>{$quiz['title']}</div>";
+              // открытие карточки
+              echo <<<html
+              <!-- карточка -->
+              <a 
+                href="quiz.php?quiz_id={$quiz['quiz_id']}&title={$quiz['title']}" 
+                class="card-quiz" 
+                aria-label="открыть викторину"
+              html;
+
+              // если есть обложка, добавляем стили
+              if (!is_null($quiz['cover'])) {
+                echo <<<html
+                style="
+                  background: linear-gradient(
+                    to left,
+                    rgba(50, 50, 50, 0.6) 0%,
+                    rgba(50, 50, 50, 0.6) 100%
+                  ),
+                  url('./assets/{$quiz['cover']}'); 
+                  background-size: cover; 
+                  background-position: center;
+                "
+                html;
+              }
+
+              // выводим данные карточки
+              echo <<<html
+              >
+                <header>
+                  <p class="question-count" aria-label="количество вопросов викторины">
+                    {$quiz['question_count']}
+                  </p>
+                  <img 
+                    src="./assets/pencil-white.png" 
+                    alt="икнока карандаша" 
+                    aria-label="редактировать созданную викторину"
+                  >
+                </header>
+                <h3>{$quiz['title']}</h3>
+                <footer aria-label="теги викторины">
+                  <p>{$quiz['tag_1']}</p>
+                  <p>{$quiz['tag_2']}</p>
+                  <p>{$quiz['tag_3']}</p>
+                </footer>
+                <div class="group">
+                  <button class="btn-ts">
+                    <span>Скачать</span>
+                    <span class="filetype">DOCX</span>
+                  </button>
+                  <button class="btn-black">Удалить</button>
+                </div>
+              </a>
+              html;
             }
 
             $stmt->close();
@@ -117,7 +174,12 @@
             // вывести викторины в зависимости от $tab (created или finished)
             switch ($tab) {
               case 'created':
-                $stmt = $conn->prepare("SELECT * FROM quizes WHERE author = ?");
+                $stmt = $conn->prepare("SELECT q.quiz_id, q.title, q.tag_1, q.tag_2, q.tag_3, q.cover, COUNT(ques.question_id) AS question_count 
+                FROM quizes q
+                LEFT JOIN questions ques ON q.quiz_id = ques.quiz_id
+                WHERE q.author = ?
+                GROUP BY q.quiz_id
+                LIMIT 3");
                 break;
               case 'finished':
                 $stmt = $conn->prepare("SELECT DISTINCT q.quiz_id, q.title 
@@ -134,9 +196,59 @@
 
             if ($result->num_rows > 0) {
               while ($quiz = $result->fetch_assoc()) {
+                // открытие карточки
                 echo <<<html
-                <div class='quiz'>{$quiz['title']}</div>
+              <!-- карточка -->
+              <a 
+                href="quiz.php?quiz_id={$quiz['quiz_id']}&title={$quiz['title']}" 
+                class="card-quiz" 
+                aria-label="открыть викторину"
+              html;
+
+                // если есть обложка, добавляем стили
+                if (!is_null($quiz['cover'])) {
+                  echo <<<html
+                style="
+                  background: linear-gradient(
+                    to left,
+                    rgba(50, 50, 50, 0.6) 0%,
+                    rgba(50, 50, 50, 0.6) 100%
+                  ),
+                  url('./assets/{$quiz['cover']}'); 
+                  background-size: cover; 
+                  background-position: center;
+                "
                 html;
+                }
+
+                // выводим данные карточки
+                echo <<<html
+              >
+                <header>
+                  <p class="question-count" aria-label="количество вопросов викторины">
+                    {$quiz['question_count']}
+                  </p>
+                  <img 
+                    src="./assets/pencil-white.png" 
+                    alt="икнока карандаша" 
+                    aria-label="редактировать созданную викторину"
+                  >
+                </header>
+                <h3>{$quiz['title']}</h3>
+                <footer aria-label="теги викторины">
+                  <p>{$quiz['tag_1']}</p>
+                  <p>{$quiz['tag_2']}</p>
+                  <p>{$quiz['tag_3']}</p>
+                </footer>
+                <div class="group">
+                  <button class="btn-ts">
+                    <span>Скачать</span>
+                    <span class="filetype">DOCX</span>
+                  </button>
+                  <button class="btn-black">Удалить</button>
+                </div>
+              </a>
+              html;
               }
             } else {
               echo <<<html

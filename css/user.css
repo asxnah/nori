@@ -94,6 +94,33 @@ hr {
 	text-align: center;
 }
 
+form {
+	width: 100%;
+
+	display: flex;
+	gap: 1rem;
+}
+
+form #name {
+	max-width: 15.5rem;
+
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+form input {
+	padding: 1rem 2rem;
+
+	border: 0.1rem solid var(--gray);
+	border-radius: 4rem;
+	font-size: 1rem;
+}
+
+form #name {
+	font-size: 2rem;
+}
+
 #quizes {
 	flex: 1;
 }
@@ -138,7 +165,7 @@ menu hr {
 	display: block;
 }
 
-#quizes a.btn-black {
+#quizes .btn-black {
 	width: fit-content;
 }
 
@@ -150,4 +177,203 @@ menu hr {
 	margin-top: 3rem;
 
 	text-align: center;
+}
+
+#quiz-list {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem;
+}
+
+.card-quiz {
+	/* чтобы растягивалась карточка при переносе */
+	flex: 1 0 0;
+	/* чтобы перенос вообще был */
+	min-width: 16rem;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.card-quiz header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	z-index: initial;
+}
+
+/* question-count класс просто для понимания */
+.card-quiz header .question-count {
+	color: var(--card-text);
+}
+
+.card-quiz header img {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.card-quiz h3 {
+	margin-top: 5rem;
+	margin-bottom: 0.5rem;
+
+	font-size: 1.75rem;
+}
+
+.card-quiz footer {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.card-quiz footer * {
+	color: var(--card-text);
+	font-size: 1rem;
+}
+
+.card-quiz .group {
+	margin-top: 2rem;
+}
+
+.card-quiz .group .filetype {
+	font-size: 0.75rem;
+	color: var(--input-text);
+}
+
+.card-quiz .group button:last-child {
+	margin-top: 0.5rem;
+}
+
+/* псевдоклассы */
+
+/* для пк */
+@media (hover: hover) {
+	.card-quiz:hover {
+		scale: 1.05;
+	}
+}
+
+/* для тачпадов */
+@media (hover: none) {
+	.card-quiz:active {
+		scale: 1.05;
+	}
+}
+
+/* адаптивность */
+
+@media (max-width: 1150px) {
+	main {
+		flex-direction: column;
+	}
+
+	#info {
+		width: unset;
+	}
+
+	form #name {
+		max-width: unset;
+		flex: 1;
+	}
+}
+
+@media (max-width: 800px) {
+	main,
+	#quiz-list {
+		padding: 2rem 1rem;
+	}
+}
+
+@media (max-width: 600px) {
+	#info form {
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+
+	form #name {
+		max-width: 10rem;
+		flex: initial;
+	}
+
+	menu {
+		flex-direction: column-reverse;
+		gap: 1rem;
+	}
+
+	menu .btn-black {
+		width: 100% !important;
+	}
+
+	menu hr {
+		display: none;
+	}
+
+	#tabs {
+		width: 100%;
+	}
+
+	#tabs .tab {
+		flex: 1;
+		text-align: center;
+	}
+
+	#tabs .tab a {
+		padding: 0.5rem 1.25rem;
+	}
+
+	.card-quiz {
+		padding: 1rem;
+		min-width: 8rem;
+
+		border-radius: 1rem;
+	}
+
+	.card-quiz header .question-count {
+		font-size: 0.75rem;
+	}
+
+	.card-quiz header img {
+		width: 1rem;
+		height: 1rem;
+	}
+
+	.card-quiz h3 {
+		margin-top: 2rem;
+
+		font-size: 1rem;
+	}
+
+	.card-quiz footer {
+		row-gap: 0;
+	}
+
+	.card-quiz footer * {
+		font-size: 0.75rem;
+	}
+
+	.card-quiz .group {
+		margin-top: 1rem;
+	}
+
+	.card-quiz .group button {
+		padding: 0.5rem 1.25rem;
+	}
+
+	.card-quiz .group * {
+		font-size: 0.75rem;
+	}
+
+	.card-quiz .group button:first-child {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+
+		border-radius: 1rem;
+	}
+
+	.card-quiz .group .filetype {
+		font-size: 0.5rem;
+	}
 }

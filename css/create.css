@@ -1,0 +1,263 @@
+/* общие правила */
+
+input[type='text'] {
+	padding: 1rem 2rem;
+
+	border: 0.1rem solid var(--gray);
+	border-radius: 4rem;
+	font-size: 1rem;
+}
+
+input[type='text']::placeholder {
+	color: var(--gray-dark);
+}
+
+input[id*='question'] {
+	width: 100%;
+}
+
+/* главный контейнер */
+
+main {
+	padding: 2rem 8rem;
+}
+
+/* форма */
+
+form .btn-accent {
+	margin-top: 2rem;
+}
+
+form #questions .btn-black {
+	align-items: center;
+	gap: 0.5rem;
+}
+
+form {
+	width: 100%;
+}
+
+form > * {
+	width: 100%;
+}
+
+/* загрузка обложки */
+
+#upload {
+	margin-top: 1rem;
+
+	height: 16rem;
+
+	position: relative;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	border-radius: 2rem;
+	background: var(--black);
+}
+
+#upload input {
+	width: 100%;
+	height: 100%;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+
+	opacity: 0;
+	cursor: pointer;
+}
+
+#upload img {
+	height: 8rem;
+	aspect-ratio: 1/1;
+	object-fit: contain;
+}
+
+/* название, описание, теги */
+
+#text-info {
+	padding: 2rem;
+
+	border: 0.1rem solid var(--gray);
+	border-radius: 2rem;
+}
+
+#text-info h2 {
+	margin-bottom: 2rem;
+}
+
+#text-info > .group {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+#text-info #tags {
+	width: 100%;
+
+	display: flex;
+	gap: 1rem;
+}
+
+#text-info #tags * {
+	width: 33%;
+}
+
+/* заголовок и добавление вопросов */
+
+#heading {
+	margin: 2rem 0;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+#heading #actions {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+#heading #actions button {
+	height: fit-content;
+
+	white-space: nowrap;
+
+	align-items: center;
+	gap: 0.5rem;
+}
+
+/* вопросы */
+
+#questions {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.question-con {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.question-con:not(:last-child) {
+	padding-bottom: 2rem;
+	border-bottom: 0.1rem solid var(--gray-light);
+}
+
+.question-con:not(:first-child) {
+	padding-top: 2rem;
+}
+
+.question-text {
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+}
+
+.question-text .question-num {
+	font-size: 1.25rem;
+	color: var(--gray-dark);
+	font-weight: 600;
+}
+
+/* ответы */
+
+.answers {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	row-gap: 1rem;
+	column-gap: 2rem;
+}
+
+/* открытый вопрос */
+
+.answers:has(textarea) {
+	grid-template-columns: 1fr;
+}
+
+/* label с img для true_false поверх radio input */
+.answers .group {
+	position: relative;
+}
+
+/* true_false */
+.answers input[type='radio'] {
+	width: 100%;
+	height: 100%;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	opacity: 0;
+
+	cursor: pointer;
+}
+
+.answers.true_false {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8rem;
+}
+
+.answers.true_false .group label {
+	padding: 1rem;
+
+	width: fit-content;
+	height: fit-content;
+
+	display: block;
+}
+
+.answers.true_false img {
+	width: 3.75rem;
+}
+
+input[id*='true'] ~ label,
+input[id*='false'] ~ label {
+	border-radius: 4rem;
+}
+
+input[id*='true'] ~ label.btn-accent,
+input[id*='false'] ~ label.btn-accent {
+	outline: 0.5rem solid var(--color-main);
+	background: none;
+}
+
+input[id*='true'] ~ label.btn-black,
+input[id*='false'] ~ label.btn-black {
+	outline: none;
+	background: none;
+}
+
+select {
+	font-size: 1rem;
+}
+
+/* multiple_choice */
+.answers.multiple_choice {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+}
+
+.answers.multiple_choice .toggler img {
+	width: 1.25rem;
+	aspect-ratio: 1/1;
+}
+
+.answers.multiple_choice .answer {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.answers.multiple_choice input {
+	width: 100%;
+}

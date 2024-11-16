@@ -13,6 +13,7 @@ if (
   ($file_title == "index")
   || ($file_title == "quiz")
   || ($file_title == "user")
+  || ($file_title == "create")
 ) {
   echo <<<html
   <script src="scripts/{$file_title}.js" defer></script>

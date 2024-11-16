@@ -131,6 +131,21 @@ form > * {
 	gap: 0.5rem;
 }
 
+select {
+	min-width: 14rem;
+	appearance: none;
+}
+
+.select {
+	position: relative;
+}
+
+.select img {
+	position: absolute;
+	right: 1.25rem;
+	top: 1.1rem;
+}
+
 /* вопросы */
 
 #questions {

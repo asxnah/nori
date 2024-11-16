@@ -53,26 +53,29 @@
               <img src="./assets/plus.svg" alt="+">
               Открытый вопрос
             </button>
-            <select class="btn-black">
-              <option value="infinite">
-                Не ограничено
-              </option>
-              <option value="5">5 мин</option>
-              <option value="10">10 мин</option>
-              <option value="15">15 мин</option>
-              <option value="20">20 мин</option>
-              <option value="25">25 мин</option>
-              <option value="30">30 мин</option>
-              <option value="35">35 мин</option>
-              <option value="40">40 мин</option>
-              <option value="45">45 мин</option>
-              <option value="50">50 мин</option>
-              <option value="55">55 мин</option>
-              <option value="60">60 мин (1 ч)</option>
-              <option value="90">90 мин (1 ч 30 мин)</option>
-              <option value="120">120 мин (2 ч)</option>
-              <option value="235">235 мин (3 ч 55 мин)</option>
-            </select>
+            <div class="select">
+              <img src="./assets/timer.png" alt="время на прохождение">
+              <select class="btn-black">
+                <option value="infinite">
+                  Не ограничено
+                </option>
+                <option value="5">5 мин</option>
+                <option value="10">10 мин</option>
+                <option value="15">15 мин</option>
+                <option value="20">20 мин</option>
+                <option value="25">25 мин</option>
+                <option value="30">30 мин</option>
+                <option value="35">35 мин</option>
+                <option value="40">40 мин</option>
+                <option value="45">45 мин</option>
+                <option value="50">50 мин</option>
+                <option value="55">55 мин</option>
+                <option value="60">60 мин (1 ч)</option>
+                <option value="90">90 мин (1 ч 30 мин)</option>
+                <option value="120">120 мин (2 ч)</option>
+                <option value="235">235 мин (3 ч 55 мин)</option>
+              </select>
+            </div>
           </div>
         </div>
         <section id="questions">

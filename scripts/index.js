@@ -1,7 +1,3 @@
-// реализовать поиск по викторинам
-
-// localStorage.setItem(`banner_hidden`, `no`); // убрать
-
 if (localStorage.getItem(`banner_hidden`) === `yes`) {
 	// скрыть баннер если уже нажималась кнопка `понятно, спасибо!`
 	document.querySelector(`#intro`).remove();

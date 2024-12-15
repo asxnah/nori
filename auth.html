@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="./css/main.css" />
+		<link rel="stylesheet" href="./css/auth.css" />
+		<script src="./js/main.js" defer></script>
+	</head>
+	<body>
+		<header>
+			<a href="./index.html" aria-labelledby="ссылка на главную страницу">
+				<img src="./assets/logo/logo-black.svg" alt="логотип Nori" />
+			</a>
+			<nav>
+				<a href="./create.html" class="btn btn-secondary">Создать</a
+				><a href="./auth.html" class="btn btn-primary">Войти</a>
+				<a
+					href="./user.html"
+					title="профиль пользователя (личный кабинет)"
+					aria-labelledby="ссылка на профиль пользователя (личный кабинет)"
+					>&#128100;</a
+				>
+			</nav>
+		</header>
+
+		<main>
+			<div id="left">
+				<img src="./assets/logo/logo-white.svg" alt="логотип Nori" />
+				<p>Создавайте, настраивайте и проходите викторины онлайн</p>
+			</div>
+			<form action="__auth.php" method="post" id="auth" class="card btn-pure">
+				<h1>Вход и регистрация</h1>
+				<div id="inputs">
+					<input
+						type="text"
+						id="username"
+						class="btn"
+						name="username"
+						placeholder="Логин"
+						required
+					/>
+					<div class="form-text">
+						<p>Логин может содержать:</p>
+						<ul>
+							<li>строчные и прописные латинские буквы</li>
+							<li>цифры</li>
+							<li>нижнее подчеркивание (_)</li>
+						</ul>
+					</div>
+					<input
+						type="password"
+						id="password"
+						class="btn"
+						name="password"
+						placeholder="Пароль"
+						required
+					/>
+					<div class="form-text">
+						<p>Пароль должен содержать:</p>
+						<ul>
+							<li>строчные и прописные латинские буквы</li>
+							<li>минимум один (1) специальный символ</li>
+							<li>минимум одну (1) цифру</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="group">
+					<button type="submit" id="login" class="btn btn-pure" name="login">
+						Войти
+					</button>
+					<button
+						type="submit"
+						id="register"
+						class="btn btn-dark"
+						name="register"
+					>
+						Зарегистрироваться
+					</button>
+				</div>
+				<small>
+					Регистрируясь, Вы соглашаетесь с нашими
+					<a href="about.html">
+						политикой конфиденциальности и условиями предоставления услуг</a
+					>.
+				</small>
+			</form>
+		</main>
+
+		<footer>
+			<button
+				id="top"
+				aria-labelledby="кнопка пролистать наверх"
+				title="пролистать наверх"
+			>
+				&#8593;
+			</button>
+			<a href="...">О платформе</a>
+			<small
+				>© 2024-2025 Все права защищены — <b>Nori</b> — создавайте, настраивайте
+				и проходите викторины онлайн
+			</small>
+		</footer>
+	</body>
+</html>

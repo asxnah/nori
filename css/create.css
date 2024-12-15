@@ -1,64 +1,103 @@
-/* общие правила */
-
-input[type='text'] {
-	padding: 1rem 2rem;
-
-	border: 0.1rem solid var(--gray);
-	border-radius: 4rem;
-	font-size: 1rem;
-}
-
-input[type='text']::placeholder {
-	color: var(--gray-dark);
-}
-
-input[id*='question'] {
-	width: 100%;
-}
-
-/* главный контейнер */
+/* главные элементы */
 
 main {
 	padding: 2rem 8rem;
 }
 
-/* форма */
+/* общие */
 
-form .btn-accent {
-	margin-top: 2rem;
-}
+textarea {
+	padding: 2rem;
 
-form #questions .btn-black {
-	align-items: center;
-	gap: 0.5rem;
-}
-
-form {
 	width: 100%;
+	height: 12rem;
+
+	resize: none;
 }
 
-form > * {
-	width: 100%;
+div[role='button'] {
+	width: fit-content;
 }
 
-/* загрузка обложки */
+.custom-checkbox input {
+	display: none;
+}
+
+.custom-checkbox .checkmark {
+	width: 1.5rem;
+	height: 1.5rem;
+	position: relative;
+	display: inline-block;
+	border: 0.1rem solid var(--grey);
+	border-radius: 0.25rem;
+	background-color: var(--white-full);
+	cursor: pointer;
+}
+
+.custom-checkbox input:checked + .checkmark {
+	background-color: var(--green);
+	border-color: var(--green);
+}
+
+.custom-checkbox input:checked + .checkmark::after {
+	content: '';
+	position: absolute;
+	top: 0.2rem;
+	left: 0.4rem;
+	width: 0.3rem;
+	height: 0.65rem;
+	border: solid var(--white-full);
+	border-width: 0 0.2rem 0.2rem 0;
+	transform: rotate(45deg);
+}
+
+/* общая информация о викторине */
+
+#info {
+	margin-bottom: 4rem;
+}
+
+#remove-bg-btn {
+	cursor: pointer;
+}
 
 #upload {
-	margin-top: 1rem;
-
-	height: 16rem;
-
 	position: relative;
 
-	display: flex;
-	align-items: center;
-	justify-content: center;
-
 	border-radius: 2rem;
-	background: var(--black);
 }
 
-#upload input {
+#upload.covered #upload-overlay {
+	mix-blend-mode: difference;
+	border: none;
+}
+
+#upload-overlay {
+	padding: 2rem;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 1.25rem;
+
+	border: 0.1rem solid var(--grey);
+	border-radius: 2rem;
+}
+
+#upload-overlay img {
+	width: 8rem;
+
+	aspect-ratio: 1/1;
+	object-fit: contain;
+}
+
+#upload-overlay p {
+	font-size: 1.25rem;
+	color: var(--darkgrey);
+}
+
+#cover {
 	width: 100%;
 	height: 100%;
 
@@ -71,84 +110,112 @@ form > * {
 	cursor: pointer;
 }
 
-#upload img {
-	height: 8rem;
+#info > .group {
+	display: inherit;
+	flex-direction: inherit;
+	gap: 1rem;
+}
+
+#info #tags {
+	display: flex;
+	gap: 1rem;
+}
+
+#info #tags * {
+	flex: 1;
+}
+
+/* q&a контейнер */
+
+#quiz {
+	position: relative;
+}
+
+#quiz,
+#quiz-list {
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+/* q&a шапка и меню */
+
+#quizzes-heading {
+	position: sticky;
+	z-index: 1;
+	top: 5rem;
+	left: 0;
+
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	background-color: var(--white-full);
+}
+
+#quizzes-heading menu .btn {
+	gap: 0.5rem;
+}
+
+#menu-pc {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+#menu-mobile {
+	display: none;
+
+	position: relative;
+}
+
+#menu-pc div img,
+#menu-mobile div img {
+	width: 1rem;
 	aspect-ratio: 1/1;
 	object-fit: contain;
 }
 
-/* название, описание, теги */
-
-#text-info {
-	padding: 2rem;
-
-	border: 0.1rem solid var(--gray);
-	border-radius: 2rem;
+#dropdown-button {
+	cursor: pointer;
 }
 
-#text-info h2 {
-	margin-bottom: 2rem;
-}
+.dropdown-content {
+	min-width: 12rem;
 
-#text-info > .group {
-	display: flex;
+	display: none;
 	flex-direction: column;
-	gap: 1rem;
+
+	position: absolute;
+	right: 0;
+	z-index: 1;
+
+	background-color: var(--white-full);
+	border: 0.1rem solid var(--grey);
+	border-radius: 1rem;
+	overflow: hidden;
 }
 
-#text-info #tags {
+.dropdown-content div {
+	padding: 1rem;
+
 	width: 100%;
 
 	display: flex;
-	gap: 1rem;
+	justify-content: flex-end;
 }
 
-#text-info #tags * {
-	width: 33%;
+.dropdown-content hr {
+	background-color: var(--lightgrey);
 }
 
-/* заголовок и добавление вопросов */
-
-#heading {
-	margin: 2rem 0;
+#menu-questions.show {
 	display: flex;
-	align-items: center;
-	justify-content: space-between;
 }
 
-#heading #actions {
-	display: flex;
-	align-items: center;
-	gap: 1rem;
-}
+/* q&a */
 
-#heading #actions button {
-	height: fit-content;
-
-	white-space: nowrap;
-
-	align-items: center;
-	gap: 0.5rem;
-}
-
-select {
-	min-width: 14rem;
-	appearance: none;
-}
-
-.select {
-	position: relative;
-}
-
-.select img {
-	position: absolute;
-	right: 1.25rem;
-	top: 1.1rem;
-}
-
-/* вопросы */
-
-#questions {
+.question {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
@@ -156,123 +223,252 @@ select {
 
 .question-con {
 	display: flex;
-	flex-direction: column;
+	align-items: center;
 	gap: 1rem;
 }
 
-.question-con:not(:last-child) {
-	padding-bottom: 2rem;
-	border-bottom: 0.1rem solid var(--gray-light);
+.question-number {
+	font-weight: 700;
+	font-size: 1.25rem;
+	color: var(--darkgrey);
 }
 
-.question-con:not(:first-child) {
-	padding-top: 2rem;
+.question-con input {
+	flex: 1;
 }
 
-.question-text {
-	display: flex;
-	align-items: center;
+/* multiple-choice */
+
+.multiple-choice {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
 	gap: 2rem;
 }
 
-.question-text .question-num {
-	font-size: 1.25rem;
-	color: var(--gray-dark);
-	font-weight: 600;
-}
-
-/* ответы */
-
-.answers {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-	row-gap: 1rem;
-	column-gap: 2rem;
-}
-
-/* открытый вопрос */
-
-.answers:has(textarea) {
-	grid-template-columns: 1fr;
-}
-
-/* label с img для true_false поверх radio input */
-.answers .group {
-	position: relative;
-}
-
-/* true_false */
-.answers input[type='radio'] {
-	width: 100%;
-	height: 100%;
-
-	position: absolute;
-	top: 0;
-	left: 0;
-	z-index: 1;
-	opacity: 0;
-
-	cursor: pointer;
-}
-
-.answers.true_false {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 8rem;
-}
-
-.answers.true_false .group label {
-	padding: 1rem;
-
-	width: fit-content;
-	height: fit-content;
-
-	display: block;
-}
-
-.answers.true_false img {
-	width: 3.75rem;
-}
-
-input[id*='true'] ~ label,
-input[id*='false'] ~ label {
-	border-radius: 4rem;
-}
-
-input[id*='true'] ~ label.btn-accent,
-input[id*='false'] ~ label.btn-accent {
-	outline: 0.5rem solid var(--color-main);
-	background: none;
-}
-
-input[id*='true'] ~ label.btn-black,
-input[id*='false'] ~ label.btn-black {
-	outline: none;
-	background: none;
-}
-
-select {
-	font-size: 1rem;
-}
-
-/* multiple_choice */
-.answers.multiple_choice {
-	display: grid;
-	grid-template-columns: repeat(2, 1fr);
-}
-
-.answers.multiple_choice .toggler img {
-	width: 1.25rem;
-	aspect-ratio: 1/1;
-}
-
-.answers.multiple_choice .answer {
+.multiple-choice .answer-con {
 	display: flex;
 	align-items: center;
 	gap: 0.5rem;
 }
 
-.answers.multiple_choice input {
+.multiple-choice input[type='checkbox'] {
+	cursor: pointer;
+}
+
+.multiple-choice .btn {
+	flex: 1;
+}
+
+.multiple-choice .delete-answer {
+	cursor: pointer;
+}
+
+div.add-answer {
 	width: 100%;
+}
+
+/* true-false */
+
+.true-false {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4rem;
+}
+
+.true-false label {
+	display: inline-block;
+
+	width: 4.75rem;
+	aspect-ratio: 1/1;
+}
+
+.true-false svg {
+	margin: 1rem;
+
+	width: 3.75rem;
+	aspect-ratio: 1/1;
+}
+
+.true-false .answer-con {
+	position: relative;
+}
+
+.true-false input {
+	width: 100%;
+	height: 100%;
+
+	position: absolute;
+	z-index: 1;
+	top: 0;
+	left: 0;
+
+	opacity: 0;
+	cursor: pointer;
+}
+
+/* сохранить */
+
+#quiz > .group {
+	display: flex;
+	gap: 1rem;
+}
+
+#quiz > .group .btn-primary {
+	flex: 1;
+}
+
+#quiz > .group .btn-secondary {
+	gap: 2rem;
+}
+
+#quiz > .group .btn-secondary span:last-child {
+	font-size: 0.75rem;
+	color: var(--black-medium);
+}
+
+/* таймер */
+
+.popup .group.btn {
+	border: 0.1rem solid var(--grey);
+}
+
+.popup .group.btn label {
+	font-weight: 400;
+}
+
+.popup .group input {
+	border: none;
+}
+
+.popup .group label {
+	flex: 0;
+}
+
+.popup > .faded-text {
+	width: 100%;
+	text-align: center;
+	cursor: pointer;
+}
+
+/* псевдоклассы */
+
+input:focus-visible,
+textarea:focus-visible {
+	outline: none;
+	border-color: var(--color-primary);
+}
+
+.custom-checkbox input:focus + .checkmark {
+	border-color: var(--green);
+}
+
+@media (hover: hover) {
+	.dropdown-content div:hover {
+		background-color: var(--lightgrey);
+	}
+
+	.delete-answer:hover rect {
+		fill: var(--darkgrey);
+	}
+
+	.custom-checkbox:hover .checkmark {
+		border-color: var(--darkgrey);
+	}
+}
+
+@media (hover: none) {
+	.dropdown-content div:active {
+		background-color: var(--lightgrey);
+	}
+
+	.delete-answer:active rect {
+		fill: var(--darkgrey);
+	}
+
+	.custom-checkbox:active .checkmark {
+		border-color: var(--darkgrey);
+	}
+}
+
+/* адаптивность */
+
+@media (width < 1150px) {
+	#info #tags * {
+		max-width: 31.6%;
+	}
+}
+
+@media (width < 1050px) {
+	main {
+		padding: 2rem 4rem;
+	}
+
+	#menu-pc {
+		display: none;
+	}
+
+	#menu-mobile {
+		display: inline-block;
+	}
+
+	.dropdown-content {
+		top: 3.5rem;
+	}
+}
+
+@media (width < 800px) {
+	main {
+		padding: 2rem 1rem;
+	}
+
+	#upload {
+		border-radius: 1.5rem;
+	}
+
+	#upload-overlay {
+		padding: 1.75rem 1.5rem;
+
+		border-radius: 1.5rem;
+	}
+
+	#info #tags {
+		flex-direction: column;
+	}
+
+	#info #tags * {
+		max-width: initial;
+	}
+
+	.dropdown-content {
+		top: 3rem;
+	}
+
+	.multiple-choice {
+		grid-template-columns: 1fr;
+	}
+
+	#quiz > .group {
+		flex-direction: column;
+	}
+
+	#quiz > .group .btn-secondary {
+		justify-content: space-between;
+	}
+
+	.popup .group {
+		justify-content: space-between;
+	}
+
+	.popup .group input {
+		max-width: 8rem;
+	}
+
+	.popup .group.btn {
+		flex-direction: row;
+	}
+
+	.popup .group div.btn {
+		width: 100%;
+	}
 }

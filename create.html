@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="./css/main.css" />
+		<link rel="stylesheet" href="./css/create.css" />
+		<script src="./js/main.js" defer></script>
+		<script src="./js/create.js" defer></script>
+	</head>
+	<body>
+		<header>
+			<a href="./index.html" aria-labelledby="ссылка на главную страницу">
+				<img src="./assets/logo/logo-black.svg" alt="логотип Nori" />
+			</a>
+			<nav>
+				<a href="./create.html" class="btn btn-secondary">Создать</a
+				><a href="./auth.html" class="btn btn-primary">Войти</a>
+				<a
+					href="./user.html"
+					title="профиль пользователя (личный кабинет)"
+					aria-labelledby="ссылка на профиль пользователя (личный кабинет)"
+					>&#128100;</a
+				>
+			</nav>
+		</header>
+
+		<main>
+			<form action="__create.php" method="post">
+				<section id="info" class="card card-outline">
+					<div id="heading">
+						<h2>О викторине</h2>
+						<div class="faded-text" id="remove-bg-btn" tabindex="0">
+							Удалить фон
+						</div>
+					</div>
+					<div id="upload">
+						<div id="upload-overlay">
+							<img
+								src="./assets/icons/upload.png"
+								id="upload-icon"
+								alt="иконка загрузки"
+							/>
+							<p>Загрузить фон</p>
+						</div>
+						<input type="file" name="cover" id="cover" accept="image/*" />
+					</div>
+					<div class="group">
+						<input
+							type="text"
+							id="title"
+							name="title"
+							class="btn"
+							placeholder="Название"
+						/>
+						<textarea
+							name="description"
+							id="description"
+							placeholder="Описание"
+						></textarea>
+						<div id="tags">
+							<input
+								type="text"
+								id="tag-1"
+								class="tag btn"
+								name="tag-1"
+								placeholder="Тег"
+							/>
+							<input
+								type="text"
+								id="tag-2"
+								class="tag btn"
+								name="tag-2"
+								placeholder="Тег"
+							/>
+							<input
+								type="text"
+								id="tag-3"
+								class="tag btn"
+								name="tag-3"
+								placeholder="Тег"
+							/>
+						</div>
+					</div>
+				</section>
+
+				<section id="quiz">
+					<div id="quizzes-heading">
+						<h2>Вопросы</h2>
+						<menu id="menu-pc">
+							<div
+								role="button"
+								id="multiple-choice"
+								class="btn btn-secondary"
+								tabindex="0"
+							>
+								<img src="./assets/icons/plus.png" alt="+" />
+								Выбор
+							</div>
+							<div
+								role="button"
+								id="true-false"
+								class="btn btn-secondary"
+								tabindex="0"
+							>
+								<img src="./assets/icons/plus.png" alt="+" />
+								Истинно / Ложно
+							</div>
+							<div
+								role="button"
+								id="open-text"
+								class="btn btn-secondary"
+								tabindex="0"
+							>
+								<img src="./assets/icons/plus.png" alt="+" />
+								Открытый вопрос
+							</div>
+							<div
+								role="button"
+								class="btn btn-secondary open-popup"
+								tabindex="0"
+							>
+								<img src="./assets/icons/plus.png" alt="+" />
+								Таймер
+							</div>
+						</menu>
+						<menu id="menu-mobile">
+							<div
+								role="button"
+								id="dropdown-button"
+								class="btn btn-secondary"
+								tabindex="0"
+							>
+								<img
+									src="./assets/icons/plus.png"
+									aria-label="добавить вопрос"
+									alt="+ добавить вопрос"
+								/>
+							</div>
+							<div id="menu-questions" class="dropdown-content">
+								<div role="button" id="multiple-choice" tabindex="0">
+									<span>Выбор</span>
+								</div>
+								<hr />
+								<div role="button" id="true-false" tabindex="0">
+									<span>Истинно / Ложно</span>
+								</div>
+								<hr />
+								<div role="button" id="open-text" tabindex="0">
+									<span>Открытый вопрос</span>
+								</div>
+								<hr />
+								<div role="button" class="open-popup" tabindex="0">
+									<span>Таймер</span>
+								</div>
+							</div>
+						</menu>
+					</div>
+
+					<div id="quiz-list"></div>
+
+					<div class="group">
+						<button type="submit" class="btn btn-primary" name="create">
+							Создать
+						</button>
+						<button
+							type="submit"
+							class="btn btn-secondary"
+							name="create_download"
+						>
+							<span>Скачать</span>
+							<span>DOCX</span>
+						</button>
+					</div>
+				</section>
+			</form>
+		</main>
+
+		<footer>
+			<button
+				id="top"
+				aria-labelledby="кнопка пролистать наверх"
+				title="пролистать наверх"
+			>
+				&#8593;
+			</button>
+			<a href="...">О платформе</a>
+			<small
+				>© 2024-2025 Все права защищены — <b>Nori</b> — создавайте, настраивайте
+				и проходите викторины онлайн
+			</small>
+		</footer>
+
+		<section class="popup-con">
+			<div class="popup card card-outline">
+				<div class="heading">
+					<h2>Таймер</h2>
+					<div role="button" class="close-popup" tabindex="0">
+						<img
+							src="./assets/icons/cross.png"
+							alt="закрыть окно"
+							title="закрыть окно"
+						/>
+					</div>
+				</div>
+				<div class="content">
+					<p class="faded-text">
+						Обязательно к заполнению только одно (1) поле. Можно заполнить все
+						три (3).
+					</p>
+					<div class="group btn">
+						<input type="number" id="hours" name="hours" placeholder="Часы" />
+						<label for="hours">ч</label>
+					</div>
+					<div class="group btn">
+						<input
+							type="number"
+							id="minutes"
+							name="minutes"
+							placeholder="Минуты"
+						/>
+						<label for="minutes">мин</label>
+					</div>
+				</div>
+				<div class="group">
+					<div
+						role="button"
+						id="save-timer"
+						class="btn btn-primary close-popup"
+						tabindex="0"
+					>
+						Сохранить
+					</div>
+					<div role="button" class="btn btn-secondary close-popup" tabindex="0">
+						Отмена
+					</div>
+				</div>
+				<div role="button" id="delete-timer" class="faded-text close-popup">
+					Удалить таймер
+				</div>
+			</div>
+		</section>
+	</body>
+</html>

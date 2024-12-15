@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+		<link rel="stylesheet" href="./css/main.css" />
+		<link rel="stylesheet" href="./css/index.css" />
+		<script src="./js/main.js" defer></script>
+		<script src="./js/index.js" defer></script>
+	</head>
+	<body>
+		<header>
+			<a href="./index.html" aria-labelledby="ссылка на главную страницу">
+				<img src="./assets/logo/logo-black.svg" alt="логотип Nori" />
+			</a>
+			<nav>
+				<a href="./create.html" class="btn btn-secondary">Создать</a
+				><a href="./auth.html" class="btn btn-primary">Войти</a>
+				<a
+					href="./user.html"
+					title="профиль пользователя (личный кабинет)"
+					aria-labelledby="ссылка на профиль пользователя (личный кабинет)"
+					>&#128100;</a
+				>
+			</nav>
+		</header>
+
+		<main>
+			<section id="banner">
+				<div id="left">
+					<img src="./assets/logo/logo-white.svg" alt="логотип Nori" />
+					<p>Создавайте, настраивайте и проходите викторины онлайн</p>
+					<div class="group">
+						<a href="./create.html" class="btn btn-pure">Создать</a>
+						<button id="take-quiz" class="btn btn-dark">Пройти</button>
+					</div>
+				</div>
+				<div id="right" class="card btn-pure">
+					<h2>Как это происходит?</h2>
+					<div class="content">
+						<p>
+							Создай викторину — загрузи свои вопросы и выбери параметры игры.
+						</p>
+						<p><span>ИЛИ</span></p>
+						<p>
+							Пройди викторину — оцени свои знания и получи результаты сразу
+							после завершения.
+						</p>
+					</div>
+					<button id="remove-banner" class="btn btn-pure">
+						Понятно, спасибо!
+					</button>
+				</div>
+			</section>
+
+			<section id="quizzes">
+				<div id="search" class="btn">
+					<input type="text" id="searchbar" placeholder="JavaScript" />
+					<button id="go">
+						<img src="./assets/icons/search.png" alt="поиск" />
+					</button>
+				</div>
+
+				<div id="quizzes-list">
+					<article
+						class="card quiz"
+						style="
+							background: linear-gradient(
+									to left,
+									var(--black-high),
+									var(--black-high)
+								),
+								url('./assets/quizzes/html.png');
+							background-size: cover;
+							background-repeat: no-repeat;
+							background-position: center;
+						"
+					>
+						<div class="quiz-header">
+							<p>10 вопросов</p>
+						</div>
+						<div class="content">
+							<h1>Насколько ты знаешь HTML</h1>
+							<div class="tags">
+								<p>HTML</p>
+								<p>Web</p>
+								<p>Front-end</p>
+							</div>
+							<a href="..." class="btn btn-pure">
+								<span>Пройти</span>
+								<img src="./assets/icons/arrow-right.png" alt=">" />
+							</a>
+						</div>
+					</article>
+					<article
+						class="card quiz"
+						style="
+							background: linear-gradient(
+									to left,
+									var(--black-high),
+									var(--black-high)
+								),
+								url('./assets/quizzes/css.png');
+							background-size: cover;
+							background-repeat: no-repeat;
+							background-position: center;
+						"
+					>
+						<div class="quiz-header">
+							<p>10 вопросов</p>
+						</div>
+						<div class="content">
+							<h1>CSS: Тест на мастерство</h1>
+							<div class="tags">
+								<p>CSS</p>
+								<p>Web</p>
+								<p>Front-end</p>
+							</div>
+							<a href="..." class="btn btn-pure">
+								<span>Пройти</span>
+								<img src="./assets/icons/arrow-right.png" alt=">" />
+							</a>
+						</div>
+					</article>
+					<article
+						class="card quiz"
+						style="
+							background: linear-gradient(
+									to left,
+									var(--black-high),
+									var(--black-high)
+								),
+								url('./assets/quizzes/react.png');
+							background-size: cover;
+							background-repeat: no-repeat;
+							background-position: center;
+						"
+					>
+						<div class="quiz-header">
+							<p>10 вопросов</p>
+						</div>
+						<div class="content">
+							<h1>React.js: Твой уровень</h1>
+							<div class="tags">
+								<p>React.js</p>
+								<p>Web</p>
+								<p>Front-end</p>
+							</div>
+							<a href="..." class="btn btn-pure">
+								<span>Пройти</span>
+								<img src="./assets/icons/arrow-right.png" alt=">" />
+							</a>
+						</div>
+					</article>
+				</div>
+			</section>
+		</main>
+
+		<footer>
+			<button
+				id="top"
+				aria-labelledby="кнопка пролистать наверх"
+				title="пролистать наверх"
+			>
+				&#8593;
+			</button>
+			<a href="...">О платформе</a>
+			<small
+				>© 2024-2025 Все права защищены — <b>Nori</b> — создавайте, настраивайте
+				и проходите викторины онлайн
+			</small>
+		</footer>
+	</body>
+</html>

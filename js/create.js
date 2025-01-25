@@ -42,6 +42,7 @@ document.querySelector(`#remove-bg-btn`).addEventListener(`click`, function () {
 	let uploadContainer = document.querySelector(`#upload`);
 	uploadContainer.classList.remove(`covered`);
 	uploadContainer.style.backgroundImage = ``;
+
 	// предотвращение загрузки на сервер
 	let uploadInput = document.querySelector(`#cover`);
 	uploadInput.value = ``;
@@ -52,6 +53,7 @@ document.querySelector(`#remove-bg-btn`).addEventListener(`click`, function () {
 let questions = document.querySelectorAll(`.question`);
 questions.forEach((question) => {
 	let answersContainer = question.querySelector(`.multiple-choice`);
+
 	if (answersContainer) {
 		let addAnswerButton = question.querySelector(`.add-answer`);
 		addAnswerButton.addEventListener(`click`, () => {
@@ -127,9 +129,19 @@ document.addEventListener(`DOMContentLoaded`, function () {
 	// множественный выбор
 	let addMultipleChoiceQuestion = () => {
 		questionCount++;
+
 		let questionHTML = `
 		<div class="question">
 			<div class="question-con">
+			  <div role="button" class="delete-question" tabindex="0">
+					<img
+						src="./assets/icons/cross.png"
+						alt="удалить вопрос"
+						title="удалить вопрос"
+						width="24"
+						height="24"
+					/>
+				</div>
 				<div class="question-number">${questionCount}</div>
 				<input type="text" id="question-${questionCount}" name="question-${questionCount}" class="question-text btn" placeholder="Вопрос">
 			</div>
@@ -172,6 +184,7 @@ document.addEventListener(`DOMContentLoaded`, function () {
 			<div role="button" class="add-answer btn btn-secondary" tabindex="0">Добавить ответ</div>
 		</div>
 		`;
+
 		document
 			.querySelector(`#quiz-list`)
 			.insertAdjacentHTML(`beforeend`, questionHTML);
@@ -180,9 +193,19 @@ document.addEventListener(`DOMContentLoaded`, function () {
 	// истинно / ложно
 	let addTrueFalseQuestion = () => {
 		questionCount++;
+
 		let questionHTML = `
         <div class="question">
           <div class="question-con">
+					<div role="button" class="delete-question" tabindex="0">
+						<img
+							src="./assets/icons/cross.png"
+							alt="удалить вопрос"
+							title="удалить вопрос"
+							width="24"
+							height="24"
+						/>
+					</div>
             <div class="question-number">${questionCount}</div>
             <input type="text" id="question-${questionCount}" name="question-${questionCount}" class="question-text btn" placeholder="Вопрос">
           </div>
@@ -230,9 +253,19 @@ document.addEventListener(`DOMContentLoaded`, function () {
 	// открытый вопрос
 	let addOpenTextQuestion = () => {
 		questionCount++;
+
 		let questionHTML = `
         <div class="question">
           <div class="question-con">
+						<div role="button" class="delete-question" tabindex="0">
+							<img
+								src="./assets/icons/cross.png"
+								alt="удалить вопрос"
+								title="удалить вопрос"
+								width="24"
+								height="24"
+							/>
+						</div>
             <div class="question-number">${questionCount}</div>
             <input type="text" id="question-${questionCount}" name="question-${questionCount}" class="question-text btn" placeholder="Вопрос">
           </div>
@@ -383,3 +416,31 @@ deleteTimer.addEventListener(`click`, () => {
 	if (document.querySelector(`#input_minutes`))
 		document.querySelector(`#input_minutes`).remove();
 });
+
+// ---------- УДАЛИТЬ ВОПРОС ----------
+document
+	.querySelector('#quiz-list')
+	.addEventListener('click', function (event) {
+		if (event.target.closest('.delete-question')) {
+			let question = event.target.closest('.question');
+			question.remove();
+
+			// пересчет номеров вопросов
+			let questions = document.querySelectorAll('.question');
+			questions.forEach((q, index) => {
+				q.querySelector('.question-number').textContent = index + 1;
+				let input = q.querySelector('.question-text');
+				input.id = `question-${index + 1}`;
+				input.name = `question-${index + 1}`;
+
+				// обновление идентификаторов и имен ответов
+				let answers = q.querySelectorAll('.answer-con input[type="checkbox"]');
+				answers.forEach((answer, answerIndex) => {
+					let newId = `correct-${index + 1}-${answerIndex + 1}`;
+					answer.id = newId;
+					answer.name = `checkbox-${newId}`;
+					answer.closest('label').setAttribute('for', newId);
+				});
+			});
+		}
+	});

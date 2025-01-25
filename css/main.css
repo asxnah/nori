@@ -368,10 +368,11 @@ hr {
 }
 
 .popup .heading img {
-	width: 1rem;
+	width: 1.5rem;
 	aspect-ratio: 1/1;
 
 	object-fit: contain;
+	cursor: pointer;
 }
 
 .popup .group {

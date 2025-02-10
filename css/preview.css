@@ -1,1 +1,35 @@
 @import url('main.css');
+
+main {
+	min-height: 100vh;
+
+	padding: 2rem 8rem;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+main * {
+	text-align: center;
+}
+
+main section {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+#info * {
+	text-align: right;
+}
+
+small {
+	color: var(--darkgrey);
+}
+
+@media (width < 800px) {
+	main {
+		padding: 2rem;
+	}
+}

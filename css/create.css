@@ -1,10 +1,8 @@
-/* главные элементы */
+@import url('main.css');
 
 main {
 	padding: 2rem 8rem;
 }
-
-/* общие */
 
 textarea {
 	padding: 2rem;
@@ -50,8 +48,6 @@ div[role='button'] {
 	border-width: 0 0.2rem 0.2rem 0;
 	transform: rotate(45deg);
 }
-
-/* общая информация о викторине */
 
 #info {
 	margin-bottom: 4rem;
@@ -125,8 +121,6 @@ div[role='button'] {
 	flex: 1;
 }
 
-/* q&a контейнер */
-
 #quiz {
 	position: relative;
 }
@@ -137,8 +131,6 @@ div[role='button'] {
 	flex-direction: column;
 	gap: 2rem;
 }
-
-/* q&a шапка и меню */
 
 #quizzes-heading {
 	position: sticky;
@@ -213,8 +205,6 @@ div[role='button'] {
 	display: flex;
 }
 
-/* q&a */
-
 .question {
 	display: flex;
 	flex-direction: column;
@@ -236,8 +226,6 @@ div[role='button'] {
 .question-con input {
 	flex: 1;
 }
-
-/* multiple-choice */
 
 .multiple-choice {
 	display: grid;
@@ -266,8 +254,6 @@ div[role='button'] {
 div.add-answer {
 	width: 100%;
 }
-
-/* true-false */
 
 .true-false {
 	display: flex;
@@ -307,8 +293,6 @@ div.add-answer {
 	cursor: pointer;
 }
 
-/* сохранить */
-
 #quiz > .group {
 	display: flex;
 	gap: 1rem;
@@ -326,8 +310,6 @@ div.add-answer {
 	font-size: 0.75rem;
 	color: var(--black-medium);
 }
-
-/* таймер */
 
 .popup .group.btn {
 	border: 0.1rem solid var(--grey);
@@ -350,8 +332,6 @@ div.add-answer {
 	text-align: center;
 	cursor: pointer;
 }
-
-/* псевдоклассы */
 
 input:focus-visible,
 textarea:focus-visible {
@@ -390,8 +370,6 @@ textarea:focus-visible {
 		border-color: var(--darkgrey);
 	}
 }
-
-/* адаптивность */
 
 @media (width < 1150px) {
 	#info #tags * {

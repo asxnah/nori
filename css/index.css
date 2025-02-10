@@ -1,3 +1,5 @@
+@import url('main.css');
+
 #banner {
 	padding: 8rem;
 
@@ -120,8 +122,6 @@
 .quiz .btn {
 	margin-top: 2rem;
 }
-
-/* адаптивность */
 
 @media (width < 1050px) {
 	#banner {

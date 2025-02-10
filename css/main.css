@@ -52,8 +52,6 @@ body.popupped > *:not(.popup-con) {
 	opacity: 0.2;
 }
 
-/* стили по умолчанию */
-
 a {
 	color: initial;
 	text-decoration: none;
@@ -69,8 +67,6 @@ input,
 textarea {
 	font-size: 1rem;
 }
-
-/* кнопковидные */
 
 .btn {
 	padding: 1rem 2rem;
@@ -110,8 +106,6 @@ header .btn {
 	background-color: var(--color-primary);
 }
 
-/* вводы */
-
 input,
 textarea,
 input::placeholder,
@@ -132,8 +126,6 @@ textarea::placeholder {
 textarea {
 	border-radius: 2rem;
 }
-
-/* текстовые */
 
 h1,
 h2,
@@ -173,9 +165,6 @@ h4 {
 .quiz .faded-text {
 	color: var(--white-medium);
 }
-
-/* контейнеры */
-/* карточки */
 
 .card {
 	padding: 2rem;
@@ -253,8 +242,6 @@ h4 {
 	justify-content: space-between;
 }
 
-/* главные элементы */
-
 header,
 footer {
 	padding: 1rem 8rem;
@@ -314,8 +301,6 @@ footer small {
 	text-align: center;
 	font-size: 0.5rem;
 }
-
-/* другое */
 
 hr {
 	height: 0.1rem;
@@ -384,8 +369,6 @@ hr {
 	flex: 1;
 }
 
-/* псевдоклассы */
-
 @media (hover: hover) {
 	.btn-pure:hover,
 	.btn-dark:hover,
@@ -431,10 +414,7 @@ hr {
 	}
 }
 
-/* адаптивность */
-
 @media (width < 1050px) {
-	/*  */
 }
 
 @media (width < 800px) {

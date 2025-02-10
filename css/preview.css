@@ -28,8 +28,22 @@ small {
 	color: var(--darkgrey);
 }
 
+#logo {
+	display: flex;
+	place-content: center;
+}
+
+#logo img {
+	width: 11rem;
+	height: 4rem;
+}
+
 @media (width < 800px) {
 	main {
 		padding: 2rem;
+	}
+
+	h1 {
+		font-size: 1.5rem;
 	}
 }

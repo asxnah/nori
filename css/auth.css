@@ -104,6 +104,26 @@ li {
 	border: 0.1rem solid var(--white-medium);
 }
 
+.popup {
+	min-width: 50%;
+}
+
+.popup * {
+	text-align: left !important;
+}
+
+.popup .btn {
+	align-self: flex-end;
+}
+
+.popup p {
+	font-size: 1rem;
+}
+
+.popup-con#password-incorrect {
+	align-items: center;
+}
+
 @media (width < 1050px) {
 	main {
 		padding: 2rem 4rem;
@@ -143,5 +163,13 @@ li {
 	#auth .group {
 		flex-direction: column;
 		gap: 0.5rem;
+	}
+
+	.popup {
+		min-width: 90%;
+	}
+
+	.popup-con#password-incorrect img {
+		display: block;
 	}
 }

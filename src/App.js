@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import PopupHandler from './PopupHandler';
+
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -13,6 +15,7 @@ import Create from './pages/Create';
 const App = () => {
 	return (
 		<Router>
+			<PopupHandler />
 			<Header />
 			<Routes>
 				<Route path="/" element={<Home />} />

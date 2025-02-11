@@ -1,0 +1,20 @@
+{
+	"short_name": "Nori",
+	"name": "Nori — Веб-платформа для создания и проведения интерактивных викторин",
+	"icons": [
+		{
+			"src": "index/banner.png",
+			"sizes": "192x192",
+			"type": "image/svg"
+		},
+		{
+			"src": "index/banner.png",
+			"sizes": "512x512",
+			"type": "image/svg"
+		}
+	],
+	"start_url": ".",
+	"display": "standalone",
+	"theme_color": "#8560D9",
+	"background_color": "#fafafa"
+}

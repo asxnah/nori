@@ -79,10 +79,6 @@ textarea {
 	font-weight: 500;
 }
 
-header .btn {
-	padding: 0.5rem 1.25rem;
-}
-
 .btn-pure,
 .btn-dark,
 .btn-primary {
@@ -242,64 +238,8 @@ h4 {
 	justify-content: space-between;
 }
 
-header,
-footer {
-	padding: 1rem 8rem;
-}
-
-header {
-	position: sticky;
-	top: 0;
-	left: 0;
-	z-index: 99;
-
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-
-	background-color: var(--white-full);
-}
-
-header nav {
-	display: flex;
-	gap: 1rem;
-}
-
-header .logo {
-	width: 107px;
-	height: 42px;
-}
-
-header a:not(.btn) {
-	font-size: 1.5rem;
-}
-
 main {
 	min-height: 80vh;
-}
-
-footer {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	gap: 1rem;
-
-	background-color: var(--lightgrey);
-}
-
-footer #top {
-	cursor: pointer;
-	font-size: 2rem;
-}
-
-footer a {
-	font-size: 0.875rem;
-	font-weight: 600;
-}
-
-footer small {
-	text-align: center;
-	font-size: 0.5rem;
 }
 
 hr {

@@ -1,0 +1,109 @@
+@import url('../../index.css');
+
+#AnswersPage {
+	padding: 2rem 8rem;
+
+	#heading {
+		margin-bottom: 2rem;
+	}
+
+	#heading h2 {
+		margin-bottom: 0.5rem;
+	}
+
+	#heading p {
+		color: var(--darkgrey);
+	}
+
+	#answers #search {
+		padding: 1rem 2rem;
+		margin-bottom: 1rem;
+
+		justify-content: space-between;
+		gap: 1rem;
+
+		border: 0.1rem solid var(--lightgrey);
+		border-radius: 4rem;
+	}
+
+	#answers #searchbar {
+		flex: 1;
+		border: none;
+	}
+
+	#answers #search img {
+		width: 1.25rem;
+
+		display: block;
+
+		aspect-ratio: 1/1;
+		object-fit: contain;
+	}
+
+	#answers #searchbar:focus-visible {
+		outline: none;
+	}
+
+	#answers #search:focus-within {
+		border-color: var(--color-primary);
+	}
+
+	#answers-list {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 2rem;
+	}
+
+	.answer {
+		padding: 1rem 2rem;
+
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+
+		border-radius: 1rem;
+		background-color: var(--lightgrey);
+	}
+
+	.answer h5 {
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	.answer small,
+	.answer p {
+		color: var(--darkgrey);
+	}
+
+	.answer small {
+		font-size: 0.875rem;
+	}
+
+	@media (hover: hover) {
+		.answer:hover p {
+			color: var(--color-primary);
+		}
+	}
+
+	@media (hover: none) {
+		.answer:active .answer h5 {
+			color: var(--color-primary);
+		}
+	}
+
+	@media (width < 1050px) {
+		padding: 2rem 4rem;
+
+		#answers-list {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media (width < 800px) {
+		padding: 2rem 1rem;
+
+		#answers-list {
+			gap: 1rem;
+		}
+	}
+}

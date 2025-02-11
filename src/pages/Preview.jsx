@@ -1,16 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>
-			Титульная страница — Веб-платформа для создания и проведения интерактивных
-			викторин "Nori"
-		</title>
-		<link rel="stylesheet" href="./css/preview.css" />
-	</head>
-	<body>
-		<main>
+import React from 'react';
+import { Link } from 'react-router-dom';
+import './styles/Preview.css';
+
+const Preview = () => {
+	return (
+		<main id="PreviewPage">
 			<div id="logo">
 				<img src="./assets/preview/logo.svg" alt="логотип ОНИКС" />
 			</div>
@@ -38,9 +32,13 @@
 				</p>
 			</section>
 
-			<a href="./index.html" class="btn btn-primary">Перейти</a>
+			<Link to="/" className="btn btn-primary">
+				Перейти
+			</Link>
 
 			<small>Пермь 2025</small>
 		</main>
-	</body>
-</html>
+	);
+};
+
+export default Preview;

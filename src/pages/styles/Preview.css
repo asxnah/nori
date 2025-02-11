@@ -1,0 +1,47 @@
+@import url('../../index.css');
+
+#PreviewPage {
+	min-height: 100vh;
+
+	padding: 2rem 8rem;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	* {
+		text-align: center;
+	}
+
+	section {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	#info * {
+		text-align: right;
+	}
+
+	small {
+		color: var(--darkgrey);
+	}
+
+	#logo {
+		display: flex;
+		place-content: center;
+	}
+
+	#logo img {
+		width: 11rem;
+		height: 4rem;
+	}
+
+	@media (width < 800px) {
+		padding: 2rem;
+
+		h1 {
+			font-size: 1.5rem;
+		}
+	}
+}

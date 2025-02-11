@@ -1,0 +1,34 @@
+header {
+	padding: 1rem 8rem;
+}
+
+header {
+	position: sticky;
+	top: 0;
+	left: 0;
+	z-index: 99;
+
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	background-color: var(--white-full);
+}
+
+header nav {
+	display: flex;
+	gap: 1rem;
+}
+
+header .logo {
+	width: 107px;
+	height: 42px;
+}
+
+header a:not(.btn) {
+	font-size: 1.5rem;
+}
+
+header .btn {
+	padding: 0.5rem 1.25rem;
+}

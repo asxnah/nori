@@ -4,13 +4,15 @@
 /nori
   ├── /src
   │   ├── /models
-  │   │   ├── Quiz.js                # Модель данных для викторины
-  │   ├── server.js                  # Серверный код (Node.js + Express)
-  │   ├── index.js                   # Точка входа для React-приложения
-  │   ├── App.js                     # Основной компонент приложения React
-  │   ├── index.css                  # Стили для всего приложения
-  │   ├── App.css                    # Стили, специфичные для компонента App
-  │   ├── reportWebVitals.js         # Отчёты о производительности приложения
+  │   │   ├── model.js
+  │   ├── /pages
+  │   │   ├── page.jsx
+  │   ├── /components
+  │   │   ├── component.jsx
+  │   ├── server.js
+  │   ├── index.js
+  │   ├── App.js
+  │   ├── reportWebVitals.js
 ```
 
 ### Порядок работы:

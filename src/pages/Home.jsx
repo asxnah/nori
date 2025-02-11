@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './styles/Home.css';
 import HomeCard from '../components/HomeCard';
@@ -24,6 +24,48 @@ const Home = () => {
 			imageUrl: './assets/quizzes/react.png',
 		},
 	];
+
+	useEffect(() => {
+		const banner = document.querySelector('#banner');
+		const takeQuizButton = document.querySelector('#take-quiz');
+		const removeBannerButton = document.querySelector('#remove-banner');
+
+		if (localStorage.getItem('banner_hidden') === 'yes') {
+			banner?.remove();
+		} else {
+			const handleTakeQuizClick = () => {
+				window.scrollTo({
+					top: banner?.offsetHeight,
+					behavior: 'smooth',
+				});
+			};
+
+			const handleRemoveBannerClick = () => {
+				window.scrollTo({
+					top: banner?.offsetHeight,
+					behavior: 'smooth',
+				});
+
+				setTimeout(() => {
+					banner?.remove();
+				}, 500);
+
+				localStorage.setItem('banner_hidden', 'yes');
+			};
+
+			takeQuizButton?.addEventListener('click', handleTakeQuizClick);
+			removeBannerButton?.addEventListener('click', handleRemoveBannerClick);
+
+			// Очистка обработчиков событий при размонтировании компонента
+			return () => {
+				takeQuizButton?.removeEventListener('click', handleTakeQuizClick);
+				removeBannerButton?.removeEventListener(
+					'click',
+					handleRemoveBannerClick
+				);
+			};
+		}
+	}, []);
 
 	return (
 		<main id="HomePage">

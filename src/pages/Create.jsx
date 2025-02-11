@@ -9,7 +9,7 @@ const Create = () => {
 					<section id="info" className="card card-outline">
 						<div id="heading">
 							<h2>О викторине</h2>
-							<div className="faded-text" id="remove-bg-btn" tabindex="0">
+							<div className="faded-text" id="remove-bg-btn" tabIndex="0">
 								Удалить фон
 							</div>
 						</div>
@@ -71,7 +71,7 @@ const Create = () => {
 									role="button"
 									id="multiple-choice"
 									className="btn btn-secondary"
-									tabindex="0"
+									tabIndex="0"
 								>
 									<img src="./assets/icons/plus.png" alt="+" />
 									Выбор
@@ -80,7 +80,7 @@ const Create = () => {
 									role="button"
 									id="true-false"
 									className="btn btn-secondary"
-									tabindex="0"
+									tabIndex="0"
 								>
 									<img src="./assets/icons/plus.png" alt="+" />
 									Истинно / Ложно
@@ -89,7 +89,7 @@ const Create = () => {
 									role="button"
 									id="open-text"
 									className="btn btn-secondary"
-									tabindex="0"
+									tabIndex="0"
 								>
 									<img src="./assets/icons/plus.png" alt="+" />
 									Открытый вопрос
@@ -97,7 +97,7 @@ const Create = () => {
 								<div
 									role="button"
 									className="btn btn-secondary open-popup"
-									tabindex="0"
+									tabIndex="0"
 								>
 									<img src="./assets/icons/plus.png" alt="+" />
 									Таймер
@@ -108,7 +108,7 @@ const Create = () => {
 									role="button"
 									id="dropdown-button"
 									className="btn btn-secondary"
-									tabindex="0"
+									tabIndex="0"
 								>
 									<img
 										src="./assets/icons/plus.png"
@@ -117,19 +117,19 @@ const Create = () => {
 									/>
 								</div>
 								<div id="menu-questions" className="dropdown-content">
-									<div role="button" id="multiple-choice" tabindex="0">
+									<div role="button" id="multiple-choice" tabIndex="0">
 										<span>Выбор</span>
 									</div>
 									<hr />
-									<div role="button" id="true-false" tabindex="0">
+									<div role="button" id="true-false" tabIndex="0">
 										<span>Истинно / Ложно</span>
 									</div>
 									<hr />
-									<div role="button" id="open-text" tabindex="0">
+									<div role="button" id="open-text" tabIndex="0">
 										<span>Открытый вопрос</span>
 									</div>
 									<hr />
-									<div role="button" className="open-popup" tabindex="0">
+									<div role="button" className="open-popup" tabIndex="0">
 										<span>Таймер</span>
 									</div>
 								</div>
@@ -159,7 +159,7 @@ const Create = () => {
 				<div className="popup card card-outline">
 					<div className="heading">
 						<h2>Таймер</h2>
-						<div role="button" className="close-popup" tabindex="0">
+						<div role="button" className="close-popup" tabIndex="0">
 							<img
 								src="./assets/icons/cross.png"
 								alt="закрыть окно"
@@ -190,14 +190,14 @@ const Create = () => {
 							role="button"
 							id="save-timer"
 							className="btn btn-primary close-popup"
-							tabindex="0"
+							tabIndex="0"
 						>
 							Сохранить
 						</div>
 						<div
 							role="button"
 							className="btn btn-secondary close-popup"
-							tabindex="0"
+							tabIndex="0"
 						>
 							Отмена
 						</div>

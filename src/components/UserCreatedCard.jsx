@@ -11,10 +11,10 @@ const UserCreatedCard = ({ title, questionsCount, tags, imageUrl }) => {
 
 	return (
 		<>
-			<article class="card quiz" style={style}>
-				<div class="quiz-header">
+			<article className="card quiz" style={style}>
+				<div className="quiz-header">
 					<p>{questionsCount} вопросов</p>
-					<div class="group">
+					<div className="group">
 						<a href="...">
 							<img
 								src="./assets/icons/pencil.png"
@@ -41,15 +41,15 @@ const UserCreatedCard = ({ title, questionsCount, tags, imageUrl }) => {
 						</a>
 					</div>
 				</div>
-				<div class="content">
+				<div className="content">
 					<h1>{title}</h1>
-					<div class="tags">
+					<div className="tags">
 						{tags.map((tag, index) => (
 							<p key={index}>{tag}</p>
 						))}
 					</div>
-					<div class="quiz-footer">
-						<Link to="..." class="btn btn-pure">
+					<div className="quiz-footer">
+						<Link to="..." className="btn btn-pure">
 							<span>Скачать</span>
 							<span>DOCX</span>
 						</Link>

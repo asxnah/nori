@@ -8,7 +8,7 @@ const Quiz = () => {
 				<section id="info" className="card card-outline">
 					<div id="heading">
 						<h2>О викторине</h2>
-						<div className="faded-text" id="remove-bg-btn" tabindex="0">
+						<div className="faded-text" id="remove-bg-btn" tabIndex="0">
 							Удалить фон
 						</div>
 					</div>

@@ -2,7 +2,7 @@
 
 :root {
 	--color-primary: #8560d9;
-	--color-primary-dark: #6f46ce;
+	--color-primary-dark: #6140ae;
 	--color-primary-high: rgba(133, 96, 217, 0.75);
 	--color-primary-medium: rgba(133, 96, 217, 0.5);
 	--color-primary-low: rgba(133, 96, 217, 0.25);
@@ -17,6 +17,7 @@
 	--darkgrey: #787878;
 	--lightgrey: #f1f1f1;
 
+	--blackest: #171717;
 	--black-full: #323232;
 	--black-high: rgba(50, 50, 50, 0.6);
 	--black-medium: rgba(50, 50, 50, 0.5);
@@ -323,7 +324,7 @@ hr {
 	}
 
 	.btn-dark:hover {
-		background-color: var(--black-high);
+		background-color: var(--blackest);
 	}
 
 	.btn-secondary:hover {
@@ -331,7 +332,7 @@ hr {
 	}
 
 	.btn-primary:hover {
-		background-color: var(--color-primary-high);
+		background-color: var(--color-primary-dark);
 	}
 }
 
@@ -342,7 +343,7 @@ hr {
 	}
 
 	.btn-dark:active {
-		background-color: var(--black-high);
+		background-color: var(--blackest);
 	}
 
 	.btn-secondary:active {
@@ -350,7 +351,7 @@ hr {
 	}
 
 	.btn-primary:active {
-		background-color: var(--color-primary-high);
+		background-color: var(--color-primary-dark);
 	}
 }
 

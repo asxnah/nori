@@ -3,14 +3,14 @@
 	"name": "Nori — Веб-платформа для создания и проведения интерактивных викторин",
 	"icons": [
 		{
-			"src": "index/banner.png",
+			"src": "logo/icon.png",
 			"sizes": "192x192",
-			"type": "image/svg"
+			"type": "image/png"
 		},
 		{
-			"src": "index/banner.png",
+			"src": "logo/icon.png",
 			"sizes": "512x512",
-			"type": "image/svg"
+			"type": "image/png"
 		}
 	],
 	"start_url": ".",

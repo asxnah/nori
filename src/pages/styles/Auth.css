@@ -1,29 +1,31 @@
 @import url('../../index.css');
 
 #AuthPage {
-	padding: 4rem 8rem;
+	main {
+		padding: 4rem 8rem;
 
-	min-height: 0rem;
+		min-height: 0rem;
 
-	display: flex;
-	align-items: center;
-	gap: 4rem;
+		display: flex;
+		align-items: center;
+		gap: 4rem;
 
-	background: linear-gradient(
-			to left,
-			var(--color-primary-high) 0%,
-			transparent 50%
-		),
-		url('/public/assets/index/banner.png');
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-position: center;
+		background: linear-gradient(
+				to left,
+				var(--color-primary-high) 0%,
+				transparent 50%
+			),
+			url('/public/assets/index/banner.png');
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
 
-	* {
+	main * {
 		color: var(--white-full);
 	}
 
-	> * {
+	main > * {
 		flex: 1;
 	}
 
@@ -124,28 +126,32 @@
 	}
 
 	@media (width < 1050px) {
-		padding: 2rem 4rem;
+		main {
+			padding: 2rem 4rem;
 
-		background: linear-gradient(
-				to left,
-				var(--color-primary-high) 0%,
-				var(--color-primary-low) 50%
-			),
-			url('/public/assets/index/banner.png');
+			background: linear-gradient(
+					to left,
+					var(--color-primary-high) 0%,
+					var(--color-primary-low) 50%
+				),
+				url('/public/assets/index/banner.png');
+		}
 	}
 
 	@media (width < 800px) {
-		padding: 2rem 1rem;
+		main {
+			padding: 2rem 1rem;
 
-		flex-direction: column;
-		gap: 1rem;
+			flex-direction: column;
+			gap: 1rem;
 
-		background: linear-gradient(
-				to left,
-				var(--color-primary-high) 0%,
-				var(--color-primary-low) 50%
-			),
-			url('/public/assets/index/banner.png');
+			background: linear-gradient(
+					to left,
+					var(--color-primary-high) 0%,
+					var(--color-primary-low) 50%
+				),
+				url('/public/assets/index/banner.png');
+		}
 
 		#banner #left p {
 			font-size: 1rem;

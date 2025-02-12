@@ -1,7 +1,36 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import './styles/Create.css';
 
 const Create = () => {
+	const coverRef = useRef(null);
+	const uploadContainerRef = useRef(null);
+	const removeBgBtnRef = useRef(null);
+
+	const [backgroundImage, setBackgroundImage] = useState(null);
+
+	const handleKeyDown = (evt) => {
+		if (evt.key === 'Enter' || evt.key === ' ') {
+			evt.preventDefault();
+			evt.target.click();
+		}
+	};
+
+	const handleFileChange = (evt) => {
+		let file = evt.target.files[0];
+		if (file) {
+			let reader = new FileReader();
+			reader.onload = function (e) {
+				setBackgroundImage(e.target.result);
+			};
+			reader.readAsDataURL(file);
+		}
+	};
+
+	const handleRemoveBackground = () => {
+		setBackgroundImage(null);
+		coverRef.current.value = '';
+	};
+
 	return (
 		<div id="CreatePage">
 			<main>
@@ -9,11 +38,25 @@ const Create = () => {
 					<section id="info" className="card card-outline">
 						<div id="heading">
 							<h2>О викторине</h2>
-							<div className="faded-text" id="remove-bg-btn" tabIndex="0">
+							<div
+								className="faded-text"
+								id="remove-bg-btn"
+								tabIndex="0"
+								ref={removeBgBtnRef}
+								onClick={handleRemoveBackground}
+							>
 								Удалить фон
 							</div>
 						</div>
-						<div id="upload">
+						<div
+							id="upload"
+							ref={uploadContainerRef}
+							style={{
+								backgroundImage: backgroundImage
+									? `url(${backgroundImage})`
+									: '',
+							}}
+						>
 							<div id="upload-overlay">
 								<img
 									src="./assets/icons/upload.png"
@@ -22,7 +65,14 @@ const Create = () => {
 								/>
 								<p>Загрузить фон</p>
 							</div>
-							<input type="file" name="cover" id="cover" accept="image/*" />
+							<input
+								type="file"
+								name="cover"
+								id="cover"
+								accept="image/*"
+								ref={coverRef}
+								onChange={handleFileChange}
+							/>
 						</div>
 						<div className="group">
 							<input
@@ -67,41 +117,27 @@ const Create = () => {
 						<div id="quizzes-heading">
 							<h2>Вопросы</h2>
 							<menu id="menu-pc">
-								<div
-									role="button"
-									id="multiple-choice"
-									className="btn btn-secondary"
-									tabIndex="0"
-								>
-									<img src="./assets/icons/plus.png" alt="+" />
-									Выбор
-								</div>
-								<div
-									role="button"
-									id="true-false"
-									className="btn btn-secondary"
-									tabIndex="0"
-								>
-									<img src="./assets/icons/plus.png" alt="+" />
-									Истинно / Ложно
-								</div>
-								<div
-									role="button"
-									id="open-text"
-									className="btn btn-secondary"
-									tabIndex="0"
-								>
-									<img src="./assets/icons/plus.png" alt="+" />
-									Открытый вопрос
-								</div>
-								<div
-									role="button"
-									className="btn btn-secondary open-popup"
-									tabIndex="0"
-								>
-									<img src="./assets/icons/plus.png" alt="+" />
-									Таймер
-								</div>
+								{['multiple-choice', 'true-false', 'open-text', 'timer'].map(
+									(id) => (
+										<div
+											role="button"
+											id={id}
+											className="btn btn-secondary"
+											tabIndex="0"
+											key={id}
+											onKeyDown={handleKeyDown}
+										>
+											<img src="./assets/icons/plus.png" alt="+" />
+											{id === 'multiple-choice'
+												? 'Выбор'
+												: id === 'true-false'
+												? 'Истинно / Ложно'
+												: id === 'open-text'
+												? 'Открытый вопрос'
+												: 'Таймер'}
+										</div>
+									)
+								)}
 							</menu>
 							<menu id="menu-mobile">
 								<div
@@ -109,6 +145,7 @@ const Create = () => {
 									id="dropdown-button"
 									className="btn btn-secondary"
 									tabIndex="0"
+									onKeyDown={handleKeyDown}
 								>
 									<img
 										src="./assets/icons/plus.png"
@@ -117,21 +154,27 @@ const Create = () => {
 									/>
 								</div>
 								<div id="menu-questions" className="dropdown-content">
-									<div role="button" id="multiple-choice" tabIndex="0">
-										<span>Выбор</span>
-									</div>
-									<hr />
-									<div role="button" id="true-false" tabIndex="0">
-										<span>Истинно / Ложно</span>
-									</div>
-									<hr />
-									<div role="button" id="open-text" tabIndex="0">
-										<span>Открытый вопрос</span>
-									</div>
-									<hr />
-									<div role="button" className="open-popup" tabIndex="0">
-										<span>Таймер</span>
-									</div>
+									{['multiple-choice', 'true-false', 'open-text', 'timer'].map(
+										(id) => (
+											<div
+												role="button"
+												id={id}
+												tabIndex="0"
+												key={id}
+												onKeyDown={handleKeyDown}
+											>
+												<span>
+													{id === 'multiple-choice'
+														? 'Выбор'
+														: id === 'true-false'
+														? 'Истинно / Ложно'
+														: id === 'open-text'
+														? 'Открытый вопрос'
+														: 'Таймер'}
+												</span>
+											</div>
+										)
+									)}
 								</div>
 							</menu>
 						</div>

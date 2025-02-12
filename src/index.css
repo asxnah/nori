@@ -49,9 +49,9 @@ body {
 	background-color: var(--white-full);
 }
 
-body.popupped > *:not(.popup-con) {
+/* body.popupped > *:not(.popup-con) {
 	opacity: 0.2;
-}
+} */
 
 a {
 	color: initial;

@@ -21,7 +21,7 @@ const PopupHandler = () => {
 				const popup = btn.closest('body').querySelector('.popup-con');
 				if (popup) {
 					popup.classList.add('show');
-					body.classList.add('popupped');
+					// body.classList.add('popupped');
 					body.style.overflow = 'hidden';
 				}
 			});
@@ -35,7 +35,7 @@ const PopupHandler = () => {
 				if (popup) {
 					popup.classList.remove('show');
 					if (!document.querySelector('.popup-con.show')) {
-						body.classList.remove('popupped');
+						// body.classList.remove('popupped');
 						body.style.overflow = '';
 					}
 				}

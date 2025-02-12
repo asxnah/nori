@@ -1,12 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './styles/Create.css';
 
 const Create = () => {
+	const [backgroundImage, setBackgroundImage] = useState(null);
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
 	const coverRef = useRef(null);
 	const uploadContainerRef = useRef(null);
 	const removeBgBtnRef = useRef(null);
-
-	const [backgroundImage, setBackgroundImage] = useState(null);
+	const menuQuestionsRef = useRef(null);
+	const dropdownButtonRef = useRef(null);
 
 	const handleKeyDown = (evt) => {
 		if (evt.key === 'Enter' || evt.key === ' ') {
@@ -30,6 +33,28 @@ const Create = () => {
 		setBackgroundImage(null);
 		coverRef.current.value = '';
 	};
+
+	const toggleDropdown = () => {
+		setIsDropdownOpen(!isDropdownOpen);
+	};
+
+	useEffect(() => {
+		const handleClickOutside = (evt) => {
+			if (
+				menuQuestionsRef.current &&
+				!menuQuestionsRef.current.contains(evt.target) &&
+				!dropdownButtonRef.current.contains(evt.target)
+			) {
+				setIsDropdownOpen(false);
+			}
+		};
+
+		window.addEventListener('click', handleClickOutside);
+
+		return () => {
+			window.removeEventListener('click', handleClickOutside);
+		};
+	}, []);
 
 	return (
 		<div id="CreatePage">
@@ -145,6 +170,8 @@ const Create = () => {
 									id="dropdown-button"
 									className="btn btn-secondary"
 									tabIndex="0"
+									ref={dropdownButtonRef}
+									onClick={toggleDropdown}
 									onKeyDown={handleKeyDown}
 								>
 									<img
@@ -153,7 +180,11 @@ const Create = () => {
 										alt="+ добавить вопрос"
 									/>
 								</div>
-								<div id="menu-questions" className="dropdown-content">
+								<div
+									id="menu-questions"
+									className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}
+									ref={menuQuestionsRef}
+								>
 									{['multiple-choice', 'true-false', 'open-text', 'timer'].map(
 										(id) => (
 											<div

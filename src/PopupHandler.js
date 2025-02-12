@@ -1,4 +1,3 @@
-// src/PopupHandler.js
 import React, { useEffect } from 'react';
 
 const PopupHandler = () => {

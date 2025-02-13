@@ -5,6 +5,10 @@ const Create = () => {
 	const [backgroundImage, setBackgroundImage] = useState(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+	const [timerValue, setTimerValue] = useState('Таймер');
+	const [inputHours, setInputHours] = useState('');
+	const [inputMinutes, setInputMinutes] = useState('');
+
 	const coverRef = useRef(null);
 	const uploadContainerRef = useRef(null);
 	const removeBgBtnRef = useRef(null);
@@ -55,6 +59,35 @@ const Create = () => {
 			window.removeEventListener('click', handleClickOutside);
 		};
 	}, []);
+
+	const handleHoursChange = (evt) => {
+		setInputHours(evt.target.value);
+	};
+
+	const handleMinutesChange = (evt) => {
+		setInputMinutes(evt.target.value);
+	};
+
+	const handleSaveTimer = () => {
+		const hours = parseInt(inputHours) || 0;
+		const minutes = parseInt(inputMinutes) || 0;
+		let totalTime = '';
+
+		if (hours > 0) {
+			totalTime += `${hours}ч `;
+		}
+		if (minutes > 0) {
+			totalTime += `${minutes}мин`;
+		}
+
+		setTimerValue(totalTime || 'Таймер');
+	};
+
+	const handleDeleteTimer = () => {
+		setTimerValue('Таймер');
+		setInputHours('');
+		setInputMinutes('');
+	};
 
 	return (
 		<div id="CreatePage">
@@ -147,19 +180,35 @@ const Create = () => {
 										<div
 											role="button"
 											id={id}
-											className="btn btn-secondary"
+											className={`btn btn-secondary ${
+												id === 'timer' ? 'open-popup' : ''
+											}`}
 											tabIndex="0"
 											key={id}
 											onKeyDown={handleKeyDown}
 										>
-											<img src="./assets/icons/plus.png" alt="+" />
-											{id === 'multiple-choice'
-												? 'Выбор'
-												: id === 'true-false'
-												? 'Истинно / Ложно'
-												: id === 'open-text'
-												? 'Открытый вопрос'
-												: 'Таймер'}
+											{id === 'timer' && timerValue ? (
+												<>
+													<img
+														src="./assets/icons/pencil-black.png"
+														alt="редактировать таймер"
+													/>
+													<span>{timerValue}</span>
+												</>
+											) : (
+												<>
+													<img src="./assets/icons/plus.png" alt="+" />
+													<span>
+														{id === 'multiple-choice'
+															? 'Выбор'
+															: id === 'true-false'
+															? 'Истинно / Ложно'
+															: id === 'open-text'
+															? 'Открытый вопрос'
+															: 'Таймер'}
+													</span>
+												</>
+											)}
 										</div>
 									)
 								)}
@@ -192,10 +241,13 @@ const Create = () => {
 												id={id}
 												tabIndex="0"
 												key={id}
+												className={id === 'timer' ? 'open-popup' : ''}
 												onKeyDown={handleKeyDown}
 											>
 												<span>
-													{id === 'multiple-choice'
+													{id === 'timer' && timerValue
+														? timerValue
+														: id === 'multiple-choice'
 														? 'Выбор'
 														: id === 'true-false'
 														? 'Истинно / Ложно'
@@ -203,6 +255,12 @@ const Create = () => {
 														? 'Открытый вопрос'
 														: 'Таймер'}
 												</span>
+												{id === 'timer' && timerValue && (
+													<img
+														src="./assets/icons/pencil-black.png"
+														alt="редактировать таймер"
+													/>
+												)}
 											</div>
 										)
 									)}
@@ -246,7 +304,14 @@ const Create = () => {
 							Заполните хотя бы одно поле для добавления таймера.
 						</p>
 						<div className="group btn">
-							<input type="number" id="hours" name="hours" placeholder="Часы" />
+							<input
+								type="number"
+								id="hours"
+								name="hours"
+								placeholder="Часы"
+								value={inputHours}
+								onChange={handleHoursChange}
+							/>
 							<label htmlFor="hours">ч</label>
 						</div>
 						<div className="group btn">
@@ -255,6 +320,8 @@ const Create = () => {
 								id="minutes"
 								name="minutes"
 								placeholder="Минуты"
+								value={inputMinutes}
+								onChange={handleMinutesChange}
 							/>
 							<label htmlFor="minutes">мин</label>
 						</div>
@@ -265,6 +332,7 @@ const Create = () => {
 							id="save-timer"
 							className="btn btn-primary close-popup"
 							tabIndex="0"
+							onClick={handleSaveTimer}
 						>
 							Сохранить
 						</div>
@@ -280,6 +348,7 @@ const Create = () => {
 						role="button"
 						id="delete-timer"
 						className="faded-text close-popup"
+						onClick={handleDeleteTimer}
 					>
 						Удалить таймер
 					</div>

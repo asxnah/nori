@@ -15,6 +15,13 @@ const Create = () => {
 	const menuQuestionsRef = useRef(null);
 	const dropdownButtonRef = useRef(null);
 
+	const questionTypes = [
+		{ id: 'multiple-choice', label: 'Выбор' },
+		{ id: 'true-false', label: 'Истинно / Ложно' },
+		{ id: 'open-text', label: 'Открытый вопрос' },
+		{ id: 'timer', label: timerValue || 'Таймер' },
+	];
+
 	const handleKeyDown = (evt) => {
 		if (evt.key === 'Enter' || evt.key === ' ') {
 			evt.preventDefault();
@@ -35,7 +42,9 @@ const Create = () => {
 
 	const handleRemoveBackground = () => {
 		setBackgroundImage(null);
-		coverRef.current.value = '';
+		if (coverRef.current) {
+			coverRef.current.value = null;
+		}
 	};
 
 	const toggleDropdown = () => {
@@ -71,16 +80,10 @@ const Create = () => {
 	const handleSaveTimer = () => {
 		const hours = parseInt(inputHours) || 0;
 		const minutes = parseInt(inputMinutes) || 0;
-		let totalTime = '';
 
-		if (hours > 0) {
-			totalTime += `${hours}ч `;
-		}
-		if (minutes > 0) {
-			totalTime += `${minutes}мин`;
-		}
-
-		setTimerValue(totalTime || 'Таймер');
+		setTimerValue(
+			`${hours > 0 ? `${hours}ч ` : ''}${minutes > 0 ? `${minutes}мин` : ''}`
+		);
 	};
 
 	const handleDeleteTimer = () => {
@@ -175,43 +178,33 @@ const Create = () => {
 						<div id="quizzes-heading">
 							<h2>Вопросы</h2>
 							<menu id="menu-pc">
-								{['multiple-choice', 'true-false', 'open-text', 'timer'].map(
-									(id) => (
-										<div
-											role="button"
-											id={id}
-											className={`btn btn-secondary ${
-												id === 'timer' ? 'open-popup' : ''
-											}`}
-											tabIndex="0"
-											key={id}
-											onKeyDown={handleKeyDown}
-										>
-											{id === 'timer' && timerValue ? (
-												<>
-													<img
-														src="./assets/icons/pencil-black.png"
-														alt="редактировать таймер"
-													/>
-													<span>{timerValue}</span>
-												</>
-											) : (
-												<>
-													<img src="./assets/icons/plus.png" alt="+" />
-													<span>
-														{id === 'multiple-choice'
-															? 'Выбор'
-															: id === 'true-false'
-															? 'Истинно / Ложно'
-															: id === 'open-text'
-															? 'Открытый вопрос'
-															: 'Таймер'}
-													</span>
-												</>
-											)}
-										</div>
-									)
-								)}
+								{questionTypes.map(({ id, label }) => (
+									<div
+										role="button"
+										id={id}
+										key={id}
+										className={`btn btn-secondary ${
+											id === 'timer' ? 'open-popup' : ''
+										}`}
+										tabIndex="0"
+										onKeyDown={handleKeyDown}
+									>
+										{id === 'timer' && timerValue ? (
+											<>
+												<img
+													src="./assets/icons/pencil-black.png"
+													alt="редактировать таймер"
+												/>
+												<span>{label}</span>
+											</>
+										) : (
+											<>
+												<img src="./assets/icons/plus.png" alt="+" />
+												<span>{label}</span>
+											</>
+										)}
+									</div>
+								))}
 							</menu>
 							<menu id="menu-mobile">
 								<div
@@ -234,36 +227,26 @@ const Create = () => {
 									className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}
 									ref={menuQuestionsRef}
 								>
-									{['multiple-choice', 'true-false', 'open-text', 'timer'].map(
-										(id) => (
-											<div
-												role="button"
-												id={id}
-												tabIndex="0"
-												key={id}
-												className={id === 'timer' ? 'open-popup' : ''}
-												onKeyDown={handleKeyDown}
-											>
-												<span>
-													{id === 'timer' && timerValue
-														? timerValue
-														: id === 'multiple-choice'
-														? 'Выбор'
-														: id === 'true-false'
-														? 'Истинно / Ложно'
-														: id === 'open-text'
-														? 'Открытый вопрос'
-														: 'Таймер'}
-												</span>
-												{id === 'timer' && timerValue && (
+									{questionTypes.map(({ id, label }) => (
+										<div
+											role="button"
+											id={id}
+											tabIndex="0"
+											key={id}
+											className={id === 'timer' ? 'open-popup' : ''}
+											onKeyDown={handleKeyDown}
+										>
+											<span>{label}</span>
+											{id === 'timer' &&
+												timerValue !== 'Таймер' &&
+												timerValue.trim() !== '' && (
 													<img
 														src="./assets/icons/pencil-black.png"
 														alt="редактировать таймер"
 													/>
 												)}
-											</div>
-										)
-									)}
+										</div>
+									))}
 								</div>
 							</menu>
 						</div>

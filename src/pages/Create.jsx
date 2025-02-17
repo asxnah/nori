@@ -189,7 +189,7 @@ const Create = () => {
 										tabIndex="0"
 										onKeyDown={handleKeyDown}
 									>
-										{id === 'timer' && timerValue ? (
+										{id === 'timer' && timerValue !== 'Таймер' ? (
 											<>
 												<img
 													src="./assets/icons/pencil-black.png"

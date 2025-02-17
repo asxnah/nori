@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {
+	BrowserRouter as Router,
+	Route,
+	Routes,
+	useLocation,
+} from 'react-router-dom';
 import PopupHandler from './PopupHandler';
 
 import Header from './components/Header';
@@ -12,11 +17,14 @@ import Auth from './pages/Auth';
 import User from './pages/User';
 import Create from './pages/Create';
 
-const App = () => {
+const AppContent = () => {
+	const location = useLocation();
+	const excludedRoute = '/preview';
+	const shouldHideHeader = excludedRoute === location.pathname;
+
 	return (
-		<Router>
-			<PopupHandler />
-			<Header />
+		<>
+			{!shouldHideHeader && <Header />}
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/preview" element={<Preview />} />
@@ -26,7 +34,16 @@ const App = () => {
 				<Route path="/user" element={<User />} />
 				<Route path="/create" element={<Create />} />
 			</Routes>
-			<Footer />
+			{!shouldHideHeader && <Footer />}
+		</>
+	);
+};
+
+const App = () => {
+	return (
+		<Router>
+			<PopupHandler />
+			<AppContent />
 		</Router>
 	);
 };

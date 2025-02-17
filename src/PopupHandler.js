@@ -1,6 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const PopupHandler = () => {
+	const location = useLocation();
+
 	useEffect(() => {
 		const topElement = document.querySelector('#top');
 		const body = document.querySelector('body');
@@ -20,7 +23,6 @@ const PopupHandler = () => {
 				const popup = btn.closest('body').querySelector('.popup-con');
 				if (popup) {
 					popup.classList.add('show');
-					// body.classList.add('popupped');
 					body.style.overflow = 'hidden';
 				}
 			});
@@ -34,14 +36,12 @@ const PopupHandler = () => {
 				if (popup) {
 					popup.classList.remove('show');
 					if (!document.querySelector('.popup-con.show')) {
-						// body.classList.remove('popupped');
 						body.style.overflow = '';
 					}
 				}
 			});
 		});
 
-		// Очистка обработчиков событий при размонтировании компонента
 		return () => {
 			topElement?.removeEventListener('click', handleTopClick);
 			openPopupBtns.forEach((btn) => {
@@ -51,9 +51,9 @@ const PopupHandler = () => {
 				btn.removeEventListener('click', handleTopClick);
 			});
 		};
-	}, []);
+	}, [location.pathname]);
 
-	return null; // Этот компонент ничего не рендерит
+	return null;
 };
 
 export default PopupHandler;

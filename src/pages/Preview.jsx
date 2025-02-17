@@ -6,7 +6,7 @@ const Preview = () => {
 	return (
 		<main id="PreviewPage">
 			<div id="logo">
-				<img src="./assets/preview/logo.svg" alt="логотип ОНИКС" />
+				<img src="./assets/logo/logo-black.svg" alt="логотип ОНИКС" />
 			</div>
 
 			<section>
@@ -18,6 +18,10 @@ const Preview = () => {
 					преподавателей, а также для личного использования
 				</p>
 			</section>
+
+			<Link to="/" className="btn btn-primary">
+				Перейти
+			</Link>
 
 			<section id="info">
 				<h3>Разработчик</h3>
@@ -31,10 +35,6 @@ const Preview = () => {
 					ГБПОУ "ПКК "ОНИКС"
 				</p>
 			</section>
-
-			<Link to="/" className="btn btn-primary">
-				Перейти
-			</Link>
 
 			<small>Пермь 2025</small>
 		</main>

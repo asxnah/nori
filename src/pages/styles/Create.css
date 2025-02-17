@@ -1,5 +1,51 @@
 @import url('../../index.css');
 
+.timer-popup {
+	.popup > .faded-text {
+		width: 100%;
+		text-align: center;
+		cursor: pointer;
+	}
+
+	div[role='button'] {
+		width: fit-content;
+	}
+
+	.popup .group.btn {
+		border: 0.1rem solid var(--grey);
+	}
+
+	.popup .group input {
+		border: none;
+	}
+
+	.popup .group.btn label {
+		font-weight: 400;
+	}
+
+	.popup .group label {
+		flex: 0 1;
+	}
+
+	@media (width < 800px) {
+		.popup .group {
+			justify-content: space-between;
+		}
+
+		.popup .group.btn {
+			flex-direction: row;
+		}
+
+		.popup .group input {
+			max-width: 8rem;
+		}
+
+		.popup .group div.btn {
+			width: 100%;
+		}
+	}
+}
+
 #CreatePage {
 	padding: 2rem 8rem;
 

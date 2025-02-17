@@ -93,8 +93,8 @@ const Create = () => {
 	};
 
 	return (
-		<div id="CreatePage">
-			<main>
+		<div>
+			<main id="CreatePage">
 				<form action="__create.php" method="post">
 					<section id="info" className="card card-outline">
 						<div id="heading">
@@ -270,7 +270,7 @@ const Create = () => {
 				</form>
 			</main>
 
-			<section className="popup-con">
+			<section className="popup-con timer-popup">
 				<div className="popup card card-outline">
 					<div className="heading">
 						<h2>Таймер</h2>

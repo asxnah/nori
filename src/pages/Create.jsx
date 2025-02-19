@@ -4,10 +4,10 @@ import './styles/Create.css';
 const Create = () => {
 	const [backgroundImage, setBackgroundImage] = useState(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
 	const [timerValue, setTimerValue] = useState('Таймер');
 	const [inputHours, setInputHours] = useState('');
 	const [inputMinutes, setInputMinutes] = useState('');
+	const [questionCount, setQuestionCount] = useState(1);
 
 	const coverRef = useRef(null);
 	const uploadContainerRef = useRef(null);
@@ -51,24 +51,6 @@ const Create = () => {
 		setIsDropdownOpen(!isDropdownOpen);
 	};
 
-	useEffect(() => {
-		const handleClickOutside = (evt) => {
-			if (
-				menuQuestionsRef.current &&
-				!menuQuestionsRef.current.contains(evt.target) &&
-				!dropdownButtonRef.current.contains(evt.target)
-			) {
-				setIsDropdownOpen(false);
-			}
-		};
-
-		window.addEventListener('click', handleClickOutside);
-
-		return () => {
-			window.removeEventListener('click', handleClickOutside);
-		};
-	}, []);
-
 	const handleHoursChange = (evt) => {
 		setInputHours(evt.target.value);
 	};
@@ -82,7 +64,7 @@ const Create = () => {
 		const minutes = parseInt(inputMinutes) || 0;
 
 		setTimerValue(
-			`${hours > 0 ? `${hours}ч ` : ''}${minutes > 0 ? `${minutes}мин` : ''}`
+			`${hours > 0 ? `${hours}ч` : ''}${minutes > 0 ? `${minutes}мин` : ''}`
 		);
 	};
 
@@ -92,10 +74,250 @@ const Create = () => {
 		setInputMinutes('');
 	};
 
+	const addMultipleChoiceQuestion = () => {
+		setQuestionCount((prevCount) => prevCount + 1);
+		const questionHTML = `
+		<div class="question">
+			<div class="question-con">
+			  <div role="button" class="delete-question" tabindex="0">
+					<img
+						src="./assets/icons/cross.png"
+						alt="удалить вопрос"
+						title="удалить вопрос"
+						width="24"
+						height="24"
+					/>
+				</div>
+				<div class="question-number">${questionCount}</div>
+				<input type="text" id="question-${questionCount}" name="question-${questionCount}" class="question-text btn" placeholder="Вопрос">
+			</div>
+			<div class="answers multiple-choice">
+				<div class="answer-con">
+					<label for="correct-${questionCount}-1" class="custom-checkbox">
+						<input type="checkbox" id="correct-${questionCount}-1" name="checkbox-correct-${questionCount}-1" value="...">
+						<span class="checkmark"></span>
+					</label>
+					<input class="btn" placeholder="Ответ">
+				</div>
+				<div class="answer-con">
+					<label for="correct-${questionCount}-2" class="custom-checkbox">
+						<input type="checkbox" id="correct-${questionCount}-2" name="checkbox-correct-${questionCount}-2" value="...">
+						<span class="checkmark"></span>
+					</label>
+					<input class="btn" placeholder="Ответ">
+				</div>
+				<div class="answer-con">
+					<label for="correct-${questionCount}-3" class="custom-checkbox">
+						<input type="checkbox" id="correct-${questionCount}-3" name="checkbox-correct-${questionCount}-3" value="...">
+						<span class="checkmark"></span>
+					</label>
+					<input class="btn" placeholder="Ответ">
+					<div role="button" class="delete-answer" tabindex="0">
+						<svg width="16" height="16" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<g clip-path="url(#clip0_310_33)">
+								<rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="#dedede"></rect>
+								<rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="#dedede"></rect>
+							</g>
+							<defs>
+								<clipPath id="clip0_310_33">
+									<rect width="60" height="60.0001" fill="none" transform="translate(0.302307)"></rect>
+								</clipPath>
+							</defs>
+						</svg>
+					</div>
+				</div>
+			</div>
+			<div role="button" class="add-answer btn btn-secondary" tabindex="0">Добавить ответ</div>
+		</div>
+		`;
+		document
+			.querySelector('#quiz-list')
+			.insertAdjacentHTML('beforeend', questionHTML);
+	};
+
+	const addTrueFalseQuestion = () => {
+		setQuestionCount((prevCount) => prevCount + 1);
+		const questionHTML = `
+		 <div class="question">
+			<div class="question-con">
+			<div role="button" class="delete-question" tabindex="0">
+				<img
+					src="./assets/icons/cross.png"
+					alt="удалить вопрос"
+					title="удалить вопрос"
+					width="24"
+					height="24"
+				/>
+			</div>
+				<div class="question-number">${questionCount}</div>
+				<input type="text" id="question-${questionCount}" name="question-${questionCount}" class="question-text btn" placeholder="Вопрос">
+			</div>
+			<div class="answers true-false">
+				<div class="answer-con">
+					<input type="radio" id="true-${questionCount}" name="true-false-${questionCount}" />
+					<label for="true-${questionCount}">
+						<svg width="60" height="60" viewBox="0 0 52 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<g clip-path="url(#clip0_310_29)">
+								<rect x="41.6785" width="12" height="62" rx="6" transform="rotate(26.5973 41.6785 0)" fill="#323232"></rect>
+								<rect x="0.697632" y="28.9199" width="12" height="37.2388" rx="6" transform="rotate(-29.5603 0.697632 28.9199)" fill="#323232"></rect>
+							</g>
+							<defs>
+								<clipPath id="clip0_310_29">
+									<rect width="60" height="60" fill="transparent" transform="translate(0.697632)"></rect>
+								</clipPath>
+							</defs>
+						</svg>
+					</label>
+				</div>
+				<div class="answer-con">
+					<input type="radio" id="false-${questionCount}" name="true-false-${questionCount}" />
+					<label for="false-${questionCount}">
+						<svg width="60" height="60" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<g clip-path="url(#clip0_310_33)">
+								<rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="#323232"></rect>
+								<rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="#323232"></rect>
+							</g>
+							<defs>
+								<clipPath id="clip0_310_33">
+									<rect width="60" height="60" fill="transparent" transform="translate(0.302307)"></rect>
+								</clipPath>
+							</defs>
+						</svg>
+					</label>
+				</div>
+			</div>
+		</div>
+		`;
+		document
+			.querySelector('#quiz-list')
+			.insertAdjacentHTML('beforeend', questionHTML);
+	};
+
+	const addOpenTextQuestion = () => {
+		setQuestionCount((prevCount) => prevCount + 1);
+		const questionHTML = `
+		<div class="question">
+			<div class="question-con">
+				<div role="button" class="delete-question" tabindex="0">
+					<img
+						src="./assets/icons/cross.png"
+						alt="удалить вопрос"
+						title="удалить вопрос"
+						width="24"
+						height="24"
+					/>
+				</div>
+				<div class="question-number">${questionCount}</div>
+				<input type="text" id="question-${questionCount}" name="question-${questionCount}" class="question-text btn" placeholder="Вопрос">
+			</div>
+			<div class="answers open-text">
+				<textarea id="open-text-${questionCount}" name="open-text-${questionCount}" placeholder="Ответ"></textarea>
+			</div>
+		</div>
+		`;
+		document
+			.querySelector('#quiz-list')
+			.insertAdjacentHTML('beforeend', questionHTML);
+	};
+
+	const handleAddAnswer = (event) => {
+		if (event.target.classList.contains('add-answer')) {
+			const question = event.target.closest('.question');
+			const answersContainer = question.querySelector('.multiple-choice');
+			if (answersContainer) {
+				const newAnswerId = `correct-${answersContainer.children.length + 1}`;
+				const newAnswerCon = document.createElement('div');
+				newAnswerCon.classList.add('answer-con');
+				newAnswerCon.innerHTML = `
+				<label for="${newAnswerId}" class="custom-checkbox">
+        <input type="checkbox" id="${newAnswerId}" name="checkbox-${newAnswerId}" value="...">
+        <span class="checkmark"></span>
+				</label>
+				<input class="btn" placeholder="Ответ">
+				<div role="button" class="delete-answer" tabindex="0">
+					<svg width="16" height="16" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<g clip-path="url(#clip0_310_33)">
+							<rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="#dedede"></rect>
+							<rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="#dedede"></rect>
+						</g>
+						<defs>
+							<clipPath id="clip0_310_33">
+								<rect width="60" height="60.0001" fill="none" transform="translate(0.302307)"></rect>
+							</clipPath>
+						</defs>
+					</svg>
+				</div>
+			`;
+				answersContainer.appendChild(newAnswerCon);
+			}
+		}
+	};
+
+	const handleDeleteQuestion = (event) => {
+		if (event.target.closest('.delete-question')) {
+			const question = event.target.closest('.question');
+			question.remove();
+
+			const questions = document.querySelectorAll('.question');
+			questions.forEach((q, index) => {
+				q.querySelector('.question-number').textContent = index + 1;
+				const input = q.querySelector('.question-text');
+				input.id = `question-${index + 1}`;
+				input.name = `question-${index + 1}`;
+
+				const answers = q.querySelectorAll(
+					'.answer-con input[type="checkbox"]'
+				);
+				answers.forEach((answer, answerIndex) => {
+					const newId = `correct-${index + 1}-${answerIndex + 1}`;
+					answer.id = newId;
+					answer.name = `checkbox-${newId}`;
+					answer.closest('label').setAttribute('for', newId);
+				});
+			});
+		}
+	};
+
+	// handleDeleteAnswer
+	useEffect(() => {
+		const handleDeleteAnswer = (event) => {
+			if (event.target.closest('.delete-answer')) {
+				const answerCon = event.target.closest('.answer-con');
+				if (answerCon) {
+					answerCon.remove();
+				}
+			}
+		};
+
+		document.addEventListener('click', handleDeleteAnswer);
+
+		return () => {
+			document.removeEventListener('click', handleDeleteAnswer);
+		};
+	}, []);
+
+	// handleClickOutside
+	useEffect(() => {
+		const handleClickOutside = (evt) => {
+			if (
+				menuQuestionsRef.current &&
+				!menuQuestionsRef.current.contains(evt.target) &&
+				!dropdownButtonRef.current.contains(evt.target)
+			) {
+				setIsDropdownOpen(false);
+			}
+		};
+
+		window.addEventListener('click', handleClickOutside);
+		return () => {
+			window.removeEventListener('click', handleClickOutside);
+		};
+	}, []);
+
 	return (
 		<div>
 			<main id="CreatePage">
-				<form action="__create.php" method="post">
+				<form>
 					<section id="info" className="card card-outline">
 						<div id="heading">
 							<h2>О викторине</h2>
@@ -188,6 +410,15 @@ const Create = () => {
 										}`}
 										tabIndex="0"
 										onKeyDown={handleKeyDown}
+										onClick={
+											id === 'timer'
+												? () => setIsDropdownOpen(false)
+												: id === 'multiple-choice'
+												? addMultipleChoiceQuestion
+												: id === 'true-false'
+												? addTrueFalseQuestion
+												: addOpenTextQuestion
+										}
 									>
 										{id === 'timer' && timerValue !== 'Таймер' ? (
 											<>
@@ -206,6 +437,7 @@ const Create = () => {
 									</div>
 								))}
 							</menu>
+
 							<menu id="menu-mobile">
 								<div
 									role="button"
@@ -235,23 +467,36 @@ const Create = () => {
 											key={id}
 											className={id === 'timer' ? 'open-popup' : ''}
 											onKeyDown={handleKeyDown}
+											onClick={
+												id === 'timer'
+													? () => setIsDropdownOpen(false)
+													: id === 'multiple-choice'
+													? addMultipleChoiceQuestion
+													: id === 'true-false'
+													? addTrueFalseQuestion
+													: addOpenTextQuestion
+											}
 										>
 											<span>{label}</span>
-											{id === 'timer' &&
-												timerValue !== 'Таймер' &&
-												timerValue.trim() !== '' && (
-													<img
-														src="./assets/icons/pencil-black.png"
-														alt="редактировать таймер"
-													/>
-												)}
+											{id === 'timer' && timerValue !== 'Таймер' && (
+												<img
+													src="./assets/icons/pencil-black.png"
+													alt="редактировать таймер"
+												/>
+											)}
 										</div>
 									))}
 								</div>
 							</menu>
 						</div>
 
-						<div id="quiz-list"></div>
+						<div
+							id="quiz-list"
+							onClick={(event) => {
+								handleAddAnswer(event);
+								handleDeleteQuestion(event);
+							}}
+						></div>
 
 						<div className="group">
 							<button type="submit" className="btn btn-primary" name="create">

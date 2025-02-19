@@ -271,6 +271,7 @@ hr {
 
 .popup {
 	margin: auto;
+	margin-top: 1rem;
 
 	width: 32rem;
 

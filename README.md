@@ -1,39 +1,8 @@
-### Структура проекта
+# React + Vite
 
-```
-/nori
-  ├── /src
-  │   ├── /models
-  │   │   ├── model.js
-  │   ├── /pages
-  │   │   ├── page.jsx
-  │   ├── /components
-  │   │   ├── component.jsx
-  │   ├── server.js
-  │   ├── index.js
-  │   ├── App.js
-  │   ├── reportWebVitals.js
-```
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-### Порядок работы:
+Currently, two official plugins are available:
 
-1. **Запусти сервер MongoDB** (если у тебя локальный MongoDB):
-
-   ```sh
-   mongod
-   ```
-
-2. **Запусти сервер Express**:
-   В папке с проектом:
-
-   ```sh
-   node server.js
-   ```
-
-3. **Запусти React-приложение**:
-   В папке **/src**:
-   ```sh
-   npm start
-   ```
-
-Теперь ты можешь протестировать API с помощью **Postman** или просто взаимодействовать с фронтендом для добавления и получения викторин.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh

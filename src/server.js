@@ -1,6 +1,6 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const Quiz = require('./models/Quiz');
+import express from 'express';
+import mongoose from 'mongoose';
+import Quiz from './models/Quiz';
 
 const app = express();
 app.use(express.json());
@@ -18,7 +18,7 @@ app.post('/quizzes', async (req, res) => {
 		await newQuiz.save();
 		res.status(201).json(newQuiz);
 	} catch (err) {
-		res.status(500).json({ error: 'Ошибка при создании викторины' });
+		res.status(500).json({ error: 'Ошибка при создании викторины: ', err });
 	}
 });
 
@@ -28,7 +28,7 @@ app.get('/quizzes', async (req, res) => {
 		const quizzes = await Quiz.find();
 		res.json(quizzes);
 	} catch (err) {
-		res.status(500).json({ error: 'Ошибка при получении викторин' });
+		res.status(500).json({ error: 'Ошибка при получении викторин: ', err });
 	}
 });
 

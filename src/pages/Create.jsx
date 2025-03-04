@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import './styles/Create.css';
 
 const Create = () => {
+	// состояния переменных
 	const [backgroundImage, setBackgroundImage] = useState(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [timerValue, setTimerValue] = useState('Таймер');
@@ -9,12 +10,15 @@ const Create = () => {
 	const [inputMinutes, setInputMinutes] = useState('');
 	const [questionCount, setQuestionCount] = useState(1);
 
+	// рефы для фона
 	const coverRef = useRef(null);
 	const uploadContainerRef = useRef(null);
 	const removeBgBtnRef = useRef(null);
+	// рефы для мобильного меню
 	const menuQuestionsRef = useRef(null);
 	const dropdownButtonRef = useRef(null);
 
+	// типы вопросов для отображения
 	const questionTypes = [
 		{ id: 'multiple-choice', label: 'Выбор' },
 		{ id: 'true-false', label: 'Истинно / Ложно' },
@@ -40,6 +44,7 @@ const Create = () => {
 		}
 	};
 
+	// удалить фон
 	const handleRemoveBackground = () => {
 		setBackgroundImage(null);
 		if (coverRef.current) {
@@ -47,18 +52,22 @@ const Create = () => {
 		}
 	};
 
+	// для мобильных: открыть меню вопросов
 	const toggleDropdown = () => {
 		setIsDropdownOpen(!isDropdownOpen);
 	};
 
+	// записать часы таймера
 	const handleHoursChange = (evt) => {
 		setInputHours(evt.target.value);
 	};
 
+	// записать минуты таймера
 	const handleMinutesChange = (evt) => {
 		setInputMinutes(evt.target.value);
 	};
 
+	// сохранить таймер и отобразить новое значение
 	const handleSaveTimer = () => {
 		const hours = parseInt(inputHours) || 0;
 		const minutes = parseInt(inputMinutes) || 0;
@@ -68,12 +77,14 @@ const Create = () => {
 		);
 	};
 
+	// удалить таймер
 	const handleDeleteTimer = () => {
 		setTimerValue('Таймер');
 		setInputHours('');
 		setInputMinutes('');
 	};
 
+	// добавить вопрос с множественным выбором
 	const addMultipleChoiceQuestion = () => {
 		setQuestionCount((prevCount) => prevCount + 1);
 		const questionHTML = `
@@ -135,6 +146,7 @@ const Create = () => {
 			.insertAdjacentHTML('beforeend', questionHTML);
 	};
 
+	// добавить вопрос истинно-ложно
 	const addTrueFalseQuestion = () => {
 		setQuestionCount((prevCount) => prevCount + 1);
 		const questionHTML = `
@@ -193,6 +205,7 @@ const Create = () => {
 			.insertAdjacentHTML('beforeend', questionHTML);
 	};
 
+	// добавить открытый вопрос
 	const addOpenTextQuestion = () => {
 		setQuestionCount((prevCount) => prevCount + 1);
 		const questionHTML = `
@@ -220,6 +233,7 @@ const Create = () => {
 			.insertAdjacentHTML('beforeend', questionHTML);
 	};
 
+	// добавить ответ (множественный выбор)
 	const handleAddAnswer = (event) => {
 		if (event.target.classList.contains('add-answer')) {
 			const question = event.target.closest('.question');
@@ -253,6 +267,7 @@ const Create = () => {
 		}
 	};
 
+	// удалить вопрос (множественный выбор)
 	const handleDeleteQuestion = (event) => {
 		if (event.target.closest('.delete-question')) {
 			const question = event.target.closest('.question');
@@ -278,7 +293,7 @@ const Create = () => {
 		}
 	};
 
-	// handleDeleteAnswer
+	// удалить ответ (множественный выбор)
 	useEffect(() => {
 		const handleDeleteAnswer = (event) => {
 			if (event.target.closest('.delete-answer')) {
@@ -296,7 +311,7 @@ const Create = () => {
 		};
 	}, []);
 
-	// handleClickOutside
+	// для мобильных: скрыть меню вопросов по нажатию в любом месте экрана
 	useEffect(() => {
 		const handleClickOutside = (evt) => {
 			if (

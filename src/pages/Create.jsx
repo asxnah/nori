@@ -338,6 +338,8 @@ const Create = () => {
 								backgroundImage: backgroundImage
 									? `url(${backgroundImage})`
 									: '',
+								backgroundSize: 'cover',
+								backgroundPosition: 'center',
 							}}
 						>
 							<div id="upload-overlay">

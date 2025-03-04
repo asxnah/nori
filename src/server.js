@@ -1,36 +1,18 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import Quiz from './models/Quiz';
+import cors from 'cors';
 
 const app = express();
+const port = 3000;
+
+app.use(cors());
 app.use(express.json());
 
-// Подключение к MongoDB
-mongoose.connect('mongodb://localhost:27017/nori', {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-});
+mongoose
+	.connect('mongodb://localhost:27017/nori')
+	.then(() => console.debug('connected'))
+	.catch((err) => console.error('not connected: ' + err));
 
-// API для создания викторины
-app.post('/quizzes', async (req, res) => {
-	try {
-		const newQuiz = new Quiz(req.body);
-		await newQuiz.save();
-		res.status(201).json(newQuiz);
-	} catch (err) {
-		res.status(500).json({ error: 'Ошибка при создании викторины: ', err });
-	}
-});
-
-// API для получения всех викторин
-app.get('/quizzes', async (req, res) => {
-	try {
-		const quizzes = await Quiz.find();
-		res.json(quizzes);
-	} catch (err) {
-		res.status(500).json({ error: 'Ошибка при получении викторин: ', err });
-	}
-});
-
-// Запуск сервера
-app.listen(5000, () => console.log('✅ Сервер запущен на порту 5000'));
+app.listen(port, () =>
+	console.log(`✅ Сервер запущен: http://localhost:${port}`)
+);

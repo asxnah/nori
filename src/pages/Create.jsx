@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './styles/Create.css';
 
 const Create = () => {
@@ -322,7 +322,7 @@ const Create = () => {
 						<div id="heading">
 							<h2>О викторине</h2>
 							<div
-								className="faded-text"
+								className="btn btn-secondary"
 								id="remove-bg-btn"
 								tabIndex="0"
 								ref={removeBgBtnRef}

@@ -62,6 +62,12 @@
 		width: fit-content;
 	}
 
+	#heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+
 	.custom-checkbox input {
 		display: none;
 	}
@@ -440,6 +446,20 @@
 
 	@media (width < 800px) {
 		padding: 2rem 1rem;
+
+		#heading {
+			flex-direction: column;
+			gap: 1rem;
+		}
+
+		#heading h2 {
+			width: 100%;
+			text-align: left;
+		}
+
+		#heading div {
+			width: 100%;
+		}
 
 		#upload {
 			border-radius: 1.5rem;

@@ -12,8 +12,6 @@ const Create = () => {
 
 	// рефы для фона
 	const coverRef = useRef(null);
-	const uploadContainerRef = useRef(null);
-	const removeBgBtnRef = useRef(null);
 	// рефы для мобильного меню
 	const menuQuestionsRef = useRef(null);
 	const dropdownButtonRef = useRef(null);
@@ -334,7 +332,6 @@ const Create = () => {
 								className="btn btn-secondary"
 								id="remove-bg-btn"
 								tabIndex="0"
-								ref={removeBgBtnRef}
 								onClick={handleRemoveBackground}
 							>
 								Удалить фон
@@ -342,7 +339,6 @@ const Create = () => {
 						</div>
 						<div
 							id="upload"
-							ref={uploadContainerRef}
 							style={{
 								backgroundImage: backgroundImage
 									? `url(${backgroundImage})`

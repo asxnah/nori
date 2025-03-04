@@ -26,13 +26,7 @@ const Create = () => {
 		{ id: 'timer', label: timerValue || 'Таймер' },
 	];
 
-	const handleKeyDown = (evt) => {
-		if (evt.key === 'Enter' || evt.key === ' ') {
-			evt.preventDefault();
-			evt.target.click();
-		}
-	};
-
+	// добавить фон
 	const handleFileChange = (evt) => {
 		let file = evt.target.files[0];
 		if (file) {
@@ -426,7 +420,6 @@ const Create = () => {
 											id === 'timer' ? 'open-popup' : ''
 										}`}
 										tabIndex="0"
-										onKeyDown={handleKeyDown}
 										onClick={
 											id === 'timer'
 												? () => setIsDropdownOpen(false)
@@ -463,7 +456,6 @@ const Create = () => {
 									tabIndex="0"
 									ref={dropdownButtonRef}
 									onClick={toggleDropdown}
-									onKeyDown={handleKeyDown}
 								>
 									<img
 										src="./assets/icons/plus.png"
@@ -483,7 +475,6 @@ const Create = () => {
 											tabIndex="0"
 											key={id}
 											className={id === 'timer' ? 'open-popup' : ''}
-											onKeyDown={handleKeyDown}
 											onClick={
 												id === 'timer'
 													? () => setIsDropdownOpen(false)

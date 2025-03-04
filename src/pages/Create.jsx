@@ -8,6 +8,7 @@ const Create = () => {
 	const [timerValue, setTimerValue] = useState('Таймер');
 	const [inputHours, setInputHours] = useState('');
 	const [inputMinutes, setInputMinutes] = useState('');
+	const [questions, setQuestions] = useState([]);
 	const [questionCount, setQuestionCount] = useState(1);
 
 	// рефы для фона
@@ -44,22 +45,39 @@ const Create = () => {
 		}
 	};
 
-	// для мобильных: открыть меню вопросов
+	// --------------------- МОБИЛЬНЫЕ
+	// открыть меню вопросов
 	const toggleDropdown = () => {
 		setIsDropdownOpen(!isDropdownOpen);
 	};
+	// скрыть меню вопросов по нажатию в любом месте экрана
+	useEffect(() => {
+		const handleClickOutside = (evt) => {
+			if (
+				menuQuestionsRef.current &&
+				!menuQuestionsRef.current.contains(evt.target) &&
+				!dropdownButtonRef.current.contains(evt.target)
+			) {
+				setIsDropdownOpen(false);
+			}
+		};
 
-	// записать часы таймера
+		window.addEventListener('click', handleClickOutside);
+		return () => {
+			window.removeEventListener('click', handleClickOutside);
+		};
+	}, []);
+
+	// --------------------- ТАЙМЕР
+	// записать часы
 	const handleHoursChange = (evt) => {
 		setInputHours(evt.target.value);
 	};
-
-	// записать минуты таймера
+	// записать минуты
 	const handleMinutesChange = (evt) => {
 		setInputMinutes(evt.target.value);
 	};
-
-	// сохранить таймер и отобразить новое значение
+	// сохранить и отобразить новое значение
 	const handleSaveTimer = () => {
 		const hours = parseInt(inputHours) || 0;
 		const minutes = parseInt(inputMinutes) || 0;
@@ -68,18 +86,20 @@ const Create = () => {
 			`${hours > 0 ? `${hours}ч` : ''}${minutes > 0 ? `${minutes}мин` : ''}`
 		);
 	};
-
-	// удалить таймер
+	// удалить
 	const handleDeleteTimer = () => {
 		setTimerValue('Таймер');
 		setInputHours('');
 		setInputMinutes('');
 	};
 
-	// добавить вопрос с множественным выбором
-	const addMultipleChoiceQuestion = () => {
+	// --------------------- ДОБАВЛЕНИЕ ОТВЕТОВ
+	const addQuestion = (questionHTML) => {
 		setQuestionCount((prevCount) => prevCount + 1);
-		const questionHTML = `
+		setQuestions((prevQuestions) => [...prevQuestions, questionHTML]);
+	};
+	const addMultipleChoiceQuestion = () => {
+		addQuestion(`
 		<div class="question">
 			<div class="question-con">
 			  <div role="button" class="delete-question" tabindex="0">
@@ -132,27 +152,21 @@ const Create = () => {
 			</div>
 			<div role="button" class="add-answer btn btn-secondary" tabindex="0">Добавить ответ</div>
 		</div>
-		`;
-		document
-			.querySelector('#quiz-list')
-			.insertAdjacentHTML('beforeend', questionHTML);
+    `);
 	};
-
-	// добавить вопрос истинно-ложно
 	const addTrueFalseQuestion = () => {
-		setQuestionCount((prevCount) => prevCount + 1);
-		const questionHTML = `
-		 <div class="question">
+		addQuestion(`
+		<div class="question">
 			<div class="question-con">
-			<div role="button" class="delete-question" tabindex="0">
-				<img
-					src="./assets/icons/cross.png"
-					alt="удалить вопрос"
-					title="удалить вопрос"
-					width="24"
-					height="24"
-				/>
-			</div>
+				<div role="button" class="delete-question" tabindex="0">
+					<img
+						src="./assets/icons/cross.png"
+						alt="удалить вопрос"
+						title="удалить вопрос"
+						width="24"
+						height="24"
+					/>
+				</div>
 				<div class="question-number">${questionCount}</div>
 				<input type="text" id="question-${questionCount}" name="question-${questionCount}" class="question-text btn" placeholder="Вопрос">
 			</div>
@@ -191,16 +205,10 @@ const Create = () => {
 				</div>
 			</div>
 		</div>
-		`;
-		document
-			.querySelector('#quiz-list')
-			.insertAdjacentHTML('beforeend', questionHTML);
+    `);
 	};
-
-	// добавить открытый вопрос
 	const addOpenTextQuestion = () => {
-		setQuestionCount((prevCount) => prevCount + 1);
-		const questionHTML = `
+		addQuestion(`
 		<div class="question">
 			<div class="question-con">
 				<div role="button" class="delete-question" tabindex="0">
@@ -219,10 +227,7 @@ const Create = () => {
 				<textarea id="open-text-${questionCount}" name="open-text-${questionCount}" placeholder="Ответ"></textarea>
 			</div>
 		</div>
-		`;
-		document
-			.querySelector('#quiz-list')
-			.insertAdjacentHTML('beforeend', questionHTML);
+    `);
 	};
 
 	// добавить ответ (множественный выбор)
@@ -232,34 +237,34 @@ const Create = () => {
 			const answersContainer = question.querySelector('.multiple-choice');
 			if (answersContainer) {
 				const newAnswerId = `correct-${answersContainer.children.length + 1}`;
-				const newAnswerCon = document.createElement('div');
-				newAnswerCon.classList.add('answer-con');
-				newAnswerCon.innerHTML = `
-				<label for="${newAnswerId}" class="custom-checkbox">
-        <input type="checkbox" id="${newAnswerId}" name="checkbox-${newAnswerId}" value="...">
-        <span class="checkmark"></span>
-				</label>
-				<input class="btn" placeholder="Ответ">
-				<div role="button" class="delete-answer" tabindex="0">
-					<svg width="16" height="16" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<g clip-path="url(#clip0_310_33)">
-							<rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="#dedede"></rect>
-							<rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="#dedede"></rect>
-						</g>
-						<defs>
-							<clipPath id="clip0_310_33">
-								<rect width="60" height="60.0001" fill="none" transform="translate(0.302307)"></rect>
-							</clipPath>
-						</defs>
-					</svg>
+				const newAnswerCon = `
+				<div class="answer-con">
+					<label for="${newAnswerId}" class="custom-checkbox">
+					<input type="checkbox" id="${newAnswerId}" name="checkbox-${newAnswerId}" value="...">
+					<span class="checkmark"></span>
+					</label>
+					<input class="btn" placeholder="Ответ">
+					<div role="button" class="delete-answer" tabindex="0">
+						<svg width="16" height="16" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<g clip-path="url(#clip0_310_33)">
+								<rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="#dedede"></rect>
+								<rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="#dedede"></rect>
+							</g>
+							<defs>
+								<clipPath id="clip0_310_33">
+									<rect width="60" height="60.0001" fill="none" transform="translate(0.302307)"></rect>
+								</clipPath>
+							</defs>
+						</svg>
+					</div>
 				</div>
 			`;
-				answersContainer.appendChild(newAnswerCon);
+				answersContainer.innerHTML += newAnswerCon;
 			}
 		}
 	};
 
-	// удалить вопрос (множественный выбор)
+	// удалить вопрос
 	const handleDeleteQuestion = (event) => {
 		if (event.target.closest('.delete-question')) {
 			const question = event.target.closest('.question');
@@ -300,24 +305,6 @@ const Create = () => {
 
 		return () => {
 			document.removeEventListener('click', handleDeleteAnswer);
-		};
-	}, []);
-
-	// для мобильных: скрыть меню вопросов по нажатию в любом месте экрана
-	useEffect(() => {
-		const handleClickOutside = (evt) => {
-			if (
-				menuQuestionsRef.current &&
-				!menuQuestionsRef.current.contains(evt.target) &&
-				!dropdownButtonRef.current.contains(evt.target)
-			) {
-				setIsDropdownOpen(false);
-			}
-		};
-
-		window.addEventListener('click', handleClickOutside);
-		return () => {
-			window.removeEventListener('click', handleClickOutside);
 		};
 	}, []);
 
@@ -500,7 +487,14 @@ const Create = () => {
 								handleAddAnswer(event);
 								handleDeleteQuestion(event);
 							}}
-						></div>
+						>
+							{questions.map((question, index) => (
+								<div
+									key={index}
+									dangerouslySetInnerHTML={{ __html: question }}
+								/>
+							))}
+						</div>
 
 						<div className="group">
 							<button type="submit" className="btn btn-primary" name="create">

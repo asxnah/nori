@@ -1,9 +1,14 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
+import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+
 import './styles/Home.css';
+
 import HomeCard from '../components/HomeCard';
+import Banner from '../components/Banner';
 
 const Home = () => {
+	const [isBannerVisible, setBannerVisible] = useState(true);
 	const quizzes = [
 		{
 			title: 'Насколько ты знаешь HTML',
@@ -26,82 +31,18 @@ const Home = () => {
 	];
 
 	useEffect(() => {
-		const banner = document.querySelector('#banner');
-		const takeQuizButton = document.querySelector('#take-quiz');
-		const removeBannerButton = document.querySelector('#remove-banner');
-
-		if (localStorage.getItem('banner_hidden') === 'yes') {
-			banner?.remove();
-		} else {
-			const handleTakeQuizClick = () => {
-				window.scrollTo({
-					top: banner?.offsetHeight,
-					behavior: 'smooth',
-				});
-			};
-
-			const handleRemoveBannerClick = () => {
-				window.scrollTo({
-					top: banner?.offsetHeight,
-					behavior: 'smooth',
-				});
-
-				setTimeout(() => {
-					banner?.remove();
-				}, 500);
-
-				localStorage.setItem('banner_hidden', 'yes');
-			};
-
-			takeQuizButton?.addEventListener('click', handleTakeQuizClick);
-			removeBannerButton?.addEventListener('click', handleRemoveBannerClick);
-
-			// Очистка обработчиков событий при размонтировании компонента
-			return () => {
-				takeQuizButton?.removeEventListener('click', handleTakeQuizClick);
-				removeBannerButton?.removeEventListener(
-					'click',
-					handleRemoveBannerClick
-				);
-			};
+		if (Cookies.get('banner_hidden') === 'true') {
+			setBannerVisible(false);
 		}
 	}, []);
 
+	const removeBanner = () => {
+		Cookies.set('banner_hidden', 'true', { expires: 30 });
+	};
+
 	return (
 		<main id="HomePage">
-			<section id="banner">
-				<div id="left">
-					<img src="./assets/logo/logo-white.svg" alt="логотип Nori" />
-					<p>Создавайте, настраивайте и проходите викторины онлайн</p>
-					<div className="group">
-						<Link to="/create" className="btn btn-pure">
-							Создать
-						</Link>
-						<button id="take-quiz" className="btn btn-dark">
-							Пройти
-						</button>
-					</div>
-				</div>
-				<div id="right" className="card btn-pure">
-					<h2>Как это происходит?</h2>
-					<div className="content">
-						<p>
-							Создай викторину — загрузи свои вопросы и выбери параметры игры.
-						</p>
-						<p>
-							<span>ИЛИ</span>
-						</p>
-						<p>
-							Пройди викторину — оцени свои знания и получи результаты сразу
-							после завершения.
-						</p>
-					</div>
-					<button id="remove-banner" className="btn btn-pure">
-						Понятно, спасибо!
-					</button>
-				</div>
-			</section>
-
+			{isBannerVisible && <Banner onRemove={removeBanner} />}
 			<section id="quizzes">
 				<div id="search" className="btn">
 					<input type="text" id="searchbar" placeholder="JavaScript" />

@@ -5,6 +5,7 @@ import {
 	Routes,
 	useLocation,
 } from 'react-router-dom';
+
 import PopupHandler from './PopupHandler';
 
 import Header from './components/Header';

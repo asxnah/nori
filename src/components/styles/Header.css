@@ -6,7 +6,8 @@ header {
 	position: sticky;
 	top: 0;
 	left: 0;
-	z-index: 99;
+	/* 99 для popup */
+	z-index: 98; 
 
 	display: flex;
 	align-items: center;

@@ -254,17 +254,15 @@ hr {
 }
 
 .popup-con {
-	width: 100%;
-
-	position: fixed;
-	z-index: -1;
-	top: 5rem;
-
 	display: none;
 }
 
 .popup-con.show {
-	z-index: 2;
+	width: 100%;
+
+	position: fixed;
+	z-index: 99;
+	top: 5rem;
 
 	display: block;
 }
@@ -276,6 +274,7 @@ hr {
 	width: 32rem;
 
 	background-color: var(--white-full);
+	box-shadow: 0 0 100vw var(--black-medium);
 }
 
 .popup .faded-text {

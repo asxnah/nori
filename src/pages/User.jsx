@@ -1,9 +1,29 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+// eslint-disable-next-line no-unused-vars
+import React, { useState } from 'react';
+import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+
 import './styles/User.css';
+
 import UserCreatedCard from '../components/UserCreatedCard';
 
 const User = () => {
+	const [user, setUser] = useState('');
+	const getUserData = async () => {
+		const response = await axios.post('http://localhost:3000/user', {
+			username: Cookies.get('user'),
+		});
+		setUser(response.data);
+	};
+	getUserData();
+
+	const navigate = useNavigate();
+	const handleLogout = () => {
+		Cookies.remove('user');
+		navigate('/auth');
+	};
+
 	const quizzes = [
 		{
 			title: 'Насколько ты знаешь HTML',
@@ -30,8 +50,8 @@ const User = () => {
 			<main>
 				<aside className="card card-outline">
 					<section id="name">
-						<p className="faded-text">@sohee</p>
-						<h1>Sohee</h1>
+						<p className="faded-text">@{user.username}</p>
+						<h1>{user.name}</h1>
 					</section>
 					<hr />
 					<section id="stats">
@@ -56,7 +76,9 @@ const User = () => {
 						<button className="btn btn-secondary open-popup">
 							Редактировать аккаунт
 						</button>
-						<button className="faded-text">Выйти из аккаунта</button>
+						<button onClick={handleLogout} className="faded-text">
+							Выйти из аккаунта
+						</button>
 					</section>
 				</aside>
 

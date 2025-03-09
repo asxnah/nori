@@ -54,6 +54,12 @@
 		gap: 1rem;
 	}
 
+	#inputs .err {
+		font-size: 1rem;
+		color: var(--white-full);
+		font-weight: initial;
+	}
+
 	#inputs input {
 		background-color: var(--white-light);
 		border: 0.1rem solid var(--white-low);

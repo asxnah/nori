@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -14,9 +14,12 @@ const User = () => {
 		const response = await axios.post('http://localhost:3000/user', {
 			username: Cookies.get('user'),
 		});
-		setUser(response.data);
+		console.debug(response.data);
+		return setUser(response.data);
 	};
-	getUserData();
+	useEffect(() => {
+		getUserData();
+	}, []);
 
 	const navigate = useNavigate();
 	const handleLogout = () => {

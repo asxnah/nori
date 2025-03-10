@@ -58,6 +58,53 @@ app.post('/user', async (req, res) => {
 	return res.send({ message: false });
 });
 
+app.put('/account-edit', async (req, res) => {
+	const { username, new_name, new_username, new_password, current_password } =
+		req.body;
+
+	const user = await User.findOne({ username: username });
+
+	if (current_password !== user.password) {
+		return res.send({
+			message: '⚠️ Неверный пароль',
+		});
+	}
+
+	if (new_name) {
+		const updated = await User.findOneAndUpdate(
+			{ username: username },
+			{ name: new_name }
+		);
+
+		if (updated) return res.send({ message: true });
+	}
+
+	if (new_username) {
+		const existingUser = await User.findOne({ username: new_username });
+		if (existingUser && existingUser.username !== username) {
+			return res.send({ message: 'Такое имя пользователя уже существует' });
+		}
+
+		const updated = await User.findOneAndUpdate(
+			{ username: username },
+			{ username: new_username }
+		);
+
+		if (updated) return res.send({ message: true });
+	}
+
+	if (new_password) {
+		const updated = await User.findOneAndUpdate(
+			{ username: username },
+			{ password: new_password }
+		);
+
+		if (updated) return res.send({ message: true });
+	}
+
+	res.send({ message: true });
+});
+
 app.listen(port, () => {
 	console.log(`сервер запущен: http://localhost:${port}`);
 });

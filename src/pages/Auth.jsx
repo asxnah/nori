@@ -153,44 +153,6 @@ const Auth = () => {
 					</small>
 				</form>
 			</main>
-
-			<section className="popup-con" id="no-such-user">
-				<section className="popup card card-outline">
-					<div className="heading">
-						<h2>Такого пользователя не существует</h2>
-						<button type="button" className="close-popup">
-							<img
-								src="./assets/icons/cross.png"
-								alt="закрыть окно"
-								title="закрыть окно"
-							/>
-						</button>
-					</div>
-					<div className="content">
-						<p>
-							Зарегистрируйтесь или проверьте правильность написания логина.
-						</p>
-					</div>
-					<button type="button" className="btn btn-secondary close-popup">
-						Отмена
-					</button>
-				</section>
-			</section>
-
-			<section className="popup-con" id="password-incorrect">
-				<section className="popup card card-outline">
-					<div className="heading">
-						<p>Неверный пароль</p>
-						<button type="button" className="close-popup">
-							<img
-								src="./assets/icons/cross.png"
-								alt="закрыть окно"
-								title="закрыть окно"
-							/>
-						</button>
-					</div>
-				</section>
-			</section>
 		</div>
 	);
 };

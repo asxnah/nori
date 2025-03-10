@@ -8,18 +8,105 @@ import './styles/User.css';
 
 import UserCreatedCard from '../components/UserCreatedCard';
 
+// return setError(response.data.message); НЕ РАБОТАЕТ (E.G. НЕ ТОТ ПАРОЛЬ)
+
 const User = () => {
 	const [user, setUser] = useState('');
 	const getUserData = async () => {
 		const response = await axios.post('http://localhost:3000/user', {
 			username: Cookies.get('user'),
 		});
-		console.debug(response.data);
 		return setUser(response.data);
 	};
 	useEffect(() => {
 		getUserData();
 	}, []);
+
+	const [error, setError] = useState(null);
+	const [formData, setFormData] = useState({
+		new_name: '',
+		new_username: '',
+		new_password: '',
+		current_password: '',
+	});
+	const handleChange = (evt) => {
+		const { name, value } = evt.target;
+		setFormData({
+			...formData,
+			[name]: value,
+		});
+	};
+
+	const handleAccountEdit = async (evt) => {
+		evt.preventDefault();
+		if (!formData.current_password) {
+			return setError('⚠️ Введите пароль для редактирования аккаунта');
+		} else if (
+			!formData.new_name &&
+			!formData.new_username &&
+			!formData.new_password
+		) {
+			return setError('⚠️ Изменения не заданы');
+		} else {
+			if (formData.new_password) {
+				const passwordRegex =
+					/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]+$/;
+				if (!passwordRegex.test(formData.password)) {
+					return setError('⚠️ Пароль должен соответствовать требованиям');
+				}
+				const response = await axios.put('http://localhost:3000/account-edit', {
+					username: Cookies.get('user'),
+					current_password: formData.current_password,
+					new_password: formData.new_password,
+				});
+
+				if (response.data.message) {
+					setError(null);
+					document.querySelector('.popup-con').classList.remove('show');
+					document.querySelector('body').style.overflow = '';
+				} else {
+					return setError(response.data.message);
+				}
+			}
+			if (formData.new_name) {
+				const response = await axios.put('http://localhost:3000/account-edit', {
+					username: Cookies.get('user'),
+					current_password: formData.current_password,
+					new_name: formData.new_name,
+				});
+
+				if (response.data.message) {
+					setError(null);
+					getUserData();
+					document.querySelector('.popup-con').classList.remove('show');
+					document.querySelector('body').style.overflow = '';
+				} else {
+					return setError(response.data.message);
+				}
+			}
+			if (formData.new_username) {
+				const usernameRegex = /^[A-Za-z0-9_]+$/;
+				if (!usernameRegex.test(formData.new_username)) {
+					return setError('⚠️ Логин должен соответствовать требованиям');
+				}
+
+				const response = await axios.put('http://localhost:3000/account-edit', {
+					username: Cookies.get('user'),
+					current_password: formData.current_password,
+					new_username: formData.new_username,
+				});
+
+				if (response.data.message) {
+					setError(null);
+					getUserData();
+					document.querySelector('.popup-con').classList.remove('show');
+					document.querySelector('body').style.overflow = '';
+				} else {
+					return setError(response.data.message);
+				}
+			}
+		}
+	};
 
 	const navigate = useNavigate();
 	const handleLogout = () => {
@@ -116,11 +203,7 @@ const User = () => {
 			</main>
 
 			<section className="popup-con">
-				<form
-					action="__edit_profile.php"
-					method="post"
-					className="popup card card-outline"
-				>
+				<form onSubmit={handleAccountEdit} className="popup card card-outline">
 					<div className="heading">
 						<h2>Редактирование профиля</h2>
 						<button type="button" className="close-popup">
@@ -132,40 +215,47 @@ const User = () => {
 						</button>
 					</div>
 					<div className="content">
+						{error ? <p className="err">{error}</p> : null}
 						<input
 							type="text"
-							id="name"
+							id="new_name"
 							className="btn"
-							name="name"
+							name="new_name"
+							autoComplete="name"
 							placeholder="Имя"
+							value={formData.new_name}
+							onChange={handleChange}
 						/>
 						<input
 							type="text"
-							id="username"
+							id="new_username"
 							className="btn"
-							name="username"
+							name="new_username"
+							autoComplete="username"
 							placeholder="Логин"
+							value={formData.new_username}
+							onChange={handleChange}
 						/>
 						<input
 							type="password"
-							id="password_old"
+							id="new_password"
 							className="btn"
-							name="password_old"
+							name="new_password"
+							autoComplete="new-password"
+							placeholder="Новый пароль (необязательно)"
+							value={formData.new_password}
+							onChange={handleChange}
+						/>
+						<input
+							type="password"
+							id="current_password"
+							className="btn"
+							name="current_password"
+							autoComplete="current-password"
 							placeholder="Старый пароль"
+							value={formData.current_password}
+							onChange={handleChange}
 						/>
-						<p className="faded-text">
-							Старый пароль обязателен для сохранения редактирования профиля
-						</p>
-						<input
-							type="password"
-							id="password_new"
-							className="btn"
-							name="password_new"
-							placeholder="Новый пароль"
-						/>
-						<p className="faded-text">
-							Введите новый пароль, если меняете пароль
-						</p>
 					</div>
 					<div className="group">
 						<button type="submit" className="btn btn-primary">

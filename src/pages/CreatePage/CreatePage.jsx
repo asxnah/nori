@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import './styles/Create.css';
+import './CreatePage.css';
 
-const Create = () => {
+export const CreatePage = () => {
 	// состояния переменных
 	const [backgroundImage, setBackgroundImage] = useState(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -83,7 +83,7 @@ const Create = () => {
 		const minutes = parseInt(inputMinutes) || 0;
 
 		setTimerValue(
-			`${hours > 0 ? `${hours}ч` : ''}${minutes > 0 ? `${minutes}мин` : ''}`
+			`${hours > 0 ? `${hours} ч` : ''} ${minutes > 0 ? `${minutes} мин` : ''}`
 		);
 	};
 	// удалить
@@ -583,5 +583,3 @@ const Create = () => {
 		</div>
 	);
 };
-
-export default Create;

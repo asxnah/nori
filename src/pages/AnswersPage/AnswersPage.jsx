@@ -1,8 +1,7 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import './styles/Answers.css';
+import './AnswersPage.css';
 
-const Answers = () => {
+export const AnswersPage = () => {
 	return (
 		<main id="AnswersPage">
 			<section id="heading">
@@ -43,5 +42,3 @@ const Answers = () => {
 		</main>
 	);
 };
-
-export default Answers;

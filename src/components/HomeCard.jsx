@@ -1,7 +1,8 @@
-import React from 'react';
+/* eslint-disable react/prop-types */
+import 'react';
 import { Link } from 'react-router-dom';
 
-const HomeCard = ({ title, questionsCount, tags, imageUrl }) => {
+export const HomeCard = ({ title, questionsCount, tags, imageUrl }) => {
 	const style = {
 		background: `linear-gradient(to left, var(--black-high), var(--black-high)), url(${imageUrl})`,
 		backgroundSize: 'cover',
@@ -29,5 +30,3 @@ const HomeCard = ({ title, questionsCount, tags, imageUrl }) => {
 		</article>
 	);
 };
-
-export default HomeCard;

@@ -1,8 +1,8 @@
-import React from 'react';
+import 'react';
 import { Link } from 'react-router-dom';
-import './styles/Preview.css';
+import './PreviewPage.css';
 
-const Preview = () => {
+export const PreviewPage = () => {
 	return (
 		<main id="PreviewPage">
 			<div id="logo">
@@ -11,7 +11,8 @@ const Preview = () => {
 
 			<section>
 				<h1>
-					Веб-платформа для создания и проведения интерактивных викторин "Nori"
+					Веб-платформа для создания и проведения интерактивных викторин
+					&quot;Nori&quot;
 				</h1>
 				<p>
 					Проект предназначен для учеников, студентов, учителей и
@@ -32,7 +33,7 @@ const Preview = () => {
 				<h3>Специальность</h3>
 				<p>
 					09.02.07 Информационные системы и программирование <br />
-					ГБПОУ "ПКК "ОНИКС"
+					ГБПОУ &quot;ПКК &quot;ОНИКС&quot;
 				</p>
 			</section>
 
@@ -40,5 +41,3 @@ const Preview = () => {
 		</main>
 	);
 };
-
-export default Preview;

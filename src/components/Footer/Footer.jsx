@@ -1,8 +1,7 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import './styles/Footer.css';
+import './Footer.css';
 
-const Footer = () => {
+export const Footer = () => {
 	return (
 		<footer>
 			<button
@@ -20,5 +19,3 @@ const Footer = () => {
 		</footer>
 	);
 };
-
-export default Footer;

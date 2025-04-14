@@ -4,13 +4,13 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import './styles/User.css';
+import './UserPage.css';
 
-import UserCreatedCard from '../components/UserCreatedCard';
+import UserCreatedCard from '../../components/UserCreatedCard';
 
 // return setError(response.data.message); НЕ РАБОТАЕТ (E.G. НЕ ТОТ ПАРОЛЬ)
 
-const User = () => {
+export const UserPage = () => {
 	const [user, setUser] = useState('');
 	const getUserData = async () => {
 		const response = await axios.post('http://localhost:3000/user', {
@@ -270,5 +270,3 @@ const User = () => {
 		</div>
 	);
 };
-
-export default User;

@@ -1,8 +1,7 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import './styles/Header.css';
+import './Header.css';
 
-const Header = () => {
+export const Header = () => {
 	return (
 		<header>
 			<Link to="/" aria-labelledby="ссылка на главную страницу">
@@ -26,5 +25,3 @@ const Header = () => {
 		</header>
 	);
 };
-
-export default Header;

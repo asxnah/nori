@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-import './styles/Home.css';
+import './MainPage.css';
 
-import HomeCard from '../components/HomeCard';
-import Banner from '../components/Banner';
+import { HomeCard } from '../../components/HomeCard';
+import { Banner } from '../../components/Banner/Banner';
 
-const Home = () => {
+export const MainPage = () => {
 	const [isBannerVisible, setBannerVisible] = useState(true);
 	const quizzes = [
 		{
@@ -41,7 +41,7 @@ const Home = () => {
 	};
 
 	return (
-		<main id="HomePage">
+		<main id="MainPage">
 			{isBannerVisible && <Banner onRemove={removeBanner} />}
 			<section id="quizzes">
 				<div id="search" className="btn">
@@ -66,5 +66,3 @@ const Home = () => {
 		</main>
 	);
 };
-
-export default Home;

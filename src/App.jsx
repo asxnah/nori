@@ -1,4 +1,4 @@
-import React from 'react';
+import 'react';
 import {
 	BrowserRouter as Router,
 	Route,
@@ -8,15 +8,16 @@ import {
 
 import PopupHandler from './PopupHandler';
 
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Home from './pages/Home';
-import Preview from './pages/Preview';
-import Quiz from './pages/Quiz';
-import Answers from './pages/Answers';
-import Auth from './pages/Auth';
-import User from './pages/User';
-import Create from './pages/Create';
+import { Header } from './components/Header/Header';
+import { Footer } from './components/Footer/Footer';
+
+import { MainPage } from './pages/MainPage/MainPage';
+import { AnswersPage } from './pages/AnswersPage/AnswersPage';
+import { AuthPage } from './pages/AuthPage/AuthPage';
+import { CreatePage } from './pages/CreatePage/CreatePage';
+import { PreviewPage } from './pages/PreviewPage/PreviewPage';
+import { QuizPage } from './pages/QuizPage/QuizPage';
+import { UserPage } from './pages/UserPage/UserPage';
 
 const AppContent = () => {
 	const location = useLocation();
@@ -27,13 +28,13 @@ const AppContent = () => {
 		<>
 			{!shouldHideHeader && <Header />}
 			<Routes>
-				<Route path="/" element={<Home />} />
-				<Route path="/preview" element={<Preview />} />
-				<Route path="/quiz" element={<Quiz />} />
-				<Route path="/answers" element={<Answers />} />
-				<Route path="/auth" element={<Auth />} />
-				<Route path="/user" element={<User />} />
-				<Route path="/create" element={<Create />} />
+				<Route path="/" element={<MainPage />} />
+				<Route path="/answers" element={<AnswersPage />} />
+				<Route path="/auth" element={<AuthPage />} />
+				<Route path="/create" element={<CreatePage />} />
+				<Route path="/preview" element={<PreviewPage />} />
+				<Route path="/quiz" element={<QuizPage />} />
+				<Route path="/user" element={<UserPage />} />
 			</Routes>
 			{!shouldHideHeader && <Footer />}
 		</>

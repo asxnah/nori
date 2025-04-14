@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 
-const Banner = ({ onRemove }) => {
+export const Banner = ({ onRemove }) => {
 	const banner = useRef<HTMLDivElement>(null);
 
 	const scrollToQuizzes = () => {
@@ -56,5 +56,3 @@ const Banner = ({ onRemove }) => {
 		</section>
 	);
 };
-
-export default Banner;

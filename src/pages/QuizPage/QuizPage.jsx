@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
-import './styles/Quiz.css';
+import './QuizPage.css';
 
-const Quiz = () => {
+export const QuizPage = () => {
 	return (
 		<main id="QuizPage">
 			<form action="__create.php" method="post">
@@ -74,5 +74,3 @@ const Quiz = () => {
 		</main>
 	);
 };
-
-export default Quiz;

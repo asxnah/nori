@@ -4,9 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-import './styles/Auth.css';
+import './AuthPage.css';
 
-const Auth = () => {
+export const AuthPage = () => {
 	const [formData, setFormData] = useState({ username: '', password: '' });
 	const [error, setError] = useState(null);
 	const navigate = useNavigate();
@@ -156,5 +156,3 @@ const Auth = () => {
 		</div>
 	);
 };
-
-export default Auth;

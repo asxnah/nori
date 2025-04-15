@@ -20,89 +20,101 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-app.get('/', (req, res) => {
-	return res.send('сервер запущен');
-});
+// Validation functions
+const validateUsername = (username) => {
+	// Only lowercase, uppercase letters, numbers, and underscore
+	const usernameRegex = /^[a-zA-Z0-9_]+$/;
+	return usernameRegex.test(username);
+};
 
-app.post('/register', async (req, res) => {
-	const { username, password } = req.body;
+const validatePassword = (password) => {
+	// At least one lowercase letter, one uppercase letter, one special character, and one number
+	const hasLowercase = /[a-z]/.test(password);
+	const hasUppercase = /[A-Z]/.test(password);
+	const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+	const hasNumber = /[0-9]/.test(password);
+	return hasLowercase && hasUppercase && hasSpecialChar && hasNumber;
+};
 
-	const existingUser = await User.findOne({ username });
-	if (existingUser) {
-		return res.send({ message: false });
-	}
-
-	const user = new User({ name: username, username, password });
+// Login endpoint
+app.post('/api/login', async (req, res) => {
 	try {
-		await user.save();
-		return res.send({ message: true });
-		// eslint-disable-next-line no-unused-vars
-	} catch (err) {
-		return res.send({ message: false });
-	}
-});
+		const { username, password } = req.body;
 
-app.post('/login', async (req, res) => {
-	const { username, password } = req.body;
-	const user = await User.findOne({ username: username });
-
-	if (!user) return res.send({ message: false });
-	return res.send({ message: user.password === password });
-});
-
-app.post('/user', async (req, res) => {
-	const { username } = req.body;
-	const user = await User.findOne({ username: username });
-
-	if (user) return res.send(user);
-	return res.send({ message: false });
-});
-
-app.put('/account-edit', async (req, res) => {
-	const { username, new_name, new_username, new_password, current_password } =
-		req.body;
-
-	const user = await User.findOne({ username: username });
-
-	if (current_password !== user.password) {
-		return res.send({
-			message: '⚠️ Неверный пароль',
-		});
-	}
-
-	if (new_name) {
-		const updated = await User.findOneAndUpdate(
-			{ username: username },
-			{ name: new_name }
-		);
-
-		if (updated) return res.send({ message: true });
-	}
-
-	if (new_username) {
-		const existingUser = await User.findOne({ username: new_username });
-		if (existingUser && existingUser.username !== username) {
-			return res.send({ message: 'Такое имя пользователя уже существует' });
+		// Find user
+		const user = await User.findOne({ username });
+		if (!user) {
+			return res.status(401).json({ message: 'Пользователь не существует' });
 		}
 
-		const updated = await User.findOneAndUpdate(
-			{ username: username },
-			{ username: new_username }
-		);
+		// Check password
+		if (user.password !== password) {
+			return res.status(401).json({ message: 'Неверный пароль' });
+		}
 
-		if (updated) return res.send({ message: true });
+		res.json({
+			message: 'Успешный вход',
+			user: { username: user.username },
+		});
+	} catch (error) {
+		console.error('Login error:', error);
+		res.status(500).json({ message: 'Ошибка при входе' });
 	}
+});
 
-	if (new_password) {
-		const updated = await User.findOneAndUpdate(
-			{ username: username },
-			{ password: new_password }
-		);
+// Registration endpoint
+app.post('/api/register', async (req, res) => {
+	try {
+		const { username, password } = req.body;
 
-		if (updated) return res.send({ message: true });
+		// Check if user exists
+		const existingUser = await User.findOne({ username });
+		if (existingUser) {
+			// If user exists, just log them in
+			if (existingUser.password === password) {
+				return res.json({
+					message: 'Успешный вход',
+					user: { username: existingUser.username },
+				});
+			}
+			return res.status(401).json({ message: 'Неверный пароль' });
+		}
+
+		// Validate username and password for new user
+		if (!validateUsername(username)) {
+			return res.status(400).json({
+				message:
+					'Логин может содержать только строчные и прописные латинские буквы, цифры и нижнее подчеркивание (_)',
+			});
+		}
+
+		if (!validatePassword(password)) {
+			return res.status(400).json({
+				message:
+					'Пароль должен содержать строчные и прописные латинские буквы, минимум один специальный символ и минимум одну цифру',
+			});
+		}
+
+		// Create new user
+		const user = new User({
+			name: username,
+			username,
+			password,
+		});
+
+		await user.save();
+		res.json({
+			message: 'Пользователь успешно зарегистрирован',
+			user: { username: user.username },
+		});
+	} catch (error) {
+		console.error('Registration error:', error);
+		res.status(500).json({ message: 'Ошибка при регистрации пользователя' });
 	}
+});
 
-	res.send({ message: true });
+app.get('/', (req, res) => {
+	return res.send('сервер запущен');
 });
 
 app.listen(port, () => {

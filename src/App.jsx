@@ -4,9 +4,11 @@ import {
 	Route,
 	Routes,
 	useLocation,
+	Navigate,
 } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
-import PopupHandler from './PopupHandler';
+import { PopupProvider } from './contexts/PopupContext';
 
 import { Header } from './components/Header/Header';
 import { Footer } from './components/Footer/Footer';
@@ -25,6 +27,18 @@ const AppContent = () => {
 	const location = useLocation();
 	const excludedRoute = '/preview';
 	const shouldHideHeader = excludedRoute === location.pathname;
+	const isAuthenticated = Cookies.get('isAuthenticated');
+
+	// List of public routes that don't require authentication
+	const publicRoutes = ['/', '/auth', '/about', '/preview'];
+
+	// Check if current route requires authentication
+	const requiresAuth = !publicRoutes.includes(location.pathname);
+
+	// Redirect to auth page if route requires authentication and user is not logged in
+	if (requiresAuth && !isAuthenticated) {
+		return <Navigate to="/auth" replace />;
+	}
 
 	return (
 		<>
@@ -48,8 +62,9 @@ const AppContent = () => {
 const App = () => {
 	return (
 		<Router>
-			<PopupHandler />
-			<AppContent />
+			<PopupProvider>
+				<AppContent />
+			</PopupProvider>
 		</Router>
 	);
 };

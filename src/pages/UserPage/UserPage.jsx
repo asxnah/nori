@@ -1,13 +1,167 @@
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { CrossIcon } from '../../uikit/CrossIcon/CrossIcon';
+import Cookies from 'js-cookie';
+import axios from 'axios';
+import { usePopup } from '../../contexts/PopupContext';
 
 import './UserPage.css';
 
 import UserCreatedCard from '../../components/UserCreatedCard';
 
 export const UserPage = () => {
+	const navigate = useNavigate();
+	const { openPopup, closePopup } = usePopup();
+	const [user, setUser] = useState({ name: '', username: '' });
+	const [formData, setFormData] = useState({
+		new_name: '',
+		new_username: '',
+		new_password: '',
+		current_password: '',
+	});
+	const [error, setError] = useState('');
+	const [success, setSuccess] = useState('');
+
+	useEffect(() => {
+		const userData = Cookies.get('user');
+		if (userData) {
+			setUser({ name: userData, username: userData });
+		}
+	}, []);
+
+	const handleFormChange = (evt) => {
+		const { name, value } = evt.target;
+		setFormData((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
+
+	const handleSubmit = async (evt) => {
+		evt.preventDefault();
+		setError('');
+		setSuccess('');
+
+		const hasChanges = Object.entries(formData).some(
+			([key, value]) => key !== 'current_password' && value.trim() !== ''
+		);
+
+		if (!hasChanges) {
+			closePopup();
+			return;
+		}
+
+		if (!formData.current_password) {
+			setError('Текущий пароль обязателен для изменений');
+			return;
+		}
+
+		try {
+			const response = await axios.post(
+				'http://localhost:3000/api/update-profile',
+				{
+					...formData,
+					current_password: formData.current_password,
+				}
+			);
+
+			setSuccess('Профиль успешно обновлен');
+			Cookies.set('user', response.data.user.username, { expires: 30 });
+			setUser({
+				name: response.data.user.username,
+				username: response.data.user.username,
+			});
+
+			setTimeout(() => {
+				setFormData({
+					new_name: '',
+					new_username: '',
+					new_password: '',
+					current_password: '',
+				});
+				closePopup();
+			}, 1000);
+		} catch (err) {
+			setError(err.response?.data?.message || 'Произошла ошибка');
+		}
+	};
+
+	const handleLogout = () => {
+		Cookies.remove('isAuthenticated');
+		Cookies.remove('user');
+		navigate('/auth');
+	};
+
+	const openEditPopup = () => {
+		openPopup(
+			<form onSubmit={handleSubmit}>
+				<div className="heading">
+					<h2>Редактирование профиля</h2>
+					<button type="button" className="close-popup" onClick={closePopup}>
+						<CrossIcon />
+					</button>
+				</div>
+				<div className="content">
+					{error && <div className="error-message">{error}</div>}
+					{success && <div className="success-message">{success}</div>}
+					<input
+						type="text"
+						id="new_name"
+						className="btn"
+						name="new_name"
+						autoComplete="name"
+						placeholder="Имя"
+						value={formData.new_name}
+						onChange={handleFormChange}
+					/>
+					<input
+						type="text"
+						id="new_username"
+						className="btn"
+						name="new_username"
+						autoComplete="username"
+						placeholder="Логин"
+						value={formData.new_username}
+						onChange={handleFormChange}
+					/>
+					<input
+						type="password"
+						id="new_password"
+						className="btn"
+						name="new_password"
+						autoComplete="new-password"
+						placeholder="Новый пароль (необязательно)"
+						value={formData.new_password}
+						onChange={handleFormChange}
+					/>
+					<input
+						type="password"
+						id="current_password"
+						className="btn"
+						name="current_password"
+						autoComplete="current-password"
+						placeholder="Старый пароль"
+						value={formData.current_password}
+						onChange={handleFormChange}
+					/>
+				</div>
+				<div className="group">
+					<button type="submit" className="btn btn-primary">
+						Сохранить
+					</button>
+					<button
+						type="button"
+						className="btn btn-secondary"
+						onClick={closePopup}
+					>
+						Отмена
+					</button>
+				</div>
+			</form>
+		);
+	};
+
 	const quizzes = [
 		{
 			title: 'Насколько ты знаешь HTML',
@@ -28,10 +182,6 @@ export const UserPage = () => {
 			imageUrl: './assets/quizzes/react.png',
 		},
 	];
-	const user = {
-		name: 'user',
-		username: 'username',
-	};
 
 	return (
 		<div id="UserPage">
@@ -61,10 +211,12 @@ export const UserPage = () => {
 							</div>
 						</div>
 						<hr />
-						<button className="btn btn-secondary open-popup">
+						<button className="btn btn-secondary" onClick={openEditPopup}>
 							Редактировать аккаунт
 						</button>
-						<button className="faded-text">Выйти из аккаунта</button>
+						<button className="faded-text" onClick={handleLogout}>
+							Выйти из аккаунта
+						</button>
 					</section>
 				</aside>
 
@@ -97,59 +249,6 @@ export const UserPage = () => {
 					</div>
 				</div>
 			</main>
-
-			<section className="popup-con">
-				<form className="popup card card-outline">
-					<div className="heading">
-						<h2>Редактирование профиля</h2>
-						<button type="button" className="close-popup">
-							<CrossIcon />
-						</button>
-					</div>
-					<div className="content">
-						<input
-							type="text"
-							id="new_name"
-							className="btn"
-							name="new_name"
-							autoComplete="name"
-							placeholder="Имя"
-						/>
-						<input
-							type="text"
-							id="new_username"
-							className="btn"
-							name="new_username"
-							autoComplete="username"
-							placeholder="Логин"
-						/>
-						<input
-							type="password"
-							id="new_password"
-							className="btn"
-							name="new_password"
-							autoComplete="new-password"
-							placeholder="Новый пароль (необязательно)"
-						/>
-						<input
-							type="password"
-							id="current_password"
-							className="btn"
-							name="current_password"
-							autoComplete="current-password"
-							placeholder="Старый пароль"
-						/>
-					</div>
-					<div className="group">
-						<button type="submit" className="btn btn-primary">
-							Сохранить
-						</button>
-						<button type="button" className="btn btn-secondary close-popup">
-							Отмена
-						</button>
-					</div>
-				</form>
-			</section>
 		</div>
 	);
 };

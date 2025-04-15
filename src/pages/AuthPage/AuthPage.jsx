@@ -1,12 +1,22 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-// import Cookies from 'js-cookie';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 import './AuthPage.css';
 
 export const AuthPage = () => {
 	const [formData, setFormData] = useState({ username: '', password: '' });
+	const [error, setError] = useState('');
+	const [success, setSuccess] = useState('');
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (Cookies.get('isAuthenticated')) {
+			navigate('/user');
+		}
+	}, [navigate]);
 
 	const handleChange = (evt) => {
 		const { name, value } = evt.target;
@@ -14,6 +24,60 @@ export const AuthPage = () => {
 			...formData,
 			[name]: value,
 		});
+	};
+
+	const handleLogin = async (evt) => {
+		evt.preventDefault();
+		setError('');
+		setSuccess('');
+
+		try {
+			const response = await axios.post(
+				'http://localhost:3000/api/login',
+				formData
+			);
+
+			setSuccess(response.data.message);
+			Cookies.set('isAuthenticated', 'true', { expires: 30 });
+			Cookies.set(
+				'user',
+				JSON.stringify({
+					name: response.data.user.name || response.data.user.username,
+					username: response.data.user.username,
+				}),
+				{ expires: 30 }
+			);
+			navigate('/user');
+		} catch (err) {
+			setError(err.response?.data?.message || 'Произошла ошибка');
+		}
+	};
+
+	const handleRegister = async (evt) => {
+		evt.preventDefault();
+		setError('');
+		setSuccess('');
+
+		try {
+			const response = await axios.post(
+				'http://localhost:3000/api/register',
+				formData
+			);
+
+			setSuccess(response.data.message);
+			Cookies.set('isAuthenticated', 'true', { expires: 30 });
+			Cookies.set(
+				'user',
+				JSON.stringify({
+					name: response.data.user.name || response.data.user.username,
+					username: response.data.user.username,
+				}),
+				{ expires: 30 }
+			);
+			navigate('/user');
+		} catch (err) {
+			setError(err.response?.data?.message || 'Произошла ошибка');
+		}
 	};
 
 	return (
@@ -25,6 +89,8 @@ export const AuthPage = () => {
 				</div>
 				<form id="auth" className="card btn-pure">
 					<h1>Вход и регистрация</h1>
+					{error && <div className="error-message">{error}</div>}
+					{success && <div className="success-message">{success}</div>}
 					<div id="inputs">
 						<input
 							type="text"
@@ -67,10 +133,18 @@ export const AuthPage = () => {
 					</div>
 
 					<div className="group">
-						<button id="login" className="btn btn-pure">
+						<button
+							type="button"
+							className="btn btn-pure"
+							onClick={handleLogin}
+						>
 							Войти
 						</button>
-						<button id="register" className="btn btn-dark">
+						<button
+							type="button"
+							className="btn btn-dark"
+							onClick={handleRegister}
+						>
 							Зарегистрироваться
 						</button>
 					</div>

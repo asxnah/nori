@@ -10,7 +10,7 @@ import UserCreatedCard from '../../components/UserCreatedCard';
 
 export const UserPage = () => {
 	const navigate = useNavigate();
-	const [user, setUser] = useState({ name: '', username: '' });
+	const [user, setUser] = useState({ name: '', username: '', id: '' });
 	const [isPopupVisible, setIsPopupVisible] = useState(false);
 	const [formData, setFormData] = useState({
 		new_name: '',
@@ -19,6 +19,8 @@ export const UserPage = () => {
 		current_password: '',
 	});
 	const [error, setError] = useState('');
+	const [quizzes, setQuizzes] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
 		const userData = Cookies.get('user');
@@ -28,15 +30,36 @@ export const UserPage = () => {
 				setUser({
 					name: parsedData.name || parsedData.username || userData,
 					username: parsedData.username || userData,
+					id: parsedData.id || '',
 				});
 			} catch {
 				setUser({
 					name: userData,
 					username: userData,
+					id: '',
 				});
 			}
 		}
 	}, []);
+
+	useEffect(() => {
+		const fetchUserQuizzes = async () => {
+			if (!user.id) return;
+
+			try {
+				const response = await axios.get(
+					`http://localhost:3000/api/quizzes/user/${user.id}`
+				);
+				setQuizzes(response.data);
+				setLoading(false);
+			} catch (error) {
+				console.error('Error fetching user quizzes:', error);
+				setLoading(false);
+			}
+		};
+
+		fetchUserQuizzes();
+	}, [user.id]);
 
 	const handleLogout = () => {
 		Cookies.remove('isAuthenticated');
@@ -112,27 +135,6 @@ export const UserPage = () => {
 		}
 	};
 
-	const quizzes = [
-		{
-			title: 'Насколько ты знаешь HTML',
-			questionsCount: 10,
-			tags: ['HTML', 'Web', 'Front-end'],
-			imageUrl: '/assets/quizzes/html.png',
-		},
-		{
-			title: 'CSS: Тест на мастерство',
-			questionsCount: 10,
-			tags: ['CSS', 'Web', 'Front-end'],
-			imageUrl: '/assets/quizzes/css.png',
-		},
-		{
-			title: 'React.js: Твой уровень',
-			questionsCount: 10,
-			tags: ['React.js', 'Web', 'Front-end'],
-			imageUrl: '/assets/quizzes/react.png',
-		},
-	];
-
 	return (
 		<div id="UserPage">
 			<main>
@@ -186,15 +188,21 @@ export const UserPage = () => {
 					</menu>
 
 					<div id="quizzes-list">
-						{quizzes.map((quiz, index) => (
-							<UserCreatedCard
-								key={index}
-								title={quiz.title}
-								questionsCount={quiz.questionsCount}
-								tags={quiz.tags}
-								imageUrl={quiz.imageUrl}
-							/>
-						))}
+						{loading ? (
+							<p>Загрузка викторин...</p>
+						) : quizzes.length === 0 ? (
+							<p>У вас пока нет созданных викторин</p>
+						) : (
+							quizzes.map((quiz, index) => (
+								<UserCreatedCard
+									key={index}
+									title={quiz.title}
+									questionsCount={quiz.questionIds.length}
+									tags={quiz.tags}
+									imageUrl={quiz.background}
+								/>
+							))
+						)}
 					</div>
 				</div>
 			</main>

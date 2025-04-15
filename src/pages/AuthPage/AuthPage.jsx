@@ -44,6 +44,7 @@ export const AuthPage = () => {
 				JSON.stringify({
 					name: response.data.user.name || response.data.user.username,
 					username: response.data.user.username,
+					id: response.data.user.id,
 				}),
 				{ expires: 30 }
 			);
@@ -71,6 +72,7 @@ export const AuthPage = () => {
 				JSON.stringify({
 					name: response.data.user.name || response.data.user.username,
 					username: response.data.user.username,
+					id: response.data.user.id,
 				}),
 				{ expires: 30 }
 			);

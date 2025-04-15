@@ -49,7 +49,11 @@ app.post('/api/login', async (req, res) => {
 
 		res.json({
 			message: 'Успешный вход',
-			user: { username: user.username },
+			user: {
+				username: user.username,
+				name: user.name,
+				id: user._id,
+			},
 		});
 	} catch (error) {
 		console.error('Login error:', error);
@@ -66,7 +70,11 @@ app.post('/api/register', async (req, res) => {
 			if (existingUser.password === password) {
 				return res.json({
 					message: 'Успешный вход',
-					user: { username: existingUser.username },
+					user: {
+						username: existingUser.username,
+						name: existingUser.name,
+						id: existingUser._id,
+					},
 				});
 			}
 			return res.status(401).json({ message: 'Неверный пароль' });
@@ -95,7 +103,11 @@ app.post('/api/register', async (req, res) => {
 		await user.save();
 		res.json({
 			message: 'Пользователь успешно зарегистрирован',
-			user: { username: user.username },
+			user: {
+				username: user.username,
+				name: user.name,
+				id: user._id,
+			},
 		});
 	} catch (error) {
 		console.error('Registration error:', error);
@@ -232,6 +244,30 @@ app.get('/api/quizzes', async (req, res) => {
 	} catch (error) {
 		console.error('Error fetching quizzes:', error);
 		res.status(500).json({ message: 'Error fetching quizzes' });
+	}
+});
+
+// Add endpoint to fetch quizzes by user ID
+app.get('/api/quizzes/user/:userId', async (req, res) => {
+	try {
+		const { userId } = req.params;
+
+		const quizzes = await Test.find(
+			{ createdBy: userId },
+			{
+				title: 1,
+				description: 1,
+				background: 1,
+				tags: 1,
+				questionIds: 1,
+				createdAt: 1,
+			}
+		).populate('questionIds');
+
+		res.json(quizzes);
+	} catch (error) {
+		console.error('Error fetching user quizzes:', error);
+		res.status(500).json({ message: 'Error fetching user quizzes' });
 	}
 });
 

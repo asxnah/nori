@@ -27,13 +27,10 @@ const AppContent = () => {
 	const shouldHideHeader = excludedRoute === location.pathname;
 	const isAuthenticated = Cookies.get('isAuthenticated');
 
-	// List of public routes that don't require authentication
 	const publicRoutes = ['/', '/auth', '/about', '/preview'];
 
-	// Check if current route requires authentication
 	const requiresAuth = !publicRoutes.includes(location.pathname);
 
-	// Redirect to auth page if route requires authentication and user is not logged in
 	if (requiresAuth && !isAuthenticated) {
 		return <Navigate to="/auth" replace />;
 	}

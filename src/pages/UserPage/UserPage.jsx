@@ -26,7 +26,20 @@ export const UserPage = () => {
 	useEffect(() => {
 		const userData = Cookies.get('user');
 		if (userData) {
-			setUser({ name: userData, username: userData });
+			try {
+				// Try to parse as JSON first
+				const parsedData = JSON.parse(userData);
+				setUser({
+					name: parsedData.name || parsedData.username || userData,
+					username: parsedData.username || userData,
+				});
+			} catch {
+				// If not JSON, use as is
+				setUser({
+					name: userData,
+					username: userData,
+				});
+			}
 		}
 	}, []);
 
@@ -67,11 +80,15 @@ export const UserPage = () => {
 			);
 
 			setSuccess('Профиль успешно обновлен');
-			Cookies.set('user', response.data.user.username, { expires: 30 });
-			setUser({
-				name: response.data.user.username,
+
+			// Store user data properly
+			const userData = {
+				name: response.data.user.name || response.data.user.username,
 				username: response.data.user.username,
-			});
+			};
+			Cookies.set('user', JSON.stringify(userData), { expires: 30 });
+
+			setUser(userData);
 
 			setTimeout(() => {
 				setFormData({

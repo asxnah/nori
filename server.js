@@ -20,15 +20,12 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model('User', userSchema);
 
-// Validation functions
 const validateUsername = (username) => {
-	// Only lowercase, uppercase letters, numbers, and underscore
 	const usernameRegex = /^[a-zA-Z0-9_]+$/;
 	return usernameRegex.test(username);
 };
 
 const validatePassword = (password) => {
-	// At least one lowercase letter, one uppercase letter, one special character, and one number
 	const hasLowercase = /[a-z]/.test(password);
 	const hasUppercase = /[A-Z]/.test(password);
 	const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
@@ -36,18 +33,15 @@ const validatePassword = (password) => {
 	return hasLowercase && hasUppercase && hasSpecialChar && hasNumber;
 };
 
-// Login endpoint
 app.post('/api/login', async (req, res) => {
 	try {
 		const { username, password } = req.body;
 
-		// Find user
 		const user = await User.findOne({ username });
 		if (!user) {
 			return res.status(401).json({ message: 'Пользователь не существует' });
 		}
 
-		// Check password
 		if (user.password !== password) {
 			return res.status(401).json({ message: 'Неверный пароль' });
 		}
@@ -62,15 +56,12 @@ app.post('/api/login', async (req, res) => {
 	}
 });
 
-// Registration endpoint
 app.post('/api/register', async (req, res) => {
 	try {
 		const { username, password } = req.body;
 
-		// Check if user exists
 		const existingUser = await User.findOne({ username });
 		if (existingUser) {
-			// If user exists, just log them in
 			if (existingUser.password === password) {
 				return res.json({
 					message: 'Успешный вход',
@@ -80,7 +71,6 @@ app.post('/api/register', async (req, res) => {
 			return res.status(401).json({ message: 'Неверный пароль' });
 		}
 
-		// Validate username and password for new user
 		if (!validateUsername(username)) {
 			return res.status(400).json({
 				message:
@@ -95,7 +85,6 @@ app.post('/api/register', async (req, res) => {
 			});
 		}
 
-		// Create new user
 		const user = new User({
 			name: username,
 			username,

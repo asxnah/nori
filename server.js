@@ -102,6 +102,71 @@ app.post('/api/register', async (req, res) => {
 	}
 });
 
+app.post('/api/update-profile', async (req, res) => {
+	try {
+		const {
+			current_username,
+			new_username,
+			new_name,
+			new_password,
+			current_password,
+		} = req.body;
+
+		// Find user by current username
+		const user = await User.findOne({ username: current_username });
+		if (!user) {
+			return res.status(404).json({ message: 'Пользователь не найден' });
+		}
+
+		// Verify current password
+		if (user.password !== current_password) {
+			return res.status(401).json({ message: 'Неверный текущий пароль' });
+		}
+
+		// Validate new username if provided
+		if (new_username && new_username !== current_username) {
+			if (!validateUsername(new_username)) {
+				return res.status(400).json({
+					message:
+						'Логин может содержать только строчные и прописные латинские буквы, цифры и нижнее подчеркивание (_)',
+				});
+			}
+
+			const existingUser = await User.findOne({ username: new_username });
+			if (existingUser) {
+				return res.status(400).json({ message: 'Этот логин уже занят' });
+			}
+		}
+
+		// Validate new password if provided
+		if (new_password && !validatePassword(new_password)) {
+			return res.status(400).json({
+				message:
+					'Пароль должен содержать строчные и прописные латинские буквы, минимум один специальный символ и минимум одну цифру',
+			});
+		}
+
+		// Update user data
+		const updateData = {};
+		if (new_username) updateData.username = new_username;
+		if (new_name) updateData.name = new_name;
+		if (new_password) updateData.password = new_password;
+
+		await User.updateOne({ username: current_username }, updateData);
+
+		res.json({
+			message: 'Профиль успешно обновлен',
+			user: {
+				name: new_name || user.name,
+				username: new_username || user.username,
+			},
+		});
+	} catch (error) {
+		console.error('Update profile error:', error);
+		res.status(500).json({ message: 'Ошибка при обновлении профиля' });
+	}
+});
+
 app.get('/', (req, res) => {
 	return res.send('сервер запущен');
 });

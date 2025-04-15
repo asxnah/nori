@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import axios from 'axios';
 
 import './UserPage.css';
 
@@ -17,6 +18,7 @@ export const UserPage = () => {
 		new_password: '',
 		current_password: '',
 	});
+	const [error, setError] = useState('');
 
 	useEffect(() => {
 		const userData = Cookies.get('user');
@@ -56,6 +58,58 @@ export const UserPage = () => {
 
 	const handleHidePopup = () => {
 		setIsPopupVisible(false);
+		setError('');
+	};
+
+	const handleSubmit = async (evt) => {
+		evt.preventDefault();
+		setError('');
+
+		// Check if any changes were made
+		const hasChanges = Object.entries(formData).some(([key, value]) => {
+			if (key === 'current_password') return false;
+			return value.trim() !== '';
+		});
+
+		if (!hasChanges) {
+			handleHidePopup();
+			return;
+		}
+
+		// Validate current password is provided for any changes
+		if (!formData.current_password) {
+			setError('Для внесения изменений необходимо ввести текущий пароль');
+			return;
+		}
+
+		try {
+			await axios.post('http://localhost:3000/api/update-profile', {
+				...formData,
+				current_username: user.username,
+			});
+
+			// Update user data in cookies
+			const updatedUser = {
+				name: formData.new_name || user.name,
+				username: formData.new_username || user.username,
+			};
+			Cookies.set('user', JSON.stringify(updatedUser), { expires: 30 });
+
+			// Update local state
+			setUser(updatedUser);
+			setFormData({
+				new_name: '',
+				new_username: '',
+				new_password: '',
+				current_password: '',
+			});
+			handleHidePopup();
+		} catch (error) {
+			setError(
+				error.response?.data?.message ||
+					'Произошла ошибка при обновлении профиля'
+			);
+		}
 	};
 
 	const quizzes = [
@@ -146,7 +200,7 @@ export const UserPage = () => {
 			</main>
 
 			<section className={`popup-con ${isPopupVisible ? 'show' : ''}`}>
-				<form className="popup card card-outline">
+				<form className="popup card card-outline" onSubmit={handleSubmit}>
 					<div className="heading">
 						<h2>Редактирование профиля</h2>
 						<button type="button" onClick={handleHidePopup}>
@@ -158,6 +212,7 @@ export const UserPage = () => {
 						</button>
 					</div>
 					<div className="content">
+						{error && <div className="error-message">{error}</div>}
 						<input
 							type="text"
 							id="new_name"
@@ -194,7 +249,7 @@ export const UserPage = () => {
 							className="btn"
 							name="current_password"
 							autoComplete="current-password"
-							placeholder="Старый пароль"
+							placeholder="Текущий пароль"
 							value={formData.current_password}
 							onChange={handleChange}
 						/>

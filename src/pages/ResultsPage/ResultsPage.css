@@ -1,0 +1,155 @@
+@import url('../../index.css');
+
+#ResultsPage {
+	padding: 2rem 8rem;
+
+	button {
+		cursor: default;
+		width: fit-content;
+	}
+
+	.correct {
+		color: var(--white-full);
+		background-color: var(--green);
+	}
+
+	.incorrect {
+		color: var(--white-full);
+		background-color: var(--red);
+	}
+
+	#heading {
+		margin-bottom: 4rem;
+
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
+
+	#heading div {
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	#heading p {
+		color: var(--darkgrey);
+	}
+
+	#heading button {
+		cursor: pointer;
+
+		display: flex;
+		align-items: flex-start;
+		gap: 0.5rem;
+
+		appearance: none;
+		color: #8560d9;
+	}
+
+	#heading button span {
+		font-size: 0.75rem;
+		opacity: 0.5;
+		color: #8560d9;
+	}
+
+	h1 {
+		font-weight: 700;
+		color: var(--black-full);
+		font-size: 1.5rem;
+	}
+
+	form > button {
+		width: 100%;
+	}
+
+	.results {
+		display: grid;
+		gap: 2rem;
+	}
+
+	.question {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	.question-text {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.question-number {
+		font-weight: 700;
+		font-size: 1.25rem;
+		color: var(--darkgrey);
+	}
+
+	.multipleChoice {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 2rem;
+	}
+
+	.multipleChoice .btn {
+		width: 100%;
+
+		justify-content: flex-start;
+	}
+
+	.trueFalse {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 4rem;
+	}
+
+	.trueFalse label {
+		display: inline-block;
+
+		width: 4.75rem;
+		aspect-ratio: 1/1;
+	}
+
+	.trueFalse svg {
+		margin: 1rem;
+
+		width: 3.75rem;
+		aspect-ratio: 1/1;
+	}
+
+	.trueFalse .answer-con {
+		position: relative;
+	}
+
+	@media (hover: hover) {
+		.btn-secondary:hover {
+			cursor: default;
+			background-color: var(--lightgrey);
+		}
+	}
+
+	@media (hover: none) {
+		.btn-secondary:active {
+			cursor: default;
+			background-color: var(--lightgrey);
+		}
+	}
+
+	@media (width < 1100px) {
+		#heading {
+			align-items: flex-start;
+			flex-direction: column;
+		}
+	}
+
+	@media (width < 800px) {
+		padding: 2rem 1rem;
+
+		.multipleChoice {
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+	}
+}

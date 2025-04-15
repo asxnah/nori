@@ -19,6 +19,7 @@ import { PreviewPage } from './pages/PreviewPage/PreviewPage';
 import { QuizPage } from './pages/QuizPage/QuizPage';
 import { UserPage } from './pages/UserPage/UserPage';
 import { ResultsPage } from './pages/ResultsPage/ResultsPage';
+import { AboutPage } from './pages/AboutPage/AboutPage';
 
 const AppContent = () => {
 	const location = useLocation();
@@ -37,6 +38,7 @@ const AppContent = () => {
 				<Route path="/quiz" element={<QuizPage />} />
 				<Route path="/user" element={<UserPage />} />
 				<Route path="/results" element={<ResultsPage />} />
+				<Route path="/about" element={<AboutPage />} />
 			</Routes>
 			{!shouldHideHeader && <Footer />}
 		</>

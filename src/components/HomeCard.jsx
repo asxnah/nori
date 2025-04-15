@@ -2,7 +2,7 @@
 import 'react';
 import { Link } from 'react-router-dom';
 
-export const HomeCard = ({ title, questionsCount, tags, imageUrl }) => {
+export const HomeCard = ({ title, questionsCount, tags, imageUrl, id }) => {
 	const style = {
 		background: `linear-gradient(to left, var(--black-high), var(--black-high)), url(${imageUrl})`,
 		backgroundSize: 'cover',
@@ -22,7 +22,7 @@ export const HomeCard = ({ title, questionsCount, tags, imageUrl }) => {
 						<p key={index}>{tag}</p>
 					))}
 				</div>
-				<Link to="..." className="btn btn-pure">
+				<Link to={`/quiz?id=${id}`} className="btn btn-pure">
 					<span>Пройти</span>
 					<img src="./assets/icons/arrow-right.png" alt=">" />
 				</Link>

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -167,8 +168,71 @@ app.post('/api/update-profile', async (req, res) => {
 	}
 });
 
+const testSchema = new mongoose.Schema({
+	title: String,
+	description: String,
+	background: String,
+	tags: [String],
+	questionIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
+	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+	createdAt: { type: Date, default: Date.now },
+});
+
+export const Test = mongoose.model('Test', testSchema);
+
+const optionSchema = new mongoose.Schema({
+	optionId: String,
+	text: String,
+});
+
+const questionSchema = new mongoose.Schema({
+	text: String,
+	type: { type: String, enum: ['single', 'multiple', 'text'] },
+	options: [optionSchema],
+	correctAnswers: [String],
+});
+
+export const Question = mongoose.model('Question', questionSchema);
+
+const answerSchema = new mongoose.Schema({
+	questionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Question' },
+	selected: [String],
+});
+
+const userAnswerSchema = new mongoose.Schema({
+	userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+	testId: { type: mongoose.Schema.Types.ObjectId, ref: 'Test' },
+	answers: [answerSchema],
+	submittedAt: { type: Date, default: Date.now },
+	score: Number,
+});
+
+export const UserAnswer = mongoose.model('UserAnswer', userAnswerSchema);
+
 app.get('/', (req, res) => {
-	return res.send('сервер запущен');
+	res.send('Hello World!');
+});
+
+// Add endpoint to fetch all quizzes
+app.get('/api/quizzes', async (req, res) => {
+	try {
+		const quizzes = await Test.find(
+			{},
+			{
+				title: 1,
+				description: 1,
+				background: 1,
+				tags: 1,
+				questionIds: 1,
+				createdAt: 1,
+			}
+		).populate('questionIds');
+
+		res.json(quizzes);
+	} catch (error) {
+		console.error('Error fetching quizzes:', error);
+		res.status(500).json({ message: 'Error fetching quizzes' });
+	}
 });
 
 app.listen(port, () => {

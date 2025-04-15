@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
+import axios from 'axios';
 
 import './MainPage.css';
 
@@ -9,26 +10,9 @@ import { Banner } from '../../components/Banner/Banner';
 
 export const MainPage = () => {
 	const [isBannerVisible, setBannerVisible] = useState(true);
-	const quizzes = [
-		{
-			title: 'Насколько ты знаешь HTML',
-			questionsCount: 10,
-			tags: ['HTML', 'Web', 'Front-end'],
-			imageUrl: './assets/quizzes/html.png',
-		},
-		{
-			title: 'CSS: Тест на мастерство',
-			questionsCount: 10,
-			tags: ['CSS', 'Web', 'Front-end'],
-			imageUrl: './assets/quizzes/css.png',
-		},
-		{
-			title: 'React.js: Твой уровень',
-			questionsCount: 10,
-			tags: ['React.js', 'Web', 'Front-end'],
-			imageUrl: './assets/quizzes/react.png',
-		},
-	];
+	const [quizzes, setQuizzes] = useState([]);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 
 	useEffect(() => {
 		if (Cookies.get('banner_hidden') === 'true') {
@@ -36,6 +20,20 @@ export const MainPage = () => {
 		} else {
 			setBannerVisible(true);
 		}
+
+		const fetchQuizzes = async () => {
+			try {
+				const response = await axios.get('http://localhost:3000/api/quizzes');
+				setQuizzes(response.data);
+				setLoading(false);
+			} catch (error) {
+				console.error('Error fetching quizzes:', error);
+				setError('Ошибка при загрузке викторин');
+				setLoading(false);
+			}
+		};
+
+		fetchQuizzes();
 	}, []);
 
 	const removeBanner = () => {
@@ -54,17 +52,24 @@ export const MainPage = () => {
 					</button>
 				</div>
 
-				<div id="quizzes-list">
-					{quizzes.map((quiz, index) => (
-						<HomeCard
-							key={index}
-							title={quiz.title}
-							questionsCount={quiz.questionsCount}
-							tags={quiz.tags}
-							imageUrl={quiz.imageUrl}
-						/>
-					))}
-				</div>
+				{loading ? (
+					<p>Загрузка викторин...</p>
+				) : error ? (
+					<p>{error}</p>
+				) : (
+					<div id="quizzes-list">
+						{quizzes.map((quiz, index) => (
+							<HomeCard
+								key={index}
+								title={quiz.title}
+								questionsCount={quiz.questionIds.length}
+								tags={quiz.tags}
+								imageUrl={quiz.background}
+								id={quiz._id}
+							/>
+						))}
+					</div>
+				)}
 			</section>
 		</main>
 	);

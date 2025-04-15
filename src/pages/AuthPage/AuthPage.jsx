@@ -1,77 +1,12 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Cookies from 'js-cookie';
+import { Link } from 'react-router-dom';
+// import Cookies from 'js-cookie';
 
 import './AuthPage.css';
 
 export const AuthPage = () => {
 	const [formData, setFormData] = useState({ username: '', password: '' });
-	const [error, setError] = useState(null);
-	const navigate = useNavigate();
-
-	const handleLogin = async (evt) => {
-		evt.preventDefault();
-
-		if (!formData.username || !formData.password) {
-			return setError('⚠️ Заполните все поля');
-		}
-
-		try {
-			const response = await axios.post('http://localhost:3000/login', {
-				username: formData.username,
-				password: formData.password,
-			});
-
-			if (response.data.message) {
-				setError(null);
-				Cookies.set('user', formData.username, { expires: 30 });
-				navigate('/user');
-			} else {
-				setError('⚠️ Проверьте правильность логина и пароля');
-			}
-		} catch (err) {
-			console.error('Ошибка при входе:', err);
-		}
-	};
-
-	const handleRegister = async (evt) => {
-		evt.preventDefault();
-
-		if (!formData.username || !formData.password) {
-			return setError('⚠️ Заполните все поля');
-		}
-
-		const passwordRegex =
-			/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]+$/;
-		const usernameRegex = /^[A-Za-z0-9_]+$/;
-
-		if (!passwordRegex.test(formData.password)) {
-			return setError('⚠️ Пароль должен соответствовать требованиям');
-		}
-
-		if (!usernameRegex.test(formData.username)) {
-			return setError('⚠️ Логин должен соответствовать требованиям');
-		}
-
-		try {
-			const response = await axios.post('http://localhost:3000/register', {
-				username: formData.username,
-				password: formData.password,
-			});
-
-			if (response.data.message) {
-				setError(null);
-				Cookies.set('user', formData.username, { expires: 30 });
-				navigate('/user');
-			} else {
-				setError('⚠️ Пользователь с таким логином уже существует');
-			}
-		} catch (err) {
-			console.error('Ошибка регистрации:', err);
-		}
-	};
 
 	const handleChange = (evt) => {
 		const { name, value } = evt.target;
@@ -91,7 +26,6 @@ export const AuthPage = () => {
 				<form id="auth" className="card btn-pure">
 					<h1>Вход и регистрация</h1>
 					<div id="inputs">
-						{error ? <p className="err">{error}</p> : null}
 						<input
 							type="text"
 							id="username"
@@ -133,14 +67,10 @@ export const AuthPage = () => {
 					</div>
 
 					<div className="group">
-						<button id="login" className="btn btn-pure" onClick={handleLogin}>
+						<button id="login" className="btn btn-pure">
 							Войти
 						</button>
-						<button
-							id="register"
-							className="btn btn-dark"
-							onClick={handleRegister}
-						>
+						<button id="register" className="btn btn-dark">
 							Зарегистрироваться
 						</button>
 					</div>

@@ -62,7 +62,7 @@
 		resize: none;
 	}
 
-	div[role='button'] {
+	button {
 		width: fit-content;
 	}
 
@@ -136,13 +136,6 @@
 		border-radius: 2rem;
 	}
 
-	#upload-overlay img {
-		width: 8rem;
-
-		aspect-ratio: 1/1;
-		object-fit: contain;
-	}
-
 	#upload-overlay p {
 		font-size: 1.25rem;
 		color: var(--darkgrey);
@@ -205,6 +198,8 @@
 	}
 
 	#menu-pc {
+		padding-bottom: 1rem;
+
 		display: flex;
 		align-items: center;
 		gap: 1rem;
@@ -282,27 +277,27 @@
 		flex: 1;
 	}
 
-	.multiple-choice {
+	.multipleChoice {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: 2rem;
 	}
 
-	.multiple-choice .answer-con {
+	.multipleChoice .answer-con {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;
 	}
 
-	.multiple-choice input[type='checkbox'] {
+	.multipleChoice input[type='checkbox'] {
 		cursor: pointer;
 	}
 
-	.multiple-choice .btn {
+	.multipleChoice .btn {
 		flex: 1;
 	}
 
-	.multiple-choice .delete-answer {
+	.multipleChoice .delete-answer {
 		cursor: pointer;
 	}
 
@@ -310,32 +305,32 @@
 		width: 100%;
 	}
 
-	.true-false {
+	.trueFalse {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		gap: 4rem;
 	}
 
-	.true-false label {
+	.trueFalse label {
 		display: inline-block;
 
 		width: 4.75rem;
 		aspect-ratio: 1/1;
 	}
 
-	.true-false svg {
+	.trueFalse svg {
 		margin: 1rem;
 
 		width: 3.75rem;
 		aspect-ratio: 1/1;
 	}
 
-	.true-false .answer-con {
+	.trueFalse .answer-con {
 		position: relative;
 	}
 
-	.true-false input {
+	.trueFalse input {
 		width: 100%;
 		height: 100%;
 
@@ -487,7 +482,7 @@
 			top: 3rem;
 		}
 
-		.multiple-choice {
+		.multipleChoice {
 			grid-template-columns: 1fr;
 		}
 

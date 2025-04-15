@@ -1,119 +1,13 @@
 // eslint-disable-next-line no-unused-vars
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { CrossIcon } from '../../uikit/CrossIcon/CrossIcon';
 
 import './UserPage.css';
 
 import UserCreatedCard from '../../components/UserCreatedCard';
 
-// return setError(response.data.message); НЕ РАБОТАЕТ (E.G. НЕ ТОТ ПАРОЛЬ)
-
 export const UserPage = () => {
-	const [user, setUser] = useState('');
-	const getUserData = async () => {
-		const response = await axios.post('http://localhost:3000/user', {
-			username: Cookies.get('user'),
-		});
-		return setUser(response.data);
-	};
-	useEffect(() => {
-		getUserData();
-	}, []);
-
-	const [error, setError] = useState(null);
-	const [formData, setFormData] = useState({
-		new_name: '',
-		new_username: '',
-		new_password: '',
-		current_password: '',
-	});
-	const handleChange = (evt) => {
-		const { name, value } = evt.target;
-		setFormData({
-			...formData,
-			[name]: value,
-		});
-	};
-
-	const handleAccountEdit = async (evt) => {
-		evt.preventDefault();
-		if (!formData.current_password) {
-			return setError('⚠️ Введите пароль для редактирования аккаунта');
-		} else if (
-			!formData.new_name &&
-			!formData.new_username &&
-			!formData.new_password
-		) {
-			return setError('⚠️ Изменения не заданы');
-		} else {
-			if (formData.new_password) {
-				const passwordRegex =
-					/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]+$/;
-				if (!passwordRegex.test(formData.password)) {
-					return setError('⚠️ Пароль должен соответствовать требованиям');
-				}
-				const response = await axios.put('http://localhost:3000/account-edit', {
-					username: Cookies.get('user'),
-					current_password: formData.current_password,
-					new_password: formData.new_password,
-				});
-
-				if (response.data.message) {
-					setError(null);
-					document.querySelector('.popup-con').classList.remove('show');
-					document.querySelector('body').style.overflow = '';
-				} else {
-					return setError(response.data.message);
-				}
-			}
-			if (formData.new_name) {
-				const response = await axios.put('http://localhost:3000/account-edit', {
-					username: Cookies.get('user'),
-					current_password: formData.current_password,
-					new_name: formData.new_name,
-				});
-
-				if (response.data.message) {
-					setError(null);
-					getUserData();
-					document.querySelector('.popup-con').classList.remove('show');
-					document.querySelector('body').style.overflow = '';
-				} else {
-					return setError(response.data.message);
-				}
-			}
-			if (formData.new_username) {
-				const usernameRegex = /^[A-Za-z0-9_]+$/;
-				if (!usernameRegex.test(formData.new_username)) {
-					return setError('⚠️ Логин должен соответствовать требованиям');
-				}
-
-				const response = await axios.put('http://localhost:3000/account-edit', {
-					username: Cookies.get('user'),
-					current_password: formData.current_password,
-					new_username: formData.new_username,
-				});
-
-				if (response.data.message) {
-					setError(null);
-					getUserData();
-					document.querySelector('.popup-con').classList.remove('show');
-					document.querySelector('body').style.overflow = '';
-				} else {
-					return setError(response.data.message);
-				}
-			}
-		}
-	};
-
-	const navigate = useNavigate();
-	const handleLogout = () => {
-		Cookies.remove('user');
-		navigate('/auth');
-	};
-
 	const quizzes = [
 		{
 			title: 'Насколько ты знаешь HTML',
@@ -134,6 +28,10 @@ export const UserPage = () => {
 			imageUrl: './assets/quizzes/react.png',
 		},
 	];
+	const user = {
+		name: 'user',
+		username: 'username',
+	};
 
 	return (
 		<div id="UserPage">
@@ -166,9 +64,7 @@ export const UserPage = () => {
 						<button className="btn btn-secondary open-popup">
 							Редактировать аккаунт
 						</button>
-						<button onClick={handleLogout} className="faded-text">
-							Выйти из аккаунта
-						</button>
+						<button className="faded-text">Выйти из аккаунта</button>
 					</section>
 				</aside>
 
@@ -203,19 +99,14 @@ export const UserPage = () => {
 			</main>
 
 			<section className="popup-con">
-				<form onSubmit={handleAccountEdit} className="popup card card-outline">
+				<form className="popup card card-outline">
 					<div className="heading">
 						<h2>Редактирование профиля</h2>
 						<button type="button" className="close-popup">
-							<img
-								src="./assets/icons/cross.png"
-								alt="закрыть окно"
-								title="закрыть окно"
-							/>
+							<CrossIcon />
 						</button>
 					</div>
 					<div className="content">
-						{error ? <p className="err">{error}</p> : null}
 						<input
 							type="text"
 							id="new_name"
@@ -223,8 +114,6 @@ export const UserPage = () => {
 							name="new_name"
 							autoComplete="name"
 							placeholder="Имя"
-							value={formData.new_name}
-							onChange={handleChange}
 						/>
 						<input
 							type="text"
@@ -233,8 +122,6 @@ export const UserPage = () => {
 							name="new_username"
 							autoComplete="username"
 							placeholder="Логин"
-							value={formData.new_username}
-							onChange={handleChange}
 						/>
 						<input
 							type="password"
@@ -243,8 +130,6 @@ export const UserPage = () => {
 							name="new_password"
 							autoComplete="new-password"
 							placeholder="Новый пароль (необязательно)"
-							value={formData.new_password}
-							onChange={handleChange}
 						/>
 						<input
 							type="password"
@@ -253,8 +138,6 @@ export const UserPage = () => {
 							name="current_password"
 							autoComplete="current-password"
 							placeholder="Старый пароль"
-							value={formData.current_password}
-							onChange={handleChange}
 						/>
 					</div>
 					<div className="group">

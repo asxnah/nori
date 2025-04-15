@@ -33,11 +33,14 @@ export const MainPage = () => {
 	useEffect(() => {
 		if (Cookies.get('banner_hidden') === 'true') {
 			setBannerVisible(false);
+		} else {
+			setBannerVisible(true);
 		}
 	}, []);
 
 	const removeBanner = () => {
 		Cookies.set('banner_hidden', 'true', { expires: 30 });
+		setBannerVisible(false);
 	};
 
 	return (

@@ -1,0 +1,8 @@
+.crossIcon {
+	stroke: #dedede;
+}
+
+.crossIcon:hover path,
+.crossIcon:active path {
+	stroke: #a5a5a5;
+}

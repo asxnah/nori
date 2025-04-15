@@ -1,32 +1,23 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import './CreatePage.css';
+import { PlusIcon } from './icons/PlusIcon';
+import { TimerIcon } from './icons/TimerIcon';
+import { CrossIcon } from '../../uikit/CrossIcon/CrossIcon';
+import { TrueIcon } from './icons/TrueIcon';
+import { FalseIcon } from './icons/FalseIcon';
 
 export const CreatePage = () => {
-	// состояния переменных
 	const [backgroundImage, setBackgroundImage] = useState(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [timerValue, setTimerValue] = useState('Таймер');
 	const [inputHours, setInputHours] = useState('');
 	const [inputMinutes, setInputMinutes] = useState('');
-	const [questions, setQuestions] = useState([]);
-	const [questionCount, setQuestionCount] = useState(1);
 
-	// рефы для фона
 	const coverRef = useRef(null);
-	// рефы для мобильного меню
 	const menuQuestionsRef = useRef(null);
 	const dropdownButtonRef = useRef(null);
 
-	// типы вопросов для отображения
-	const questionTypes = [
-		{ id: 'multiple-choice', label: 'Выбор' },
-		{ id: 'true-false', label: 'Истинно / Ложно' },
-		{ id: 'open-text', label: 'Открытый вопрос' },
-		{ id: 'timer', label: timerValue || 'Таймер' },
-	];
-
-	// добавить фон
-	const handleFileChange = (evt) => {
+	const handleSetBackground = (evt) => {
 		let file = evt.target.files[0];
 		if (file) {
 			let reader = new FileReader();
@@ -37,7 +28,6 @@ export const CreatePage = () => {
 		}
 	};
 
-	// удалить фон
 	const handleRemoveBackground = () => {
 		setBackgroundImage(null);
 		if (coverRef.current) {
@@ -45,39 +35,18 @@ export const CreatePage = () => {
 		}
 	};
 
-	// --------------------- МОБИЛЬНЫЕ
-	// открыть меню вопросов
 	const toggleDropdown = () => {
 		setIsDropdownOpen(!isDropdownOpen);
 	};
-	// скрыть меню вопросов по нажатию в любом месте экрана
-	useEffect(() => {
-		const handleClickOutside = (evt) => {
-			if (
-				menuQuestionsRef.current &&
-				!menuQuestionsRef.current.contains(evt.target) &&
-				!dropdownButtonRef.current.contains(evt.target)
-			) {
-				setIsDropdownOpen(false);
-			}
-		};
 
-		window.addEventListener('click', handleClickOutside);
-		return () => {
-			window.removeEventListener('click', handleClickOutside);
-		};
-	}, []);
-
-	// --------------------- ТАЙМЕР
-	// записать часы
 	const handleHoursChange = (evt) => {
 		setInputHours(evt.target.value);
 	};
-	// записать минуты
+
 	const handleMinutesChange = (evt) => {
 		setInputMinutes(evt.target.value);
 	};
-	// сохранить и отобразить новое значение
+
 	const handleSaveTimer = () => {
 		const hours = parseInt(inputHours) || 0;
 		const minutes = parseInt(inputMinutes) || 0;
@@ -86,227 +55,12 @@ export const CreatePage = () => {
 			`${hours > 0 ? `${hours} ч` : ''} ${minutes > 0 ? `${minutes} мин` : ''}`
 		);
 	};
-	// удалить
+
 	const handleDeleteTimer = () => {
 		setTimerValue('Таймер');
 		setInputHours('');
 		setInputMinutes('');
 	};
-
-	// --------------------- ДОБАВЛЕНИЕ ОТВЕТОВ
-	const addQuestion = (questionHTML) => {
-		setQuestionCount((prevCount) => prevCount + 1);
-		setQuestions((prevQuestions) => [...prevQuestions, questionHTML]);
-	};
-	const addMultipleChoiceQuestion = () => {
-		addQuestion(`
-		<div class="question">
-			<div class="question-con">
-			  <div role="button" class="delete-question" tabindex="0">
-					<img
-						src="./assets/icons/cross.png"
-						alt="удалить вопрос"
-						title="удалить вопрос"
-						width="24"
-						height="24"
-					/>
-				</div>
-				<div class="question-number">${questionCount}</div>
-				<input type="text" id="question-${questionCount}" name="question-${questionCount}" class="question-text btn" placeholder="Вопрос">
-			</div>
-			<div class="answers multiple-choice">
-				<div class="answer-con">
-					<label for="correct-${questionCount}-1" class="custom-checkbox">
-						<input type="checkbox" id="correct-${questionCount}-1" name="checkbox-correct-${questionCount}-1" value="...">
-						<span class="checkmark"></span>
-					</label>
-					<input class="btn" placeholder="Ответ">
-				</div>
-				<div class="answer-con">
-					<label for="correct-${questionCount}-2" class="custom-checkbox">
-						<input type="checkbox" id="correct-${questionCount}-2" name="checkbox-correct-${questionCount}-2" value="...">
-						<span class="checkmark"></span>
-					</label>
-					<input class="btn" placeholder="Ответ">
-				</div>
-				<div class="answer-con">
-					<label for="correct-${questionCount}-3" class="custom-checkbox">
-						<input type="checkbox" id="correct-${questionCount}-3" name="checkbox-correct-${questionCount}-3" value="...">
-						<span class="checkmark"></span>
-					</label>
-					<input class="btn" placeholder="Ответ">
-					<div role="button" class="delete-answer" tabindex="0">
-						<svg width="16" height="16" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<g clip-path="url(#clip0_310_33)">
-								<rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="#dedede"></rect>
-								<rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="#dedede"></rect>
-							</g>
-							<defs>
-								<clipPath id="clip0_310_33">
-									<rect width="60" height="60.0001" fill="none" transform="translate(0.302307)"></rect>
-								</clipPath>
-							</defs>
-						</svg>
-					</div>
-				</div>
-			</div>
-			<div role="button" class="add-answer btn btn-secondary" tabindex="0">Добавить ответ</div>
-		</div>
-    `);
-	};
-	const addTrueFalseQuestion = () => {
-		addQuestion(`
-		<div class="question">
-			<div class="question-con">
-				<div role="button" class="delete-question" tabindex="0">
-					<img
-						src="./assets/icons/cross.png"
-						alt="удалить вопрос"
-						title="удалить вопрос"
-						width="24"
-						height="24"
-					/>
-				</div>
-				<div class="question-number">${questionCount}</div>
-				<input type="text" id="question-${questionCount}" name="question-${questionCount}" class="question-text btn" placeholder="Вопрос">
-			</div>
-			<div class="answers true-false">
-				<div class="answer-con">
-					<input type="radio" id="true-${questionCount}" name="true-false-${questionCount}" />
-					<label for="true-${questionCount}">
-						<svg width="60" height="60" viewBox="0 0 52 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<g clip-path="url(#clip0_310_29)">
-								<rect x="41.6785" width="12" height="62" rx="6" transform="rotate(26.5973 41.6785 0)" fill="#323232"></rect>
-								<rect x="0.697632" y="28.9199" width="12" height="37.2388" rx="6" transform="rotate(-29.5603 0.697632 28.9199)" fill="#323232"></rect>
-							</g>
-							<defs>
-								<clipPath id="clip0_310_29">
-									<rect width="60" height="60" fill="transparent" transform="translate(0.697632)"></rect>
-								</clipPath>
-							</defs>
-						</svg>
-					</label>
-				</div>
-				<div class="answer-con">
-					<input type="radio" id="false-${questionCount}" name="true-false-${questionCount}" />
-					<label for="false-${questionCount}">
-						<svg width="60" height="60" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<g clip-path="url(#clip0_310_33)">
-								<rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="#323232"></rect>
-								<rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="#323232"></rect>
-							</g>
-							<defs>
-								<clipPath id="clip0_310_33">
-									<rect width="60" height="60" fill="transparent" transform="translate(0.302307)"></rect>
-								</clipPath>
-							</defs>
-						</svg>
-					</label>
-				</div>
-			</div>
-		</div>
-    `);
-	};
-	const addOpenTextQuestion = () => {
-		addQuestion(`
-		<div class="question">
-			<div class="question-con">
-				<div role="button" class="delete-question" tabindex="0">
-					<img
-						src="./assets/icons/cross.png"
-						alt="удалить вопрос"
-						title="удалить вопрос"
-						width="24"
-						height="24"
-					/>
-				</div>
-				<div class="question-number">${questionCount}</div>
-				<input type="text" id="question-${questionCount}" name="question-${questionCount}" class="question-text btn" placeholder="Вопрос">
-			</div>
-			<div class="answers open-text">
-				<textarea id="open-text-${questionCount}" name="open-text-${questionCount}" placeholder="Ответ"></textarea>
-			</div>
-		</div>
-    `);
-	};
-
-	// добавить ответ (множественный выбор)
-	const handleAddAnswer = (event) => {
-		if (event.target.classList.contains('add-answer')) {
-			const question = event.target.closest('.question');
-			const answersContainer = question.querySelector('.multiple-choice');
-			if (answersContainer) {
-				const newAnswerId = `correct-${answersContainer.children.length + 1}`;
-				const newAnswerCon = `
-				<div class="answer-con">
-					<label for="${newAnswerId}" class="custom-checkbox">
-					<input type="checkbox" id="${newAnswerId}" name="checkbox-${newAnswerId}" value="...">
-					<span class="checkmark"></span>
-					</label>
-					<input class="btn" placeholder="Ответ">
-					<div role="button" class="delete-answer" tabindex="0">
-						<svg width="16" height="16" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<g clip-path="url(#clip0_310_33)">
-								<rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="#dedede"></rect>
-								<rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="#dedede"></rect>
-							</g>
-							<defs>
-								<clipPath id="clip0_310_33">
-									<rect width="60" height="60.0001" fill="none" transform="translate(0.302307)"></rect>
-								</clipPath>
-							</defs>
-						</svg>
-					</div>
-				</div>
-			`;
-				answersContainer.innerHTML += newAnswerCon;
-			}
-		}
-	};
-
-	// удалить вопрос
-	const handleDeleteQuestion = (event) => {
-		if (event.target.closest('.delete-question')) {
-			const question = event.target.closest('.question');
-			question.remove();
-
-			const questions = document.querySelectorAll('.question');
-			questions.forEach((q, index) => {
-				q.querySelector('.question-number').textContent = index + 1;
-				const input = q.querySelector('.question-text');
-				input.id = `question-${index + 1}`;
-				input.name = `question-${index + 1}`;
-
-				const answers = q.querySelectorAll(
-					'.answer-con input[type="checkbox"]'
-				);
-				answers.forEach((answer, answerIndex) => {
-					const newId = `correct-${index + 1}-${answerIndex + 1}`;
-					answer.id = newId;
-					answer.name = `checkbox-${newId}`;
-					answer.closest('label').setAttribute('for', newId);
-				});
-			});
-		}
-	};
-
-	// удалить ответ (множественный выбор)
-	useEffect(() => {
-		const handleDeleteAnswer = (event) => {
-			if (event.target.closest('.delete-answer')) {
-				const answerCon = event.target.closest('.answer-con');
-				if (answerCon) {
-					answerCon.remove();
-				}
-			}
-		};
-
-		document.addEventListener('click', handleDeleteAnswer);
-
-		return () => {
-			document.removeEventListener('click', handleDeleteAnswer);
-		};
-	}, []);
 
 	return (
 		<div>
@@ -318,7 +72,6 @@ export const CreatePage = () => {
 							<div
 								className="btn btn-secondary"
 								id="remove-bg-btn"
-								tabIndex="0"
 								onClick={handleRemoveBackground}
 							>
 								Удалить фон
@@ -336,7 +89,7 @@ export const CreatePage = () => {
 						>
 							<div id="upload-overlay">
 								<img
-									src="./assets/icons/upload.png"
+									src="./assets/icons/UploadIcon.png"
 									id="upload-icon"
 									alt="иконка загрузки"
 								/>
@@ -348,7 +101,7 @@ export const CreatePage = () => {
 								id="cover"
 								accept="image/*"
 								ref={coverRef}
-								onChange={handleFileChange}
+								onChange={handleSetBackground}
 							/>
 						</div>
 						<div className="group">
@@ -394,41 +147,22 @@ export const CreatePage = () => {
 						<div id="quizzes-heading">
 							<h2>Вопросы</h2>
 							<menu id="menu-pc">
-								{questionTypes.map(({ id, label }) => (
-									<div
-										role="button"
-										id={id}
-										key={id}
-										className={`btn btn-secondary ${
-											id === 'timer' ? 'open-popup' : ''
-										}`}
-										tabIndex="0"
-										onClick={
-											id === 'timer'
-												? () => setIsDropdownOpen(false)
-												: id === 'multiple-choice'
-												? addMultipleChoiceQuestion
-												: id === 'true-false'
-												? addTrueFalseQuestion
-												: addOpenTextQuestion
-										}
-									>
-										{id === 'timer' && timerValue !== 'Таймер' ? (
-											<>
-												<img
-													src="./assets/icons/pencil-black.png"
-													alt="редактировать таймер"
-												/>
-												<span>{label}</span>
-											</>
-										) : (
-											<>
-												<img src="./assets/icons/plus.png" alt="+" />
-												<span>{label}</span>
-											</>
-										)}
-									</div>
-								))}
+								<button id="multipleChoice" className="btn btn-secondary">
+									<PlusIcon />
+									<span>Выбор</span>
+								</button>
+								<button id="trueFalse" className="btn btn-secondary">
+									<PlusIcon />
+									<span>Истинно / Ложно</span>
+								</button>
+								<button id="openText" className="btn btn-secondary">
+									<PlusIcon />
+									<span>Открытый вопрос</span>
+								</button>
+								<button id="timer" className="btn btn-secondary">
+									<TimerIcon />
+									<span>{timerValue ? timerValue : 'Таймер'}</span>
+								</button>
 							</menu>
 
 							<menu id="menu-mobile">
@@ -436,7 +170,6 @@ export const CreatePage = () => {
 									role="button"
 									id="dropdown-button"
 									className="btn btn-secondary"
-									tabIndex="0"
 									ref={dropdownButtonRef}
 									onClick={toggleDropdown}
 								>
@@ -451,49 +184,128 @@ export const CreatePage = () => {
 									className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}
 									ref={menuQuestionsRef}
 								>
-									{questionTypes.map(({ id, label }) => (
-										<div
-											role="button"
-											id={id}
-											tabIndex="0"
-											key={id}
-											className={id === 'timer' ? 'open-popup' : ''}
-											onClick={
-												id === 'timer'
-													? () => setIsDropdownOpen(false)
-													: id === 'multiple-choice'
-													? addMultipleChoiceQuestion
-													: id === 'true-false'
-													? addTrueFalseQuestion
-													: addOpenTextQuestion
-											}
-										>
-											<span>{label}</span>
-											{id === 'timer' && timerValue !== 'Таймер' && (
-												<img
-													src="./assets/icons/pencil-black.png"
-													alt="редактировать таймер"
-												/>
-											)}
-										</div>
-									))}
+									<button id="multipleChoice">
+										<span>Выбор</span>
+									</button>
+									<button id="trueFalse">
+										<span>Истинно / Ложно</span>
+									</button>
+									<button id="openText">
+										<span>Открытый вопрос</span>
+									</button>
+									<button id="timer" className="timer">
+										<span>{timerValue ? timerValue : 'Таймер'}</span>
+									</button>
 								</div>
 							</menu>
 						</div>
 
-						<div
-							id="quiz-list"
-							onClick={(event) => {
-								handleAddAnswer(event);
-								handleDeleteQuestion(event);
-							}}
-						>
-							{questions.map((question, index) => (
-								<div
-									key={index}
-									dangerouslySetInnerHTML={{ __html: question }}
-								/>
-							))}
+						<div id="quiz-list">
+							<div className="question">
+								<div className="question-con">
+									<button className="delete-question">
+										<CrossIcon width={18} height={18} />
+									</button>
+									<div className="question-number">1</div>
+									<input
+										type="text"
+										name="question-1"
+										className="question-text btn"
+										placeholder="Вопрос"
+									/>
+								</div>
+								<div className="answers multipleChoice">
+									<div className="answer-con">
+										<label htmlFor="answer" className="custom-checkbox">
+											<input
+												type="checkbox"
+												id="answer"
+												name="checkbox-answer"
+											/>
+											<span className="checkmark"></span>
+										</label>
+										<input className="btn" placeholder="Ответ" />
+									</div>
+									<div className="answer-con">
+										<label htmlFor="answer" className="custom-checkbox">
+											<input
+												type="checkbox"
+												id="answer"
+												name="checkbox-answer"
+											/>
+											<span className="checkmark"></span>
+										</label>
+										<input className="btn" placeholder="Ответ" />
+									</div>
+									<div className="answer-con">
+										<label htmlFor="answer" className="custom-checkbox">
+											<input
+												type="checkbox"
+												id="answer"
+												name="checkbox-answer"
+											/>
+											<span className="checkmark"></span>
+										</label>
+										<input className="btn" placeholder="Ответ" />
+										<button className="delete-answer">
+											<CrossIcon width={16} height={16} />
+										</button>
+									</div>
+								</div>
+								<div role="button" className="add-answer btn btn-secondary">
+									Добавить ответ
+								</div>
+							</div>
+							<div className="question">
+								<div className="question-con">
+									<button className="delete-question">
+										<CrossIcon width={18} height={18} />
+									</button>
+									<div className="question-number">2</div>
+									<input
+										type="text"
+										name="question"
+										className="question-text btn"
+										placeholder="Вопрос"
+									/>
+								</div>
+								<div className="answers trueFalse">
+									<div className="answer-con">
+										<input type="radio" id="true" name="trueFalse" />
+										<label htmlFor="true">
+											<TrueIcon />
+										</label>
+									</div>
+									<div className="answer-con">
+										<input type="radio" id="false" name="trueFalse" />
+										<label htmlFor="false">
+											<FalseIcon />
+										</label>
+									</div>
+								</div>
+							</div>
+							<div className="question">
+								<div className="question-con">
+									<button className="delete-question">
+										<CrossIcon width={18} height={18} />
+									</button>
+									<div className="question-number">3</div>
+									<input
+										type="text"
+										id="question"
+										name="question"
+										className="question-text btn"
+										placeholder="Вопрос"
+									/>
+								</div>
+								<div className="answers openText">
+									<textarea
+										id="openText"
+										name="openText"
+										placeholder="Ответ"
+									></textarea>
+								</div>
+							</div>
 						</div>
 
 						<div className="group">
@@ -517,13 +329,13 @@ export const CreatePage = () => {
 				<div className="popup card card-outline">
 					<div className="heading">
 						<h2>Таймер</h2>
-						<div role="button" className="close-popup" tabIndex="0">
+						<button className="close-popup">
 							<img
 								src="./assets/icons/cross.png"
 								alt="закрыть окно"
 								title="закрыть окно"
 							/>
-						</div>
+						</button>
 					</div>
 					<div className="content">
 						<p className="faded-text">
@@ -557,16 +369,11 @@ export const CreatePage = () => {
 							role="button"
 							id="save-timer"
 							className="btn btn-primary close-popup"
-							tabIndex="0"
 							onClick={handleSaveTimer}
 						>
 							Сохранить
 						</div>
-						<div
-							role="button"
-							className="btn btn-secondary close-popup"
-							tabIndex="0"
-						>
+						<div role="button" className="btn btn-secondary close-popup">
 							Отмена
 						</div>
 					</div>

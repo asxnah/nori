@@ -1,9 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { CrossIcon } from '../../uikit/CrossIcon/CrossIcon';
 import Cookies from 'js-cookie';
-import axios from 'axios';
 
 import './UserPage.css';
 
@@ -12,15 +10,13 @@ import UserCreatedCard from '../../components/UserCreatedCard';
 export const UserPage = () => {
 	const navigate = useNavigate();
 	const [user, setUser] = useState({ name: '', username: '' });
+	const [isPopupVisible, setIsPopupVisible] = useState(false);
 	const [formData, setFormData] = useState({
 		new_name: '',
 		new_username: '',
 		new_password: '',
 		current_password: '',
 	});
-	const [error, setError] = useState('');
-	const [success, setSuccess] = useState('');
-	const [isPopupOpen, setIsPopupOpen] = useState(false);
 
 	useEffect(() => {
 		const userData = Cookies.get('user');
@@ -40,70 +36,26 @@ export const UserPage = () => {
 		}
 	}, []);
 
-	const handleFormChange = (evt) => {
-		const { name, value } = evt.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
-	};
-
-	const handleSubmit = async (evt) => {
-		evt.preventDefault();
-		setError('');
-		setSuccess('');
-
-		const hasChanges = Object.entries(formData).some(
-			([key, value]) => key !== 'current_password' && value.trim() !== ''
-		);
-
-		if (!hasChanges) {
-			setIsPopupOpen(false);
-			return;
-		}
-
-		if (!formData.current_password) {
-			setError('Текущий пароль обязателен для изменений');
-			return;
-		}
-
-		try {
-			const response = await axios.post(
-				'http://localhost:3000/api/update-profile',
-				{
-					...formData,
-					current_password: formData.current_password,
-				}
-			);
-
-			setSuccess('Профиль успешно обновлен');
-
-			const userData = {
-				name: response.data.user.name || response.data.user.username,
-				username: response.data.user.username,
-			};
-			Cookies.set('user', JSON.stringify(userData), { expires: 30 });
-
-			setUser(userData);
-
-			setTimeout(() => {
-				setFormData({
-					new_name: '',
-					new_username: '',
-					new_password: '',
-					current_password: '',
-				});
-				setIsPopupOpen(false);
-			}, 1000);
-		} catch (err) {
-			setError(err.response?.data?.message || 'Произошла ошибка');
-		}
-	};
-
 	const handleLogout = () => {
 		Cookies.remove('isAuthenticated');
 		Cookies.remove('user');
 		navigate('/auth');
+	};
+
+	const handleChange = (evt) => {
+		const { name, value } = evt.target;
+		setFormData({
+			...formData,
+			[name]: value,
+		});
+	};
+
+	const handleShowPopup = () => {
+		setIsPopupVisible(true);
+	};
+
+	const handleHidePopup = () => {
+		setIsPopupVisible(false);
 	};
 
 	const quizzes = [
@@ -155,10 +107,7 @@ export const UserPage = () => {
 							</div>
 						</div>
 						<hr />
-						<button
-							className="btn btn-secondary"
-							onClick={() => setIsPopupOpen(true)}
-						>
+						<button className="btn btn-secondary" onClick={handleShowPopup}>
 							Редактировать аккаунт
 						</button>
 						<button className="faded-text" onClick={handleLogout}>
@@ -196,21 +145,19 @@ export const UserPage = () => {
 				</div>
 			</main>
 
-			{isPopupOpen && (
-				<form onSubmit={handleSubmit}>
+			<section className={`popup-con ${isPopupVisible ? 'show' : ''}`}>
+				<form className="popup card card-outline">
 					<div className="heading">
 						<h2>Редактирование профиля</h2>
-						<button
-							type="button"
-							className="close-popup"
-							onClick={() => setIsPopupOpen(false)}
-						>
-							<CrossIcon />
+						<button type="button" onClick={handleHidePopup}>
+							<img
+								src="./assets/icons/cross.png"
+								alt="закрыть окно"
+								title="закрыть окно"
+							/>
 						</button>
 					</div>
 					<div className="content">
-						{error && <div className="error-message">{error}</div>}
-						{success && <div className="success-message">{success}</div>}
 						<input
 							type="text"
 							id="new_name"
@@ -219,7 +166,7 @@ export const UserPage = () => {
 							autoComplete="name"
 							placeholder="Имя"
 							value={formData.new_name}
-							onChange={handleFormChange}
+							onChange={handleChange}
 						/>
 						<input
 							type="text"
@@ -229,7 +176,7 @@ export const UserPage = () => {
 							autoComplete="username"
 							placeholder="Логин"
 							value={formData.new_username}
-							onChange={handleFormChange}
+							onChange={handleChange}
 						/>
 						<input
 							type="password"
@@ -239,7 +186,7 @@ export const UserPage = () => {
 							autoComplete="new-password"
 							placeholder="Новый пароль (необязательно)"
 							value={formData.new_password}
-							onChange={handleFormChange}
+							onChange={handleChange}
 						/>
 						<input
 							type="password"
@@ -249,7 +196,7 @@ export const UserPage = () => {
 							autoComplete="current-password"
 							placeholder="Старый пароль"
 							value={formData.current_password}
-							onChange={handleFormChange}
+							onChange={handleChange}
 						/>
 					</div>
 					<div className="group">
@@ -259,13 +206,13 @@ export const UserPage = () => {
 						<button
 							type="button"
 							className="btn btn-secondary"
-							onClick={() => setIsPopupOpen(false)}
+							onClick={handleHidePopup}
 						>
 							Отмена
 						</button>
 					</div>
 				</form>
-			)}
+			</section>
 		</div>
 	);
 };

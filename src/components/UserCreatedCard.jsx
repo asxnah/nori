@@ -16,25 +16,25 @@ export const UserCreatedCard = ({ title, questionsCount, tags, imageUrl }) => {
 				<div className="quiz-header">
 					<p>{questionsCount} вопросов</p>
 					<div className="group">
-						<a href="...">
+						<a href="/edit">
 							<img
-								src="./assets/icons/pencil.png"
+								src="/assets/icons/pencil.png"
 								alt="редактировать викторину"
 								aria-labelledby="редактировать викторину"
 								title="редактировать"
 							/>
 						</a>
-						<a href="...">
+						<a href="/preview">
 							<img
-								src="./assets/icons/open-link.png"
+								src="/assets/icons/open-link.png"
 								alt="открыть викторину"
 								aria-labelledby="открыть викторину"
 								title="открыть"
 							/>
 						</a>
-						<a href="...">
+						<a href="/share">
 							<img
-								src="./assets/icons/share.png"
+								src="/assets/icons/share.png"
 								alt="поделиться викториной"
 								aria-labelledby="поделиться викториной"
 								title="поделиться"
@@ -50,7 +50,7 @@ export const UserCreatedCard = ({ title, questionsCount, tags, imageUrl }) => {
 						))}
 					</div>
 					<div className="quiz-footer">
-						<Link to="..." className="btn btn-pure">
+						<Link to="/download" className="btn btn-pure">
 							<span>Скачать</span>
 							<span>DOCX</span>
 						</Link>

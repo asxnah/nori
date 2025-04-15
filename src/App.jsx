@@ -8,8 +8,6 @@ import {
 } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
-import { PopupProvider } from './contexts/PopupContext';
-
 import { Header } from './components/Header/Header';
 import { Footer } from './components/Footer/Footer';
 
@@ -62,9 +60,7 @@ const AppContent = () => {
 const App = () => {
 	return (
 		<Router>
-			<PopupProvider>
-				<AppContent />
-			</PopupProvider>
+			<AppContent />
 		</Router>
 	);
 };

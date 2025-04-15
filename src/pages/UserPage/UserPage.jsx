@@ -111,19 +111,19 @@ export const UserPage = () => {
 			title: 'Насколько ты знаешь HTML',
 			questionsCount: 10,
 			tags: ['HTML', 'Web', 'Front-end'],
-			imageUrl: './assets/quizzes/html.png',
+			imageUrl: '/assets/quizzes/html.png',
 		},
 		{
 			title: 'CSS: Тест на мастерство',
 			questionsCount: 10,
 			tags: ['CSS', 'Web', 'Front-end'],
-			imageUrl: './assets/quizzes/css.png',
+			imageUrl: '/assets/quizzes/css.png',
 		},
 		{
 			title: 'React.js: Твой уровень',
 			questionsCount: 10,
 			tags: ['React.js', 'Web', 'Front-end'],
-			imageUrl: './assets/quizzes/react.png',
+			imageUrl: '/assets/quizzes/react.png',
 		},
 	];
 
@@ -171,13 +171,13 @@ export const UserPage = () => {
 					<menu>
 						<ul id="tabs">
 							<li id="tab-created" className="tab active">
-								<Link to="...">Созданные</Link>
+								<Link to="/user/created">Созданные</Link>
 								<Link to="/create" className="btn btn-secondary">
 									Создать
 								</Link>
 							</li>
 							<li id="tab-completed" className="tab">
-								<Link to="...">Пройденные</Link>
+								<Link to="/user/completed">Пройденные</Link>
 							</li>
 						</ul>
 					</menu>
@@ -197,78 +197,74 @@ export const UserPage = () => {
 			</main>
 
 			{isPopupOpen && (
-				<div className="popup-overlay" onClick={() => setIsPopupOpen(false)}>
-					<div className="popup-content" onClick={(e) => e.stopPropagation()}>
-						<form onSubmit={handleSubmit}>
-							<div className="heading">
-								<h2>Редактирование профиля</h2>
-								<button
-									type="button"
-									className="close-popup"
-									onClick={() => setIsPopupOpen(false)}
-								>
-									<CrossIcon />
-								</button>
-							</div>
-							<div className="content">
-								{error && <div className="error-message">{error}</div>}
-								{success && <div className="success-message">{success}</div>}
-								<input
-									type="text"
-									id="new_name"
-									className="btn"
-									name="new_name"
-									autoComplete="name"
-									placeholder="Имя"
-									value={formData.new_name}
-									onChange={handleFormChange}
-								/>
-								<input
-									type="text"
-									id="new_username"
-									className="btn"
-									name="new_username"
-									autoComplete="username"
-									placeholder="Логин"
-									value={formData.new_username}
-									onChange={handleFormChange}
-								/>
-								<input
-									type="password"
-									id="new_password"
-									className="btn"
-									name="new_password"
-									autoComplete="new-password"
-									placeholder="Новый пароль (необязательно)"
-									value={formData.new_password}
-									onChange={handleFormChange}
-								/>
-								<input
-									type="password"
-									id="current_password"
-									className="btn"
-									name="current_password"
-									autoComplete="current-password"
-									placeholder="Старый пароль"
-									value={formData.current_password}
-									onChange={handleFormChange}
-								/>
-							</div>
-							<div className="group">
-								<button type="submit" className="btn btn-primary">
-									Сохранить
-								</button>
-								<button
-									type="button"
-									className="btn btn-secondary"
-									onClick={() => setIsPopupOpen(false)}
-								>
-									Отмена
-								</button>
-							</div>
-						</form>
+				<form onSubmit={handleSubmit}>
+					<div className="heading">
+						<h2>Редактирование профиля</h2>
+						<button
+							type="button"
+							className="close-popup"
+							onClick={() => setIsPopupOpen(false)}
+						>
+							<CrossIcon />
+						</button>
 					</div>
-				</div>
+					<div className="content">
+						{error && <div className="error-message">{error}</div>}
+						{success && <div className="success-message">{success}</div>}
+						<input
+							type="text"
+							id="new_name"
+							className="btn"
+							name="new_name"
+							autoComplete="name"
+							placeholder="Имя"
+							value={formData.new_name}
+							onChange={handleFormChange}
+						/>
+						<input
+							type="text"
+							id="new_username"
+							className="btn"
+							name="new_username"
+							autoComplete="username"
+							placeholder="Логин"
+							value={formData.new_username}
+							onChange={handleFormChange}
+						/>
+						<input
+							type="password"
+							id="new_password"
+							className="btn"
+							name="new_password"
+							autoComplete="new-password"
+							placeholder="Новый пароль (необязательно)"
+							value={formData.new_password}
+							onChange={handleFormChange}
+						/>
+						<input
+							type="password"
+							id="current_password"
+							className="btn"
+							name="current_password"
+							autoComplete="current-password"
+							placeholder="Старый пароль"
+							value={formData.current_password}
+							onChange={handleFormChange}
+						/>
+					</div>
+					<div className="group">
+						<button type="submit" className="btn btn-primary">
+							Сохранить
+						</button>
+						<button
+							type="button"
+							className="btn btn-secondary"
+							onClick={() => setIsPopupOpen(false)}
+						>
+							Отмена
+						</button>
+					</div>
+				</form>
 			)}
 		</div>
 	);

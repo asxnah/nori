@@ -73,12 +73,15 @@ export const QuizPage = () => {
 				})
 			);
 
-			await axios.post(`http://localhost:3000/api/quizzes/${testId}/answers`, {
-				userId,
-				answers: formattedAnswers,
-			});
+			const response = await axios.post(
+				`http://localhost:3000/api/quizzes/${testId}/answers`,
+				{
+					userId,
+					answers: formattedAnswers,
+				}
+			);
 
-			navigate(`/quiz/results/${testId}`);
+			navigate(`/quiz/results/${response.data.userAnswer._id}`);
 		} catch (err) {
 			console.error(err);
 			setError('Ошибка при сохранении ответов');

@@ -180,4 +180,10 @@
 		margin-bottom: 1rem;
 		color: var(--red);
 	}
+
+	@media (width < 400px) {
+		.quiz-footer .btn:has(svg) svg {
+			display: none;
+		}
+	}
 }

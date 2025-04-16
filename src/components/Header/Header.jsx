@@ -8,7 +8,7 @@ export const Header = () => {
 	return (
 		<header>
 			<Link to="/" aria-labelledby="ссылка на главную страницу">
-				<img src="./assets/logo/logo-black.svg" alt="логотип Nori" />
+				<img src="/assets/logo/logo-black.svg" alt="логотип Nori" />
 			</Link>
 			<nav>
 				{isAuthenticated && (

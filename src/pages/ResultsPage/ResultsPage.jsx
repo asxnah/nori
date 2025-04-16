@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import './ResultsPage.css';
 import { TrueIcon } from './icons/TrueIcon';
 import { FalseIcon } from './icons/FalseIcon';
 
 export const ResultsPage = () => {
-	const { testId } = useParams();
+	const { answerId } = useParams();
 	const [test, setTest] = useState(null);
 	const [userAnswers, setUserAnswers] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -16,20 +15,15 @@ export const ResultsPage = () => {
 	useEffect(() => {
 		const fetchResults = async () => {
 			try {
-				const testResponse = await axios.get(
-					`http://localhost:3000/api/quizzes/${testId}`
-				);
-				setTest(testResponse.data);
-
-				const userData = JSON.parse(Cookies.get('user'));
-				if (!userData || !userData.id) {
-					throw new Error('User data not found');
-				}
-
 				const answersResponse = await axios.get(
-					`http://localhost:3000/api/quizzes/${testId}/answers/${userData.id}`
+					`http://localhost:3000/api/quizzes/answers/${answerId}`
 				);
 				setUserAnswers(answersResponse.data);
+
+				const testResponse = await axios.get(
+					`http://localhost:3000/api/quizzes/${answersResponse.data.testId}`
+				);
+				setTest(testResponse.data);
 			} catch (err) {
 				console.error('Error fetching results:', err);
 				setError('Ошибка при загрузке результатов');
@@ -39,7 +33,7 @@ export const ResultsPage = () => {
 		};
 
 		fetchResults();
-	}, [testId]);
+	}, [answerId]);
 
 	if (loading) return <div>Загрузка результатов...</div>;
 	if (error) return <div>{error}</div>;
@@ -49,57 +43,72 @@ export const ResultsPage = () => {
 		let correct = 0;
 		let total = 0;
 
-		userAnswers.answers.forEach((answer, index) => {
-			const question = test.questionIds[index];
-			console.log('Processing question:', {
-				index,
-				type: question.type,
-				correctAnswer: question.correctAnswer,
-				userAnswer: answer.selected,
-				correctAnswerType: typeof question.correctAnswer,
-				userAnswerType: typeof answer.selected[0],
+		console.log('Calculating score for:', {
+			userAnswers: userAnswers.answers,
+			testQuestions: test.questionIds,
+			answerIds: userAnswers.answers.map((a) => a.questionId._id),
+			questionIds: test.questionIds.map((q) => q._id),
+		});
+
+		userAnswers.answers.forEach((answer) => {
+			const question = test.questionIds.find((q) => {
+				console.log('Comparing:', {
+					answerQuestionId: answer.questionId._id,
+					questionId: q._id,
+					types: {
+						answerType: typeof answer.questionId._id,
+						questionType: typeof q._id,
+					},
+				});
+				return q._id === answer.questionId._id;
+			});
+			console.log('Processing answer:', {
+				answer,
+				question,
+				questionFound: !!question,
 			});
 
-			// Считаем только trueFalse и multipleChoice
-			if (question.type === 'trueFalse' || question.type === 'multipleChoice') {
-				total++;
+			if (!question) return;
 
-				if (question.type === 'trueFalse') {
-					const userAnswerBool = answer.selected[0] === 'true';
-					const isCorrect = userAnswerBool === question.correctAnswer;
-					console.log('True/False comparison:', {
-						questionId: question._id,
-						correctAnswer: question.correctAnswer,
-						userAnswer: answer.selected[0],
-						userAnswerBool,
-						isEqual: isCorrect,
-					});
-					if (isCorrect) {
-						correct++;
-						console.log('Correct answer found! Current score:', {
-							correct,
-							total,
-						});
-					}
-				} else if (question.type === 'multipleChoice') {
-					// Сравниваем первый элемент массива с правильным ответом
-					const isCorrect = answer.selected[0] === question.correctAnswer;
-					console.log('Multiple choice comparison:', {
-						questionId: question._id,
-						correctAnswer: question.correctAnswer,
-						userAnswer: answer.selected[0],
-						isEqual: isCorrect,
-					});
-					if (isCorrect) {
-						correct++;
-						console.log('Correct answer found! Current score:', {
-							correct,
-							total,
-						});
-					}
+			total++; // Count all questions in total
+
+			if (question.type === 'trueFalse') {
+				const userAnswerBool = answer.selected[0] === 'true';
+				const isCorrect = userAnswerBool === question.correctAnswer;
+				console.log('True/False comparison:', {
+					userAnswer: answer.selected[0],
+					userAnswerBool,
+					correctAnswer: question.correctAnswer,
+					isCorrect,
+				});
+				if (isCorrect) {
+					correct++;
+				}
+			} else if (question.type === 'multipleChoice') {
+				const isCorrect = answer.selected[0] === question.correctAnswer;
+				console.log('Multiple choice comparison:', {
+					userAnswer: answer.selected[0],
+					correctAnswer: question.correctAnswer,
+					isCorrect,
+				});
+				if (isCorrect) {
+					correct++;
+				}
+			} else if (question.type === 'openText') {
+				const isCorrect =
+					answer.selected[0].toLowerCase().trim() ===
+					question.correctAnswer.toLowerCase().trim();
+				console.log('Open text comparison:', {
+					userAnswer: answer.selected[0],
+					correctAnswer: question.correctAnswer,
+					isCorrect,
+				});
+				if (isCorrect) {
+					correct++;
 				}
 			}
 		});
+
 		console.log('Final score:', { correct, total });
 		return { correct, total };
 	};
@@ -182,7 +191,7 @@ export const ResultsPage = () => {
 						<table>
 							<thead>
 								<tr>
-									<th>Ваш ответ</th>
+									<th>Ответ</th>
 									<th>Правильный ответ</th>
 								</tr>
 							</thead>

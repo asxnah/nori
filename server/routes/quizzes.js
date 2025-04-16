@@ -138,4 +138,42 @@ router.get('/:testId/answers/:userId', async (req, res) => {
 	}
 });
 
+router.get('/:testId/answers', async (req, res) => {
+	try {
+		const { testId } = req.params;
+
+		// Find all user answers for this test
+		const userAnswers = await UserAnswer.find({ testId })
+			.populate('userId', 'username name')
+			.populate('answers.questionId');
+
+		res.json(userAnswers);
+	} catch (error) {
+		console.error('Error fetching all user answers:', error);
+		res
+			.status(500)
+			.json({ message: 'Ошибка при получении ответов пользователей' });
+	}
+});
+
+router.get('/answers/:answerId', async (req, res) => {
+	try {
+		const { answerId } = req.params;
+
+		// Find the specific user answer
+		const userAnswer = await UserAnswer.findById(answerId)
+			.populate('answers.questionId')
+			.populate('userId', 'username name');
+
+		if (!userAnswer) {
+			return res.status(404).json({ message: 'Ответы не найдены' });
+		}
+
+		res.json(userAnswer);
+	} catch (error) {
+		console.error('Error fetching user answer:', error);
+		res.status(500).json({ message: 'Ошибка при получении ответов' });
+	}
+});
+
 export default router;

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ShareIcon } from '../pages/UserPage/icons/ShareIcon';
 import { OpenIcon } from '../pages/UserPage/icons/OpenIcon';
 import { EditIcon } from '../pages/UserPage/icons/EditIcon';
+import { ArrowRightIcon } from '../uikit/ArrowRightIcon/ArrowRightIcon';
 
 export const UserCreatedCard = ({
 	id,
@@ -52,6 +53,12 @@ export const UserCreatedCard = ({
 						<Link to={`/download/${id}`} className="btn btn-pure">
 							<span>Скачать</span>
 							<span>DOCX</span>
+						</Link>
+						<Link to={`/answers?id=${id}`} className="btn btn-pure">
+							<span>Ответы пользователей</span>
+							<span>
+								<ArrowRightIcon />
+							</span>
 						</Link>
 						<button>Удалить</button>
 					</div>

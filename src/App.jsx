@@ -46,7 +46,7 @@ const AppContent = () => {
 				<Route path="/preview" element={<PreviewPage />} />
 				<Route path="/quiz" element={<QuizPage />} />
 				<Route path="/user" element={<UserPage />} />
-				<Route path="/quiz/results/:testId" element={<ResultsPage />} />
+				<Route path="/quiz/results/:answerId" element={<ResultsPage />} />
 				<Route path="/about" element={<AboutPage />} />
 			</Routes>
 			{!shouldHideHeader && <Footer />}

@@ -16,6 +16,3 @@
    ```sh
    npm run dev
    ```
-
-Структура БД
-![image](https://github.com/user-attachments/assets/095e0760-11fa-47d9-9d72-804b281a5588)

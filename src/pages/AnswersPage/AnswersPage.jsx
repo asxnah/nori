@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import './AnswersPage.css';
 import { SearchIcon } from '../../uikit/SearchIcon/SearchIcon';
 
 export const AnswersPage = () => {
 	const [searchParams] = useSearchParams();
+	const navigate = useNavigate();
 	const quizId = searchParams.get('id');
 	const [quiz, setQuiz] = useState(null);
 	const [userAnswers, setUserAnswers] = useState([]);
@@ -17,10 +19,30 @@ export const AnswersPage = () => {
 	useEffect(() => {
 		const fetchQuizData = async () => {
 			try {
+				const userData = Cookies.get('user');
+				if (!userData) {
+					setError('Пользователь не авторизован');
+					setLoading(false);
+					return;
+				}
+
+				const { id: currentUserId } = JSON.parse(userData);
+				if (!currentUserId) {
+					setError('ID пользователя не найден');
+					setLoading(false);
+					return;
+				}
+
 				const quizResponse = await axios.get(
 					`http://localhost:3000/api/quizzes/${quizId}`
 				);
 				setQuiz(quizResponse.data);
+
+				if (quizResponse.data.createdBy._id !== currentUserId) {
+					navigate('/user');
+					setLoading(false);
+					return;
+				}
 
 				// Fetch all user answers for this quiz
 				const answersResponse = await axios.get(

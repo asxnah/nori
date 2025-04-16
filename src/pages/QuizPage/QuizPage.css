@@ -44,6 +44,15 @@
 		width: 100%;
 	}
 
+	form > button:disabled {
+		background-color: var(--grey);
+		cursor: not-allowed;
+	}
+
+	form > button:not(:disabled) {
+		cursor: pointer;
+	}
+
 	.questions {
 		display: grid;
 		gap: 2rem;

@@ -117,4 +117,25 @@ router.post('/:testId/answers', async (req, res) => {
 	}
 });
 
+router.get('/:testId/answers/:userId', async (req, res) => {
+	try {
+		const { testId, userId } = req.params;
+
+		// Find the user's answers for this test
+		const userAnswer = await UserAnswer.findOne({
+			testId,
+			userId,
+		}).populate('answers.questionId');
+
+		if (!userAnswer) {
+			return res.status(404).json({ message: 'Ответы не найдены' });
+		}
+
+		res.json(userAnswer);
+	} catch (error) {
+		console.error('Error fetching user answers:', error);
+		res.status(500).json({ message: 'Ошибка при получении ответов' });
+	}
+});
+
 export default router;

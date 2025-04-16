@@ -8,6 +8,21 @@
 		width: fit-content;
 	}
 
+	table {
+		width: 100%;
+	}
+
+	table th,
+	table td {
+		padding: 0.5rem 1rem;
+		text-align: left;
+	}
+
+	table td:first-child,
+	table th:first-child {
+		border-right: 0.1rem solid var(--grey);
+	}
+
 	.correct {
 		color: var(--white-full);
 		background-color: var(--green);
@@ -94,7 +109,6 @@
 
 	.multipleChoice .btn {
 		width: 100%;
-
 		justify-content: flex-start;
 	}
 
@@ -105,22 +119,18 @@
 		gap: 4rem;
 	}
 
-	.trueFalse label {
-		display: inline-block;
-
+	.trueFalse button {
 		width: 4.75rem;
 		aspect-ratio: 1/1;
+		padding: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.trueFalse svg {
-		margin: 1rem;
-
 		width: 3.75rem;
 		aspect-ratio: 1/1;
-	}
-
-	.trueFalse .answer-con {
-		position: relative;
 	}
 
 	@media (hover: hover) {

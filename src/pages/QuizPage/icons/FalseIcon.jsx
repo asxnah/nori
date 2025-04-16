@@ -1,4 +1,6 @@
-export const FalseIcon = () => (
+import PropTypes from 'prop-types';
+
+export const FalseIcon = ({ isSelected }) => (
 	<svg
 		width="60"
 		height="60"
@@ -14,7 +16,7 @@ export const FalseIcon = () => (
 				height="75.5977"
 				rx="6"
 				transform="rotate(-45 0.302307 8.48535)"
-				fill="#323232"
+				fill={isSelected ? 'var(--color-primary)' : '#323232'}
 			></rect>
 			<rect
 				x="53.7579"
@@ -22,7 +24,7 @@ export const FalseIcon = () => (
 				height="75.5977"
 				rx="6"
 				transform="rotate(45 53.7579 0)"
-				fill="#323232"
+				fill={isSelected ? 'var(--color-primary)' : '#323232'}
 			></rect>
 		</g>
 		<defs>
@@ -37,3 +39,7 @@ export const FalseIcon = () => (
 		</defs>
 	</svg>
 );
+
+FalseIcon.propTypes = {
+	isSelected: PropTypes.bool,
+};

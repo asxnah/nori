@@ -1,4 +1,6 @@
-export const TrueIcon = () => (
+import PropTypes from 'prop-types';
+
+export const TrueIcon = ({ isSelected }) => (
 	<svg
 		width="60"
 		height="60"
@@ -13,7 +15,7 @@ export const TrueIcon = () => (
 				height="62"
 				rx="6"
 				transform="rotate(26.5973 41.6785 0)"
-				fill="#323232"
+				fill={isSelected ? 'var(--color-primary)' : '#323232'}
 			></rect>
 			<rect
 				x="0.697632"
@@ -22,7 +24,7 @@ export const TrueIcon = () => (
 				height="37.2388"
 				rx="6"
 				transform="rotate(-29.5603 0.697632 28.9199)"
-				fill="#323232"
+				fill={isSelected ? 'var(--color-primary)' : '#323232'}
 			></rect>
 		</g>
 		<defs>
@@ -37,3 +39,7 @@ export const TrueIcon = () => (
 		</defs>
 	</svg>
 );
+
+TrueIcon.propTypes = {
+	isSelected: PropTypes.bool,
+};

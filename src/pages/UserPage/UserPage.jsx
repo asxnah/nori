@@ -196,6 +196,7 @@ export const UserPage = () => {
 							quizzes.map((quiz, index) => (
 								<UserCreatedCard
 									key={index}
+									id={quiz._id}
 									title={quiz.title}
 									questionsCount={quiz.questionIds.length}
 									tags={quiz.tags}

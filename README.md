@@ -1,20 +1,3 @@
-### Структура проекта
-
-```
-/nori
-  ├── /src
-  │   ├── /models
-  │   │   ├── model.js
-  │   ├── /pages
-  │   │   ├── page.jsx
-  │   ├── /components
-  │   │   ├── component.jsx
-  │   ├── server.js
-  │   ├── index.js
-  │   ├── App.js
-  │   ├── reportWebVitals.js
-```
-
 ### Порядок работы:
 
 1. **Запусти сервер MongoDB** (если у тебя локальный MongoDB):
@@ -23,17 +6,13 @@
    mongod
    ```
 
-2. **Запусти сервер Express**:
-   В папке с проектом:
+2. **Запусти сервер**:
 
    ```sh
-   node server.js
+   npm run server
    ```
 
 3. **Запусти React-приложение**:
-   В папке **/src**:
    ```sh
-   npm start
+   npm run dev
    ```
-
-Теперь ты можешь протестировать API с помощью **Postman** или просто взаимодействовать с фронтендом для добавления и получения викторин.

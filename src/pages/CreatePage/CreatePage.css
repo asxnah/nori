@@ -347,8 +347,8 @@
 		gap: 1rem;
 	}
 
-	#quiz > .group .btn-primary {
-		flex: 1;
+	#quiz > .group button {
+		width: 100%;
 	}
 
 	#quiz > .group .btn-secondary {

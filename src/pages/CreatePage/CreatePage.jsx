@@ -13,6 +13,8 @@ export const CreatePage = () => {
 	const [minutes, setMinutes] = useState('');
 	const [isTimerPopupOpen, setIsTimerPopupOpen] = useState(false);
 	const [questions, setQuestions] = useState([]);
+	const [quizTitle, setQuizTitle] = useState('');
+	const [tags, setTags] = useState(['', '', '']);
 
 	const coverRef = useRef(null);
 	const menuQuestionsRef = useRef(null);
@@ -82,7 +84,8 @@ export const CreatePage = () => {
 			type,
 			text: '',
 			answers: type === 'multipleChoice' ? ['', ''] : [],
-			correctAnswer: type === 'trueFalse' ? true : '',
+			correctAnswer:
+				type === 'trueFalse' ? true : type === 'multipleChoice' ? [] : '',
 		};
 		setQuestions([...questions, newQuestion]);
 		setIsDropdownOpen(false);
@@ -105,11 +108,27 @@ export const CreatePage = () => {
 		);
 	};
 
-	const handleCorrectAnswerChange = (questionId, answer) => {
+	const handleCorrectAnswerChange = (questionId, answerIndex) => {
 		setQuestions(
-			questions.map((q) =>
-				q.id === questionId ? { ...q, correctAnswer: answer } : q
-			)
+			questions.map((q) => {
+				if (q.id === questionId) {
+					if (q.type === 'multipleChoice') {
+						const newCorrectAnswers = [...(q.correctAnswer || [])];
+						const index = newCorrectAnswers.indexOf(answerIndex);
+						if (index === -1) {
+							newCorrectAnswers.push(answerIndex);
+						} else {
+							newCorrectAnswers.splice(index, 1);
+						}
+						return { ...q, correctAnswer: newCorrectAnswers };
+					} else if (q.type === 'trueFalse') {
+						return { ...q, correctAnswer: answerIndex };
+					} else {
+						return { ...q, correctAnswer: answerIndex };
+					}
+				}
+				return q;
+			})
 		);
 	};
 
@@ -136,6 +155,42 @@ export const CreatePage = () => {
 
 	const removeQuestion = (questionId) => {
 		setQuestions(questions.filter((q) => q.id !== questionId));
+	};
+
+	const handleQuizTitleChange = (evt) => {
+		setQuizTitle(evt.target.value);
+	};
+
+	const handleTagChange = (index, value) => {
+		const newTags = [...tags];
+		newTags[index] = value;
+		setTags(newTags);
+	};
+
+	const isQuizValid = () => {
+		if (!quizTitle.trim()) return false;
+
+		if (!tags.every((tag) => tag.trim())) return false;
+
+		if (questions.length === 0) return false;
+
+		return questions.every((question) => {
+			if (!question.text.trim()) return false;
+
+			switch (question.type) {
+				case 'openText':
+					return question.correctAnswer.trim() !== '';
+				case 'multipleChoice':
+					return (
+						question.answers.length >= 2 &&
+						question.answers.every((answer) => answer.trim())
+					);
+				case 'trueFalse':
+					return typeof question.correctAnswer === 'boolean';
+				default:
+					return false;
+			}
+		});
 	};
 
 	const renderQuestion = (question, index) => {
@@ -167,9 +222,8 @@ export const CreatePage = () => {
 								<div className="answer-con" key={i}>
 									<label className="custom-checkbox">
 										<input
-											type="radio"
-											name={`correct-${question.id}`}
-											checked={question.correctAnswer === i}
+											type="checkbox"
+											checked={question.correctAnswer?.includes(i) || false}
 											onChange={() => handleCorrectAnswerChange(question.id, i)}
 										/>
 										<span className="checkmark"></span>
@@ -231,7 +285,7 @@ export const CreatePage = () => {
 				{question.type === 'openText' && (
 					<div className="answers openText">
 						<textarea
-							placeholder="Ответ"
+							placeholder="Правильный ответ"
 							value={question.correctAnswer}
 							onChange={(e) =>
 								handleCorrectAnswerChange(question.id, e.target.value)
@@ -274,7 +328,9 @@ export const CreatePage = () => {
 									id="upload-icon"
 									alt="иконка загрузки"
 								/>
-								<p>Загрузить фон</p>
+								<p>
+									Загрузить фон <br /> (необязательно)
+								</p>
 							</div>
 							<input
 								type="file"
@@ -286,12 +342,25 @@ export const CreatePage = () => {
 							/>
 						</div>
 						<div className="group">
-							<input type="text" className="btn" placeholder="Название" />
-							<textarea placeholder="Описание"></textarea>
+							<input
+								type="text"
+								className="btn"
+								placeholder="Название *"
+								value={quizTitle}
+								onChange={handleQuizTitleChange}
+							/>
+							<textarea placeholder="Описание (необязательно)"></textarea>
 							<div id="tags">
-								<input type="text" className="tag btn" placeholder="Тег" />
-								<input type="text" className="tag btn" placeholder="Тег" />
-								<input type="text" className="tag btn" placeholder="Тег" />
+								{tags.map((tag, index) => (
+									<input
+										key={index}
+										type="text"
+										className="tag btn"
+										placeholder="Тег *"
+										value={tag}
+										onChange={(e) => handleTagChange(index, e.target.value)}
+									/>
+								))}
 							</div>
 						</div>
 					</section>
@@ -381,7 +450,11 @@ export const CreatePage = () => {
 						</div>
 
 						<div className="group">
-							<button type="submit" className="btn btn-primary">
+							<button
+								type="submit"
+								className="btn btn-primary"
+								disabled={!isQuizValid()}
+							>
 								Создать
 							</button>
 							<button type="button" className="btn btn-secondary">

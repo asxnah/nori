@@ -53,6 +53,11 @@
 #CreatePage {
 	padding: 2rem 8rem;
 
+	button:disabled {
+		background-color: var(--grey);
+		cursor: not-allowed;
+	}
+
 	textarea {
 		padding: 2rem;
 
@@ -504,5 +509,9 @@
 		.popup .group div.btn {
 			width: 100%;
 		}
+	}
+
+	.answers.trueFalse input[type='radio']:checked + label svg rect {
+		fill: var(--color-primary);
 	}
 }

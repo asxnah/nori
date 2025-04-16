@@ -12,6 +12,7 @@ export const CreatePage = () => {
 	const [hours, setHours] = useState('');
 	const [minutes, setMinutes] = useState('');
 	const [isTimerPopupOpen, setIsTimerPopupOpen] = useState(false);
+	const [questions, setQuestions] = useState([]);
 
 	const coverRef = useRef(null);
 	const menuQuestionsRef = useRef(null);
@@ -75,6 +76,173 @@ export const CreatePage = () => {
 		setIsTimerPopupOpen(false);
 	};
 
+	const addQuestion = (type) => {
+		const newQuestion = {
+			id: Date.now(),
+			type,
+			text: '',
+			answers: type === 'multipleChoice' ? ['', ''] : [],
+			correctAnswer: type === 'trueFalse' ? true : '',
+		};
+		setQuestions([...questions, newQuestion]);
+		setIsDropdownOpen(false);
+	};
+
+	const handleQuestionTextChange = (id, text) => {
+		setQuestions(questions.map((q) => (q.id === id ? { ...q, text } : q)));
+	};
+
+	const handleAnswerChange = (questionId, answerIndex, text) => {
+		setQuestions(
+			questions.map((q) => {
+				if (q.id === questionId) {
+					const newAnswers = [...q.answers];
+					newAnswers[answerIndex] = text;
+					return { ...q, answers: newAnswers };
+				}
+				return q;
+			})
+		);
+	};
+
+	const handleCorrectAnswerChange = (questionId, answer) => {
+		setQuestions(
+			questions.map((q) =>
+				q.id === questionId ? { ...q, correctAnswer: answer } : q
+			)
+		);
+	};
+
+	const addAnswer = (questionId) => {
+		setQuestions(
+			questions.map((q) =>
+				q.id === questionId ? { ...q, answers: [...q.answers, ''] } : q
+			)
+		);
+	};
+
+	const removeAnswer = (questionId, answerIndex) => {
+		setQuestions(
+			questions.map((q) => {
+				if (q.id === questionId) {
+					const newAnswers = [...q.answers];
+					newAnswers.splice(answerIndex, 1);
+					return { ...q, answers: newAnswers };
+				}
+				return q;
+			})
+		);
+	};
+
+	const removeQuestion = (questionId) => {
+		setQuestions(questions.filter((q) => q.id !== questionId));
+	};
+
+	const renderQuestion = (question, index) => {
+		return (
+			<div className="question" key={question.id}>
+				<div className="question-con">
+					<button
+						type="button"
+						className="delete-question"
+						onClick={() => removeQuestion(question.id)}
+					>
+						<CrossIcon width={18} height={18} />
+					</button>
+					<div className="question-number">{index + 1}</div>
+					<input
+						type="text"
+						className="question-text btn"
+						placeholder="Вопрос"
+						value={question.text}
+						onChange={(e) =>
+							handleQuestionTextChange(question.id, e.target.value)
+						}
+					/>
+				</div>
+				{question.type === 'multipleChoice' && (
+					<div className="multipleChoice">
+						<div className="answers">
+							{question.answers.map((answer, i) => (
+								<div className="answer-con" key={i}>
+									<label className="custom-checkbox">
+										<input
+											type="radio"
+											name={`correct-${question.id}`}
+											checked={question.correctAnswer === i}
+											onChange={() => handleCorrectAnswerChange(question.id, i)}
+										/>
+										<span className="checkmark"></span>
+									</label>
+									<input
+										className="btn"
+										placeholder="Ответ"
+										value={answer}
+										onChange={(e) =>
+											handleAnswerChange(question.id, i, e.target.value)
+										}
+									/>
+									{i > 1 && (
+										<button
+											type="button"
+											className="delete-answer"
+											onClick={() => removeAnswer(question.id, i)}
+										>
+											<CrossIcon width={16} height={16} />
+										</button>
+									)}
+								</div>
+							))}
+						</div>
+						<div
+							className="add-answer btn btn-secondary"
+							onClick={() => addAnswer(question.id)}
+						>
+							Добавить ответ
+						</div>
+					</div>
+				)}
+				{question.type === 'trueFalse' && (
+					<div className="answers trueFalse">
+						<div className="answer-con">
+							<input
+								type="radio"
+								name={`trueFalse-${question.id}`}
+								checked={question.correctAnswer === true}
+								onChange={() => handleCorrectAnswerChange(question.id, true)}
+							/>
+							<label>
+								<TrueIcon />
+							</label>
+						</div>
+						<div className="answer-con">
+							<input
+								type="radio"
+								name={`trueFalse-${question.id}`}
+								checked={question.correctAnswer === false}
+								onChange={() => handleCorrectAnswerChange(question.id, false)}
+							/>
+							<label>
+								<FalseIcon />
+							</label>
+						</div>
+					</div>
+				)}
+				{question.type === 'openText' && (
+					<div className="answers openText">
+						<textarea
+							placeholder="Ответ"
+							value={question.correctAnswer}
+							onChange={(e) =>
+								handleCorrectAnswerChange(question.id, e.target.value)
+							}
+						></textarea>
+					</div>
+				)}
+			</div>
+		);
+	};
+
 	return (
 		<div>
 			<main id="CreatePage">
@@ -118,40 +286,12 @@ export const CreatePage = () => {
 							/>
 						</div>
 						<div className="group">
-							<input
-								type="text"
-								id="title"
-								name="title"
-								className="btn"
-								placeholder="Название"
-							/>
-							<textarea
-								name="description"
-								id="description"
-								placeholder="Описание"
-							></textarea>
+							<input type="text" className="btn" placeholder="Название" />
+							<textarea placeholder="Описание"></textarea>
 							<div id="tags">
-								<input
-									type="text"
-									id="tag-1"
-									className="tag btn"
-									name="tag-1"
-									placeholder="Тег"
-								/>
-								<input
-									type="text"
-									id="tag-2"
-									className="tag btn"
-									name="tag-2"
-									placeholder="Тег"
-								/>
-								<input
-									type="text"
-									id="tag-3"
-									className="tag btn"
-									name="tag-3"
-									placeholder="Тег"
-								/>
+								<input type="text" className="tag btn" placeholder="Тег" />
+								<input type="text" className="tag btn" placeholder="Тег" />
+								<input type="text" className="tag btn" placeholder="Тег" />
 							</div>
 						</div>
 					</section>
@@ -160,15 +300,27 @@ export const CreatePage = () => {
 						<div id="quizzes-heading">
 							<h2>Вопросы</h2>
 							<menu id="menu-pc">
-								<button type="button" className="btn btn-secondary">
+								<button
+									type="button"
+									className="btn btn-secondary"
+									onClick={() => addQuestion('multipleChoice')}
+								>
 									<PlusIcon />
 									<span>Выбор</span>
 								</button>
-								<button type="button" className="btn btn-secondary">
+								<button
+									type="button"
+									className="btn btn-secondary"
+									onClick={() => addQuestion('trueFalse')}
+								>
 									<PlusIcon />
 									<span>Истинно / Ложно</span>
 								</button>
-								<button type="button" className="btn btn-secondary">
+								<button
+									type="button"
+									className="btn btn-secondary"
+									onClick={() => addQuestion('openText')}
+								>
 									<PlusIcon />
 									<span>Открытый вопрос</span>
 								</button>
@@ -196,15 +348,21 @@ export const CreatePage = () => {
 									className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}
 									ref={menuQuestionsRef}
 								>
-									<button type="button">
+									<button
+										type="button"
+										onClick={() => addQuestion('multipleChoice')}
+									>
 										<PlusIcon />
 										<span>Выбор</span>
 									</button>
-									<button type="button">
+									<button
+										type="button"
+										onClick={() => addQuestion('trueFalse')}
+									>
 										<PlusIcon />
 										<span>Истинно / Ложно</span>
 									</button>
-									<button type="button">
+									<button type="button" onClick={() => addQuestion('openText')}>
 										<PlusIcon />
 										<span>Открытый вопрос</span>
 									</button>
@@ -217,91 +375,9 @@ export const CreatePage = () => {
 						</div>
 
 						<div id="quiz-list">
-							<div className="question">
-								<div className="question-con">
-									<button className="delete-question">
-										<CrossIcon width={18} height={18} />
-									</button>
-									<div className="question-number">1</div>
-									<input
-										type="text"
-										className="question-text btn"
-										placeholder="Вопрос"
-									/>
-								</div>
-								<div className="answers multipleChoice">
-									<div className="answer-con">
-										<label className="custom-checkbox">
-											<input type="checkbox" />
-											<span className="checkmark"></span>
-										</label>
-										<input className="btn" placeholder="Ответ" />
-									</div>
-									<div className="answer-con">
-										<label className="custom-checkbox">
-											<input type="checkbox" />
-											<span className="checkmark"></span>
-										</label>
-										<input className="btn" placeholder="Ответ" />
-									</div>
-									<div className="answer-con">
-										<label className="custom-checkbox">
-											<input type="checkbox" />
-											<span className="checkmark"></span>
-										</label>
-										<input className="btn" placeholder="Ответ" />
-										<button className="delete-answer">
-											<CrossIcon width={16} height={16} />
-										</button>
-									</div>
-								</div>
-								<div className="add-answer btn btn-secondary">
-									Добавить ответ
-								</div>
-							</div>
-							<div className="question">
-								<div className="question-con">
-									<button className="delete-question">
-										<CrossIcon width={18} height={18} />
-									</button>
-									<div className="question-number">2</div>
-									<input
-										type="text"
-										className="question-text btn"
-										placeholder="Вопрос"
-									/>
-								</div>
-								<div className="answers trueFalse">
-									<div className="answer-con">
-										<input type="radio" />
-										<label>
-											<TrueIcon />
-										</label>
-									</div>
-									<div className="answer-con">
-										<input type="radio" />
-										<label>
-											<FalseIcon />
-										</label>
-									</div>
-								</div>
-							</div>
-							<div className="question">
-								<div className="question-con">
-									<button className="delete-question">
-										<CrossIcon width={18} height={18} />
-									</button>
-									<div className="question-number">3</div>
-									<input
-										type="text"
-										className="question-text btn"
-										placeholder="Вопрос"
-									/>
-								</div>
-								<div className="answers openText">
-									<textarea placeholder="Ответ"></textarea>
-								</div>
-							</div>
+							{questions.map((question, index) =>
+								renderQuestion(question, index)
+							)}
 						</div>
 
 						<div className="group">

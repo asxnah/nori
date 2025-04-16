@@ -284,10 +284,10 @@
 		flex: 1;
 	}
 
-	.multipleChoice {
+	.multipleChoice,
+	.multipleChoice .answers {
 		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		gap: 2rem;
+		gap: 1rem;
 	}
 
 	.multipleChoice .answer-con {
@@ -302,14 +302,6 @@
 
 	.multipleChoice .btn {
 		flex: 1;
-	}
-
-	.multipleChoice .delete-answer {
-		cursor: pointer;
-	}
-
-	div.add-answer {
-		width: 100%;
 	}
 
 	.trueFalse {
@@ -487,10 +479,6 @@
 
 		.dropdown-content {
 			top: 3rem;
-		}
-
-		.multipleChoice {
-			grid-template-columns: 1fr;
 		}
 
 		#quiz > .group {

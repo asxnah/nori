@@ -43,29 +43,9 @@ export const ResultsPage = () => {
 		let correct = 0;
 		let total = 0;
 
-		console.log('Calculating score for:', {
-			userAnswers: userAnswers.answers,
-			testQuestions: test.questionIds,
-			answerIds: userAnswers.answers.map((a) => a.questionId._id),
-			questionIds: test.questionIds.map((q) => q._id),
-		});
-
 		userAnswers.answers.forEach((answer) => {
 			const question = test.questionIds.find((q) => {
-				console.log('Comparing:', {
-					answerQuestionId: answer.questionId._id,
-					questionId: q._id,
-					types: {
-						answerType: typeof answer.questionId._id,
-						questionType: typeof q._id,
-					},
-				});
 				return q._id === answer.questionId._id;
-			});
-			console.log('Processing answer:', {
-				answer,
-				question,
-				questionFound: !!question,
 			});
 
 			if (!question) return;
@@ -75,22 +55,13 @@ export const ResultsPage = () => {
 			if (question.type === 'trueFalse') {
 				const userAnswerBool = answer.selected[0] === 'true';
 				const isCorrect = userAnswerBool === question.correctAnswer;
-				console.log('True/False comparison:', {
-					userAnswer: answer.selected[0],
-					userAnswerBool,
-					correctAnswer: question.correctAnswer,
-					isCorrect,
-				});
+
 				if (isCorrect) {
 					correct++;
 				}
 			} else if (question.type === 'multipleChoice') {
 				const isCorrect = answer.selected[0] === question.correctAnswer;
-				console.log('Multiple choice comparison:', {
-					userAnswer: answer.selected[0],
-					correctAnswer: question.correctAnswer,
-					isCorrect,
-				});
+
 				if (isCorrect) {
 					correct++;
 				}
@@ -98,18 +69,13 @@ export const ResultsPage = () => {
 				const isCorrect =
 					answer.selected[0].toLowerCase().trim() ===
 					question.correctAnswer.toLowerCase().trim();
-				console.log('Open text comparison:', {
-					userAnswer: answer.selected[0],
-					correctAnswer: question.correctAnswer,
-					isCorrect,
-				});
+
 				if (isCorrect) {
 					correct++;
 				}
 			}
 		});
 
-		console.log('Final score:', { correct, total });
 		return { correct, total };
 	};
 

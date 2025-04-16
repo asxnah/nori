@@ -78,9 +78,12 @@ export const AnswersPage = () => {
 		return { correct, total };
 	};
 
-	const filteredAnswers = userAnswers.filter((answer) =>
-		answer.userId.username.toLowerCase().includes(searchQuery.toLowerCase())
-	);
+	const filteredAnswers = userAnswers.filter((answer) => {
+		const searchLower = searchQuery.toLowerCase();
+		const username = answer.userId.username.toLowerCase();
+		const name = answer.userId.name.toLowerCase();
+		return username.includes(searchLower) || name.includes(searchLower);
+	});
 
 	if (loading) {
 		return <div>Загрузка ответов...</div>;

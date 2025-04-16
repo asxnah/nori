@@ -24,7 +24,7 @@ export const UserCreatedCard = ({
 		<>
 			<article className="card quiz" style={style}>
 				<div className="quiz-header">
-					<p>{questionsCount} вопросов</p>
+					<p>Количество вопросов: {questionsCount}</p>
 					<div className="group">
 						<button>
 							<EditIcon />

@@ -9,7 +9,6 @@ const userAnswerSchema = new mongoose.Schema({
 	userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 	testId: { type: mongoose.Schema.Types.ObjectId, ref: 'Test' },
 	answers: [answerSchema],
-	score: Number,
 });
 
 const UserAnswer = mongoose.model('UserAnswer', userAnswerSchema);

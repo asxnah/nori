@@ -14,7 +14,7 @@ export const HomeCard = ({ title, questionsCount, tags, imageUrl, id }) => {
 	return (
 		<article className="card quiz" style={style}>
 			<div className="quiz-header">
-				<p>{questionsCount} вопросов</p>
+				<p>Количество вопросов: {questionsCount}</p>
 			</div>
 			<div className="content">
 				<h1>{title}</h1>

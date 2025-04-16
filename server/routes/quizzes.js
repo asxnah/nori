@@ -106,7 +106,6 @@ router.post('/:testId/answers', async (req, res) => {
 					? answer.selected
 					: [answer.selected],
 			})),
-			score: 0, // We'll calculate the score later
 		});
 
 		await userAnswer.save();

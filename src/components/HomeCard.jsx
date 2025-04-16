@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRightIcon } from '../uikit/ArrowRightIcon/ArrowRightIcon';
 
 export const HomeCard = ({ title, questionsCount, tags, imageUrl, id }) => {
 	const style = {
@@ -24,7 +25,7 @@ export const HomeCard = ({ title, questionsCount, tags, imageUrl, id }) => {
 				</div>
 				<Link to={`/quiz?id=${id}`} className="btn btn-pure">
 					<span>Пройти</span>
-					<img src="./assets/icons/arrow-right.png" alt=">" />
+					<ArrowRightIcon />
 				</Link>
 			</div>
 		</article>

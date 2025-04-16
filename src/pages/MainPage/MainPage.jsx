@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-
+import { SearchIcon } from '../../uikit/SearchIcon/SearchIcon';
 import './MainPage.css';
 
 import { HomeCard } from '../../components/HomeCard';
@@ -48,7 +48,7 @@ export const MainPage = () => {
 				<div id="search" className="btn">
 					<input type="text" id="searchbar" placeholder="JavaScript" />
 					<button id="go">
-						<img src="./assets/icons/search.png" alt="поиск" />
+						<SearchIcon />
 					</button>
 				</div>
 

@@ -1,6 +1,9 @@
 /* eslint-disable react/prop-types */
 import 'react';
 import { Link } from 'react-router-dom';
+import { ShareIcon } from '../pages/UserPage/icons/ShareIcon';
+import { OpenIcon } from '../pages/UserPage/icons/OpenIcon';
+import { EditIcon } from '../pages/UserPage/icons/EditIcon';
 
 export const UserCreatedCard = ({
 	id,
@@ -23,28 +26,18 @@ export const UserCreatedCard = ({
 					<p>{questionsCount} вопросов</p>
 					<div className="group">
 						<button>
-							<img
-								src="/assets/icons/pencil.png"
-								alt="редактировать викторину"
-								aria-labelledby="редактировать викторину"
-								title="редактировать"
-							/>
+							<EditIcon />
 						</button>
 						<Link to={`/quiz?id=${id}`}>
-							<img
-								src="/assets/icons/open-link.png"
-								alt="открыть викторину"
-								aria-labelledby="открыть викторину"
-								title="открыть"
-							/>
+							<OpenIcon />
 						</Link>
-						<button>
-							<img
-								src="/assets/icons/share.png"
-								alt="поделиться викториной"
-								aria-labelledby="поделиться викториной"
-								title="поделиться"
-							/>
+						<button
+							onClick={() => {
+								const url = `${window.location.origin}/quiz?id=${id}`;
+								navigator.clipboard.writeText(url);
+							}}
+						>
+							<ShareIcon />
 						</button>
 					</div>
 				</div>

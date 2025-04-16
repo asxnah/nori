@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import './AnswersPage.css';
-
+import { SearchIcon } from '../../uikit/SearchIcon/SearchIcon';
 export const AnswersPage = () => {
 	return (
 		<main id="AnswersPage">
@@ -17,7 +17,7 @@ export const AnswersPage = () => {
 						placeholder="Введите имя пользователя"
 					/>
 					<button id="go">
-						<img src="./assets/icons/search.png" alt="поиск" />
+						<SearchIcon />
 					</button>
 				</div>
 

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import './CreatePage.css';
 import { PlusIcon } from './icons/PlusIcon';
 import { TimerIcon } from './icons/TimerIcon';
@@ -9,13 +9,33 @@ import { FalseIcon } from './icons/FalseIcon';
 export const CreatePage = () => {
 	const [backgroundImage, setBackgroundImage] = useState(null);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-	const [timerValue, setTimerValue] = useState('Таймер');
-	const [inputHours, setInputHours] = useState('');
-	const [inputMinutes, setInputMinutes] = useState('');
+	const [hours, setHours] = useState('');
+	const [minutes, setMinutes] = useState('');
+	const [isTimerPopupOpen, setIsTimerPopupOpen] = useState(false);
 
 	const coverRef = useRef(null);
 	const menuQuestionsRef = useRef(null);
 	const dropdownButtonRef = useRef(null);
+
+	const [timerValue, setTimerValue] = useState('Таймер');
+
+	useEffect(() => {
+		if (hours && minutes) {
+			setTimerValue(`${hours} ч ${minutes} мин`);
+		}
+
+		if (hours && !minutes) {
+			setTimerValue(`${hours} ч`);
+		}
+
+		if (!hours && minutes) {
+			setTimerValue(`${minutes} мин`);
+		}
+
+		if (!hours && !minutes) {
+			setTimerValue('Таймер');
+		}
+	}, [hours, minutes]);
 
 	const handleSetBackground = (evt) => {
 		let file = evt.target.files[0];
@@ -40,26 +60,19 @@ export const CreatePage = () => {
 	};
 
 	const handleHoursChange = (evt) => {
-		setInputHours(evt.target.value);
+		setHours(evt.target.value);
 	};
 
 	const handleMinutesChange = (evt) => {
-		setInputMinutes(evt.target.value);
+		setMinutes(evt.target.value);
 	};
 
-	const handleSaveTimer = () => {
-		const hours = parseInt(inputHours) || 0;
-		const minutes = parseInt(inputMinutes) || 0;
-
-		setTimerValue(
-			`${hours > 0 ? `${hours} ч` : ''} ${minutes > 0 ? `${minutes} мин` : ''}`
-		);
+	const handleTimerButtonClick = () => {
+		setIsTimerPopupOpen(true);
 	};
 
-	const handleDeleteTimer = () => {
-		setTimerValue('Таймер');
-		setInputHours('');
-		setInputMinutes('');
+	const handleClosePopup = () => {
+		setIsTimerPopupOpen(false);
 	};
 
 	return (
@@ -69,13 +82,13 @@ export const CreatePage = () => {
 					<section id="info" className="card card-outline">
 						<div id="heading">
 							<h2>О викторине</h2>
-							<div
+							<button
+								type="button"
 								className="btn btn-secondary"
-								id="remove-bg-btn"
 								onClick={handleRemoveBackground}
 							>
 								Удалить фон
-							</div>
+							</button>
 						</div>
 						<div
 							id="upload"
@@ -147,54 +160,57 @@ export const CreatePage = () => {
 						<div id="quizzes-heading">
 							<h2>Вопросы</h2>
 							<menu id="menu-pc">
-								<button id="multipleChoice" className="btn btn-secondary">
+								<button type="button" className="btn btn-secondary">
 									<PlusIcon />
 									<span>Выбор</span>
 								</button>
-								<button id="trueFalse" className="btn btn-secondary">
+								<button type="button" className="btn btn-secondary">
 									<PlusIcon />
 									<span>Истинно / Ложно</span>
 								</button>
-								<button id="openText" className="btn btn-secondary">
+								<button type="button" className="btn btn-secondary">
 									<PlusIcon />
 									<span>Открытый вопрос</span>
 								</button>
-								<button id="timer" className="btn btn-secondary">
+								<button
+									type="button"
+									className="btn btn-secondary"
+									onClick={handleTimerButtonClick}
+								>
 									<TimerIcon />
-									<span>{timerValue ? timerValue : 'Таймер'}</span>
+									<span>{timerValue}</span>
 								</button>
 							</menu>
 
 							<menu id="menu-mobile">
 								<div
-									role="button"
 									id="dropdown-button"
 									className="btn btn-secondary"
 									ref={dropdownButtonRef}
 									onClick={toggleDropdown}
 								>
-									<img
-										src="./assets/icons/plus.png"
-										aria-label="добавить вопрос"
-										alt="+ добавить вопрос"
-									/>
+									<PlusIcon />
 								</div>
 								<div
 									id="menu-questions"
 									className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}
 									ref={menuQuestionsRef}
 								>
-									<button id="multipleChoice">
+									<button type="button">
+										<PlusIcon />
 										<span>Выбор</span>
 									</button>
-									<button id="trueFalse">
+									<button type="button">
+										<PlusIcon />
 										<span>Истинно / Ложно</span>
 									</button>
-									<button id="openText">
+									<button type="button">
+										<PlusIcon />
 										<span>Открытый вопрос</span>
 									</button>
-									<button id="timer" className="timer">
-										<span>{timerValue ? timerValue : 'Таймер'}</span>
+									<button type="button" onClick={handleTimerButtonClick}>
+										<TimerIcon />
+										<span>{timerValue}</span>
 									</button>
 								</div>
 							</menu>
@@ -209,41 +225,28 @@ export const CreatePage = () => {
 									<div className="question-number">1</div>
 									<input
 										type="text"
-										name="question-1"
 										className="question-text btn"
 										placeholder="Вопрос"
 									/>
 								</div>
 								<div className="answers multipleChoice">
 									<div className="answer-con">
-										<label htmlFor="answer" className="custom-checkbox">
-											<input
-												type="checkbox"
-												id="answer"
-												name="checkbox-answer"
-											/>
+										<label className="custom-checkbox">
+											<input type="checkbox" />
 											<span className="checkmark"></span>
 										</label>
 										<input className="btn" placeholder="Ответ" />
 									</div>
 									<div className="answer-con">
-										<label htmlFor="answer" className="custom-checkbox">
-											<input
-												type="checkbox"
-												id="answer"
-												name="checkbox-answer"
-											/>
+										<label className="custom-checkbox">
+											<input type="checkbox" />
 											<span className="checkmark"></span>
 										</label>
 										<input className="btn" placeholder="Ответ" />
 									</div>
 									<div className="answer-con">
-										<label htmlFor="answer" className="custom-checkbox">
-											<input
-												type="checkbox"
-												id="answer"
-												name="checkbox-answer"
-											/>
+										<label className="custom-checkbox">
+											<input type="checkbox" />
 											<span className="checkmark"></span>
 										</label>
 										<input className="btn" placeholder="Ответ" />
@@ -252,7 +255,7 @@ export const CreatePage = () => {
 										</button>
 									</div>
 								</div>
-								<div role="button" className="add-answer btn btn-secondary">
+								<div className="add-answer btn btn-secondary">
 									Добавить ответ
 								</div>
 							</div>
@@ -264,21 +267,20 @@ export const CreatePage = () => {
 									<div className="question-number">2</div>
 									<input
 										type="text"
-										name="question"
 										className="question-text btn"
 										placeholder="Вопрос"
 									/>
 								</div>
 								<div className="answers trueFalse">
 									<div className="answer-con">
-										<input type="radio" id="true" name="trueFalse" />
-										<label htmlFor="true">
+										<input type="radio" />
+										<label>
 											<TrueIcon />
 										</label>
 									</div>
 									<div className="answer-con">
-										<input type="radio" id="false" name="trueFalse" />
-										<label htmlFor="false">
+										<input type="radio" />
+										<label>
 											<FalseIcon />
 										</label>
 									</div>
@@ -292,31 +294,21 @@ export const CreatePage = () => {
 									<div className="question-number">3</div>
 									<input
 										type="text"
-										id="question"
-										name="question"
 										className="question-text btn"
 										placeholder="Вопрос"
 									/>
 								</div>
 								<div className="answers openText">
-									<textarea
-										id="openText"
-										name="openText"
-										placeholder="Ответ"
-									></textarea>
+									<textarea placeholder="Ответ"></textarea>
 								</div>
 							</div>
 						</div>
 
 						<div className="group">
-							<button type="submit" className="btn btn-primary" name="create">
+							<button type="submit" className="btn btn-primary">
 								Создать
 							</button>
-							<button
-								type="submit"
-								className="btn btn-secondary"
-								name="create_download"
-							>
+							<button type="button" className="btn btn-secondary">
 								<span>Скачать</span>
 								<span>DOCX</span>
 							</button>
@@ -325,16 +317,18 @@ export const CreatePage = () => {
 				</form>
 			</main>
 
-			<section className="popup-con timer-popup">
+			<section
+				className={`popup-con timer-popup ${isTimerPopupOpen ? 'show' : ''}`}
+			>
 				<div className="popup card card-outline">
 					<div className="heading">
 						<h2>Таймер</h2>
-						<button className="close-popup">
-							<img
-								src="./assets/icons/cross.png"
-								alt="закрыть окно"
-								title="закрыть окно"
-							/>
+						<button
+							type="button"
+							className="close-popup"
+							onClick={handleClosePopup}
+						>
+							<CrossIcon width={18} height={18} />
 						</button>
 					</div>
 					<div className="content">
@@ -344,44 +338,46 @@ export const CreatePage = () => {
 						<div className="group btn">
 							<input
 								type="number"
-								id="hours"
-								name="hours"
 								placeholder="Часы"
-								value={inputHours}
+								value={hours}
 								onChange={handleHoursChange}
 							/>
-							<label htmlFor="hours">ч</label>
+							<label>ч</label>
 						</div>
 						<div className="group btn">
 							<input
 								type="number"
-								id="minutes"
-								name="minutes"
 								placeholder="Минуты"
-								value={inputMinutes}
+								value={minutes}
 								onChange={handleMinutesChange}
 							/>
-							<label htmlFor="minutes">мин</label>
+							<label>мин</label>
 						</div>
 					</div>
 					<div className="group">
 						<div
-							role="button"
-							id="save-timer"
 							className="btn btn-primary close-popup"
-							onClick={handleSaveTimer}
+							onClick={() => {
+								handleClosePopup();
+							}}
 						>
 							Сохранить
 						</div>
-						<div role="button" className="btn btn-secondary close-popup">
+						<div
+							className="btn btn-secondary close-popup"
+							onClick={handleClosePopup}
+						>
 							Отмена
 						</div>
 					</div>
 					<div
-						role="button"
-						id="delete-timer"
 						className="faded-text close-popup"
-						onClick={handleDeleteTimer}
+						onClick={() => {
+							setHours('');
+							setMinutes('');
+							setTimerValue('Таймер');
+							setIsTimerPopupOpen(false);
+						}}
 					>
 						Удалить таймер
 					</div>

@@ -175,4 +175,35 @@ router.get('/answers/:answerId', async (req, res) => {
 	}
 });
 
+router.get('/answers/user/:userId', async (req, res) => {
+	try {
+		const { userId } = req.params;
+
+		// Find all user answers and populate test and question data
+		const userAnswers = await UserAnswer.find({ userId })
+			.populate('testId', 'title tags background')
+			.populate('answers.questionId');
+
+		// For each user answer, fetch the complete test data
+		const completedQuizzes = await Promise.all(
+			userAnswers.map(async (userAnswer) => {
+				const test = await Test.findById(userAnswer.testId).populate(
+					'questionIds'
+				);
+				return {
+					...userAnswer.toObject(),
+					testId: test,
+				};
+			})
+		);
+
+		res.json(completedQuizzes);
+	} catch (error) {
+		console.error('Error fetching user completed quizzes:', error);
+		res
+			.status(500)
+			.json({ message: 'Ошибка при получении пройденных викторин' });
+	}
+});
+
 export default router;

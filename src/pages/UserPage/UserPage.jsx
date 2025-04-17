@@ -1,15 +1,17 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { CrossIcon } from '../../uikit/CrossIcon/CrossIcon';
 
 import './UserPage.css';
 
-import UserCreatedCard from '../../components/UserCreatedCard';
+import QuizCard from '../../components/QuizCard';
 
 export const UserPage = () => {
 	const navigate = useNavigate();
+	const location = useLocation();
 	const [user, setUser] = useState({ name: '', username: '', id: '' });
 	const [isPopupVisible, setIsPopupVisible] = useState(false);
 	const [formData, setFormData] = useState({
@@ -21,6 +23,9 @@ export const UserPage = () => {
 	const [error, setError] = useState('');
 	const [quizzes, setQuizzes] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [activeTab, setActiveTab] = useState('created');
+	const [completedQuizzes, setCompletedQuizzes] = useState([]);
+	const [completedLoading, setCompletedLoading] = useState(true);
 
 	useEffect(() => {
 		const userData = Cookies.get('user');
@@ -61,6 +66,34 @@ export const UserPage = () => {
 		fetchUserQuizzes();
 	}, [user.id]);
 
+	useEffect(() => {
+		const fetchCompletedQuizzes = async () => {
+			if (!user.id) return;
+
+			try {
+				const response = await axios.get(
+					`http://localhost:3000/api/quizzes/answers/user/${user.id}`
+				);
+				setCompletedQuizzes(response.data);
+				setCompletedLoading(false);
+			} catch (error) {
+				console.error('Error fetching completed quizzes:', error);
+				setCompletedLoading(false);
+			}
+		};
+
+		fetchCompletedQuizzes();
+	}, [user.id]);
+
+	useEffect(() => {
+		const path = location.pathname;
+		if (path.includes('/completed')) {
+			setActiveTab('completed');
+		} else {
+			setActiveTab('created');
+		}
+	}, [location.pathname]);
+
 	const handleLogout = () => {
 		Cookies.remove('isAuthenticated');
 		Cookies.remove('user');
@@ -88,7 +121,6 @@ export const UserPage = () => {
 		evt.preventDefault();
 		setError('');
 
-		// Check if any changes were made
 		const hasChanges = Object.entries(formData).some(([key, value]) => {
 			if (key === 'current_password') return false;
 			return value.trim() !== '';
@@ -99,7 +131,6 @@ export const UserPage = () => {
 			return;
 		}
 
-		// Validate current password is provided for any changes
 		if (!formData.current_password) {
 			setError('Для внесения изменений необходимо ввести текущий пароль');
 			return;
@@ -111,14 +142,12 @@ export const UserPage = () => {
 				current_username: user.username,
 			});
 
-			// Update user data in cookies
 			const updatedUser = {
 				name: formData.new_name || user.name,
 				username: formData.new_username || user.username,
 			};
 			Cookies.set('user', JSON.stringify(updatedUser), { expires: 30 });
 
-			// Update local state
 			setUser(updatedUser);
 			setFormData({
 				new_name: '',
@@ -133,6 +162,11 @@ export const UserPage = () => {
 					'Произошла ошибка при обновлении профиля'
 			);
 		}
+	};
+
+	const handleTabChange = (tab) => {
+		setActiveTab(tab);
+		navigate(`/user/${tab}`);
 	};
 
 	return (
@@ -158,7 +192,7 @@ export const UserPage = () => {
 								<p>Создано</p>
 								<hr />
 								<p id="created" className="counter">
-									0
+									{quizzes.length}
 								</p>
 							</div>
 						</div>
@@ -175,32 +209,61 @@ export const UserPage = () => {
 				<div id="quizzes">
 					<menu>
 						<ul id="tabs">
-							<li id="tab-created" className="tab active">
+							<li
+								id="tab-created"
+								className={`tab ${activeTab === 'created' ? 'active' : ''}`}
+								onClick={() => handleTabChange('created')}
+							>
 								<Link to="/user/created">Созданные</Link>
 								<Link to="/create" className="btn btn-secondary">
 									Создать
 								</Link>
 							</li>
-							<li id="tab-completed" className="tab">
+							<li
+								id="tab-completed"
+								className={`tab ${activeTab === 'completed' ? 'active' : ''}`}
+								onClick={() => handleTabChange('completed')}
+							>
 								<Link to="/user/completed">Пройденные</Link>
 							</li>
 						</ul>
 					</menu>
 
 					<div id="quizzes-list">
-						{loading ? (
-							<p>Загрузка викторин...</p>
-						) : quizzes.length === 0 ? (
-							<p>У вас пока нет созданных викторин</p>
+						{activeTab === 'created' ? (
+							loading ? (
+								<p>Загрузка викторин...</p>
+							) : quizzes.length === 0 ? (
+								<p>У вас пока нет созданных викторин</p>
+							) : (
+								quizzes.map((quiz) => (
+									<QuizCard
+										key={quiz._id}
+										id={quiz._id}
+										title={quiz.title}
+										questionsCount={quiz.questionIds.length}
+										tags={quiz.tags}
+										imageUrl={quiz.background}
+										type="created"
+									/>
+								))
+							)
+						) : completedLoading ? (
+							<p>Загрузка пройденных викторин...</p>
+						) : completedQuizzes.length === 0 ? (
+							<p>У вас пока нет пройденных викторин</p>
 						) : (
-							quizzes.map((quiz, index) => (
-								<UserCreatedCard
-									key={index}
-									id={quiz._id}
-									title={quiz.title}
-									questionsCount={quiz.questionIds.length}
-									tags={quiz.tags}
-									imageUrl={quiz.background}
+							completedQuizzes.map((quiz) => (
+								<QuizCard
+									key={quiz.testId._id}
+									id={quiz.testId._id}
+									title={quiz.testId.title}
+									questionsCount={quiz.testId.questionIds.length}
+									tags={quiz.testId.tags}
+									imageUrl={quiz.testId.background}
+									type="completed"
+									correctAnswers={quiz.correctAnswers}
+									totalAnswers={quiz.testId.questionIds.length}
 								/>
 							))
 						)}
@@ -213,11 +276,7 @@ export const UserPage = () => {
 					<div className="heading">
 						<h2>Редактирование профиля</h2>
 						<button type="button" onClick={handleHidePopup}>
-							<img
-								src="./assets/icons/cross.png"
-								alt="закрыть окно"
-								title="закрыть окно"
-							/>
+							<CrossIcon />
 						</button>
 					</div>
 					<div className="content">

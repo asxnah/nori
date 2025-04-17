@@ -23,7 +23,7 @@ export const Header = () => {
 				)}
 				{isAuthenticated && (
 					<Link
-						to="/user"
+						to="/user/created"
 						title="профиль пользователя (личный кабинет)"
 						aria-labelledby="ссылка на профиль пользователя (личный кабинет)"
 					>

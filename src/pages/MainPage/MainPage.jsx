@@ -5,7 +5,7 @@ import axios from 'axios';
 import { SearchIcon } from '../../uikit/SearchIcon/SearchIcon';
 import './MainPage.css';
 
-import { HomeCard } from '../../components/HomeCard';
+import QuizCard from '../../components/QuizCard';
 import { Banner } from '../../components/Banner/Banner';
 
 export const MainPage = () => {
@@ -58,14 +58,14 @@ export const MainPage = () => {
 					<p>{error}</p>
 				) : (
 					<div id="quizzes-list">
-						{quizzes.map((quiz, index) => (
-							<HomeCard
-								key={index}
+						{quizzes.map((quiz) => (
+							<QuizCard
+								key={quiz._id}
+								id={quiz._id}
 								title={quiz.title}
 								questionsCount={quiz.questionIds.length}
 								tags={quiz.tags}
 								imageUrl={quiz.background}
-								id={quiz._id}
 							/>
 						))}
 					</div>

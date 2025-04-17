@@ -5,6 +5,7 @@ import {
 	Routes,
 	useLocation,
 	Navigate,
+	Outlet,
 } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
@@ -45,7 +46,11 @@ const AppContent = () => {
 				<Route path="/create" element={<CreatePage />} />
 				<Route path="/preview" element={<PreviewPage />} />
 				<Route path="/quiz" element={<QuizPage />} />
-				<Route path="/user" element={<UserPage />} />
+				<Route path="/user" element={<Outlet />}>
+					<Route index element={<UserPage />} />
+					<Route path="created" element={<UserPage />} />
+					<Route path="completed" element={<UserPage />} />
+				</Route>
 				<Route path="/quiz/results/:answerId" element={<ResultsPage />} />
 				<Route path="/about" element={<AboutPage />} />
 			</Routes>

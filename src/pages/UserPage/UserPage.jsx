@@ -21,9 +21,9 @@ export const UserPage = () => {
 		current_password: '',
 	});
 	const [error, setError] = useState('');
-	const [quizzes, setQuizzes] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [activeTab, setActiveTab] = useState('created');
+	const [createdQuizzes, setCreatedQuizzes] = useState([]);
 	const [completedQuizzes, setCompletedQuizzes] = useState([]);
 	const [completedLoading, setCompletedLoading] = useState(true);
 
@@ -55,7 +55,7 @@ export const UserPage = () => {
 				const response = await axios.get(
 					`http://localhost:3000/api/quizzes/user/${user.id}`
 				);
-				setQuizzes(response.data);
+				setCreatedQuizzes(response.data);
 				setLoading(false);
 			} catch (error) {
 				console.error('Error fetching user quizzes:', error);
@@ -225,14 +225,14 @@ export const UserPage = () => {
 								<p>Пройдено</p>
 								<hr />
 								<p id="completed" className="counter">
-									0
+									{completedQuizzes.length}
 								</p>
 							</div>
 							<div className="group-el">
 								<p>Создано</p>
 								<hr />
 								<p id="created" className="counter">
-									{quizzes.length}
+									{createdQuizzes.length}
 								</p>
 							</div>
 						</div>
@@ -277,10 +277,10 @@ export const UserPage = () => {
 						{activeTab === 'created' ? (
 							loading ? (
 								<p>Загрузка викторин...</p>
-							) : quizzes.length === 0 ? (
+							) : createdQuizzes.length === 0 ? (
 								<p>У вас пока нет созданных викторин</p>
 							) : (
-								quizzes.map((quiz) => (
+								createdQuizzes.map((quiz) => (
 									<QuizCard
 										key={quiz._id}
 										id={quiz._id}

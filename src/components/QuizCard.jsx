@@ -5,6 +5,7 @@ import { ShareIcon } from '../pages/UserPage/icons/ShareIcon';
 import { OpenIcon } from '../pages/UserPage/icons/OpenIcon';
 import { EditIcon } from '../pages/UserPage/icons/EditIcon';
 import { ArrowRightIcon } from '../uikit/ArrowRightIcon/ArrowRightIcon';
+import axios from 'axios';
 
 export const QuizCard = ({
 	id,
@@ -15,7 +16,22 @@ export const QuizCard = ({
 	type = 'default',
 	correctAnswers,
 	totalAnswers,
+	onDelete,
 }) => {
+	const handleDelete = async () => {
+		if (window.confirm('Вы уверены, что хотите удалить этот тест?')) {
+			try {
+				await axios.delete(`http://localhost:3000/api/quizzes/${id}`);
+				if (onDelete) {
+					onDelete(id);
+				}
+			} catch (error) {
+				console.error('Error deleting quiz:', error);
+				alert('Ошибка при удалении теста');
+			}
+		}
+	};
+
 	const style = {
 		background: background
 			? `linear-gradient(to left, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(${background})`
@@ -40,7 +56,7 @@ export const QuizCard = ({
 							</Link>
 							<button
 								onClick={() => {
-									const url = `${window.location.origin}/quiz?id=${id}`;
+									const url = `http://localhost:3000/quiz?id=${id}`;
 									navigator.clipboard.writeText(url);
 								}}
 							>
@@ -61,7 +77,7 @@ export const QuizCard = ({
 							</Link>
 							<button
 								onClick={() => {
-									const url = `${window.location.origin}/quiz/results/${id}`;
+									const url = `http://localhost:3000/quiz/results/${id}`;
 									navigator.clipboard.writeText(url);
 								}}
 							>
@@ -80,7 +96,7 @@ export const QuizCard = ({
 							</Link>
 							<button
 								onClick={() => {
-									const url = `${window.location.origin}/quiz?id=${id}`;
+									const url = `http://localhost:3000/quiz?id=${id}`;
 									navigator.clipboard.writeText(url);
 								}}
 							>
@@ -107,7 +123,7 @@ export const QuizCard = ({
 								<ArrowRightIcon />
 							</span>
 						</Link>
-						<button>Удалить</button>
+						<button onClick={handleDelete}>Удалить</button>
 					</div>
 				);
 			case 'completed':

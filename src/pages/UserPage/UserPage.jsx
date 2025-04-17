@@ -54,10 +54,11 @@ export const UserPage = () => {
 				const response = await axios.get(
 					`http://localhost:3000/api/quizzes/user/${user.id}`
 				);
-				setCreatedQuizzes(response.data);
+				setCreatedQuizzes(Array.isArray(response.data) ? response.data : []);
 				setLoading(false);
 			} catch (error) {
 				console.error('Error fetching user quizzes:', error);
+				setCreatedQuizzes([]);
 				setLoading(false);
 			}
 		};
@@ -73,10 +74,11 @@ export const UserPage = () => {
 				const response = await axios.get(
 					`http://localhost:3000/api/quizzes/answers/user/${user.id}`
 				);
-				setCompletedQuizzes(response.data);
+				setCompletedQuizzes(Array.isArray(response.data) ? response.data : []);
 				setCompletedLoading(false);
 			} catch (error) {
 				console.error('Error fetching completed quizzes:', error);
+				setCompletedQuizzes([]);
 				setCompletedLoading(false);
 			}
 		};
@@ -208,7 +210,9 @@ export const UserPage = () => {
 		return { correct, total };
 	};
 
-	console.log(createdQuizzes);
+	const handleDeleteQuiz = (quizId) => {
+		setCreatedQuizzes(createdQuizzes.filter((quiz) => quiz._id !== quizId));
+	};
 
 	return (
 		<div id="UserPage">
@@ -290,6 +294,7 @@ export const UserPage = () => {
 										tags={quiz.tags}
 										background={quiz.background}
 										type="created"
+										onDelete={handleDeleteQuiz}
 									/>
 								))
 							)

@@ -5,6 +5,7 @@ import UserAnswer from '../models/UserAnswer.js';
 import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -286,6 +287,50 @@ router.post('/', upload.single('background'), async (req, res) => {
 		} else {
 			res.status(500).json({ message: 'Error creating quiz' });
 		}
+	}
+});
+
+router.delete('/:testId', async (req, res) => {
+	try {
+		const { testId } = req.params;
+
+		// Delete the test and all associated questions
+		const test = await Test.findById(testId);
+		if (!test) {
+			return res.status(404).json({ message: 'Тест не найден' });
+		}
+
+		// Delete background image if it exists
+		if (test.background) {
+			const backgroundPath = test.background.split(
+				'/uploads/quizzesBackground/'
+			)[1];
+			if (backgroundPath) {
+				const fullPath = path.join(
+					process.cwd(),
+					'uploads',
+					'quizzesBackground',
+					backgroundPath
+				);
+				if (fs.existsSync(fullPath)) {
+					fs.unlinkSync(fullPath);
+				}
+			}
+		}
+
+		// Delete all questions associated with this test
+		await Question.deleteMany({ _id: { $in: test.questionIds } });
+
+		// Delete all user answers for this test
+		await UserAnswer.deleteMany({ testId });
+
+		// Finally delete the test itself
+		await Test.findByIdAndDelete(testId);
+
+		res.json({ message: 'Тест успешно удален' });
+	} catch (error) {
+		console.error('Error deleting quiz:', error);
+		res.status(500).json({ message: 'Ошибка при удалении теста' });
 	}
 });
 

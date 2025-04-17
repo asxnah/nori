@@ -119,11 +119,6 @@
 		gap: 1rem;
 	}
 
-	.quiz-footer .btn span:last-child {
-		font-size: 0.75rem;
-		color: var(--white-medium);
-	}
-
 	@media (width < 1200px) {
 		main {
 			padding: 2rem 4rem;
@@ -181,11 +176,5 @@
 		font-size: 0.875rem;
 		margin-bottom: 1rem;
 		color: var(--red);
-	}
-
-	@media (width < 400px) {
-		.quiz-footer .btn:has(svg) svg {
-			display: none;
-		}
 	}
 }

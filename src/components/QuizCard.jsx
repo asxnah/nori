@@ -95,7 +95,7 @@ export const QuizCard = ({
 			case 'created':
 				return (
 					<div className="quiz-footer">
-						<Link to={`/download/${id}`} className="btn btn-pure">
+						<Link to="/" className="btn btn-pure">
 							<span>Скачать</span>
 							<span>DOCX</span>
 						</Link>
@@ -111,7 +111,7 @@ export const QuizCard = ({
 			case 'completed':
 				return (
 					<div className="quiz-footer">
-						<Link to="/user/completed" className="btn btn-pure">
+						<Link to="/" className="btn btn-pure">
 							<span>Скачать</span>
 							<span>DOCX</span>
 						</Link>
@@ -121,7 +121,10 @@ export const QuizCard = ({
 				return (
 					<div className="quiz-footer">
 						<Link to={`/quiz?id=${id}`} className="btn btn-pure">
-							Начать
+							<span>Пройти</span>
+							<span>
+								<ArrowRightIcon />
+							</span>
 						</Link>
 					</div>
 				);
@@ -132,14 +135,14 @@ export const QuizCard = ({
 		<article className="card quiz" style={style}>
 			{renderHeader()}
 			<div className="content">
-				<h1>{title}</h1>
+				<h3>{title}</h3>
 				<div className="tags">
 					{tags.map((tag, index) => (
 						<p key={index}>{tag}</p>
 					))}
 				</div>
-				{renderFooter()}
 			</div>
+			{renderFooter()}
 		</article>
 	);
 };

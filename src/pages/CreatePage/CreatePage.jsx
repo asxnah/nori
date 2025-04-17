@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './CreatePage.css';
 import { PlusIcon } from './icons/PlusIcon';
 import { TimerIcon } from './icons/TimerIcon';
@@ -457,10 +458,10 @@ export const CreatePage = () => {
 							>
 								Создать
 							</button>
-							<button type="button" className="btn btn-secondary">
+							<Link to="/" className="btn btn-secondary">
 								<span>Скачать</span>
 								<span>DOCX</span>
-							</button>
+							</Link>
 						</div>
 					</section>
 				</form>

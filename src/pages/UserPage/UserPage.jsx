@@ -252,9 +252,13 @@ export const UserPage = () => {
 							<li
 								id="tab-created"
 								className={`tab ${activeTab === 'created' ? 'active' : ''}`}
-								onClick={() => handleTabChange('created')}
 							>
-								<Link to="/user/created">Созданные</Link>
+								<Link
+									to="/user/created"
+									onClick={() => handleTabChange('created')}
+								>
+									Созданные
+								</Link>
 								<Link to="/create" className="btn btn-secondary">
 									Создать
 								</Link>

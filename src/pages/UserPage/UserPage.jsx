@@ -169,6 +169,46 @@ export const UserPage = () => {
 		navigate(`/user/${tab}`);
 	};
 
+	const calculateScore = (quiz) => {
+		let correct = 0;
+		let total = 0;
+
+		quiz.answers.forEach((answer) => {
+			const question = quiz.testId.questionIds.find((q) => {
+				return q._id === answer.questionId._id;
+			});
+
+			if (!question) return;
+
+			total++; // Count all questions in total
+
+			if (question.type === 'trueFalse') {
+				const userAnswerBool = answer.selected[0] === 'true';
+				const isCorrect = userAnswerBool === question.correctAnswer;
+
+				if (isCorrect) {
+					correct++;
+				}
+			} else if (question.type === 'multipleChoice') {
+				const isCorrect = answer.selected[0] === question.correctAnswer;
+
+				if (isCorrect) {
+					correct++;
+				}
+			} else if (question.type === 'openText') {
+				const isCorrect =
+					answer.selected[0].toLowerCase().trim() ===
+					question.correctAnswer.toLowerCase().trim();
+
+				if (isCorrect) {
+					correct++;
+				}
+			}
+		});
+
+		return { correct, total };
+	};
+
 	return (
 		<div id="UserPage">
 			<main>
@@ -262,8 +302,8 @@ export const UserPage = () => {
 									tags={quiz.testId.tags}
 									imageUrl={quiz.testId.background}
 									type="completed"
-									correctAnswers={quiz.correctAnswers}
-									totalAnswers={quiz.testId.questionIds.length}
+									correctAnswers={calculateScore(quiz).correct}
+									totalAnswers={calculateScore(quiz).total}
 								/>
 							))
 						)}

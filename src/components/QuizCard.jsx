@@ -11,13 +11,15 @@ export const QuizCard = ({
 	title,
 	questionsCount,
 	tags,
-	imageUrl,
+	background,
 	type = 'default',
 	correctAnswers,
 	totalAnswers,
 }) => {
 	const style = {
-		background: `linear-gradient(to left, var(--black-high), var(--black-high)), url(${imageUrl})`,
+		background: background
+			? `linear-gradient(to left, var(--black-high), var(--black-high)), url(${background})`
+			: 'var(--color-primary)',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',
 		backgroundPosition: 'center',
@@ -133,8 +135,8 @@ export const QuizCard = ({
 
 	return (
 		<article className="card quiz" style={style}>
-			{renderHeader()}
 			<div className="content">
+				{renderHeader()}
 				<h3>{title}</h3>
 				<div className="tags">
 					{tags.map((tag, index) => (

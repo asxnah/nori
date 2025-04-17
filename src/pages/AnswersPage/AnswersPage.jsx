@@ -44,7 +44,6 @@ export const AnswersPage = () => {
 					return;
 				}
 
-				// Fetch all user answers for this quiz
 				const answersResponse = await axios.get(
 					`http://localhost:3000/api/quizzes/${quizId}/answers`
 				);

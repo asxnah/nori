@@ -2,8 +2,39 @@ import express from 'express';
 import Test from '../models/Test.js';
 import Question from '../models/Question.js';
 import UserAnswer from '../models/UserAnswer.js';
+import multer from 'multer';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, path.join(__dirname, '../uploads/quizzesBackground'));
+	},
+	filename: function (req, file, cb) {
+		const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+		cb(null, uniqueSuffix + path.extname(file.originalname));
+	},
+});
+
+const upload = multer({
+	storage: storage,
+	fileFilter: function (req, file, cb) {
+		if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+			return cb(new Error('Only image files are allowed!'), false);
+		}
+		cb(null, true);
+	},
+});
 
 const router = express.Router();
+
+router.use(
+	'/uploads/quizzesBackground',
+	express.static(path.join(__dirname, '../uploads/quizzesBackground'))
+);
 
 router.get('/', async (req, res) => {
 	try {
@@ -15,8 +46,12 @@ router.get('/', async (req, res) => {
 				background: 1,
 				tags: 1,
 				questionIds: 1,
+				createdAt: 1,
 			}
-		).populate('questionIds');
+		)
+			.sort({ createdAt: -1 })
+			.limit(10)
+			.populate('questionIds');
 
 		res.json(quizzes);
 	} catch (error) {
@@ -96,7 +131,6 @@ router.post('/:testId/answers', async (req, res) => {
 		const { testId } = req.params;
 		const { userId, answers } = req.body;
 
-		// Create a new UserAnswer document
 		const userAnswer = new UserAnswer({
 			userId,
 			testId,
@@ -120,7 +154,6 @@ router.get('/:testId/answers/:userId', async (req, res) => {
 	try {
 		const { testId, userId } = req.params;
 
-		// Find the user's answers for this test
 		const userAnswer = await UserAnswer.findOne({
 			testId,
 			userId,
@@ -141,7 +174,6 @@ router.get('/:testId/answers', async (req, res) => {
 	try {
 		const { testId } = req.params;
 
-		// Find all user answers for this test
 		const userAnswers = await UserAnswer.find({ testId })
 			.populate('userId', 'username name')
 			.populate('answers.questionId');
@@ -159,7 +191,6 @@ router.get('/answers/:answerId', async (req, res) => {
 	try {
 		const { answerId } = req.params;
 
-		// Find the specific user answer
 		const userAnswer = await UserAnswer.findById(answerId)
 			.populate('answers.questionId')
 			.populate('userId', 'username name');
@@ -179,12 +210,10 @@ router.get('/answers/user/:userId', async (req, res) => {
 	try {
 		const { userId } = req.params;
 
-		// Find all user answers and populate test and question data
 		const userAnswers = await UserAnswer.find({ userId })
 			.populate('testId', 'title tags background')
 			.populate('answers.questionId');
 
-		// For each user answer, fetch the complete test data
 		const completedQuizzes = await Promise.all(
 			userAnswers.map(async (userAnswer) => {
 				const test = await Test.findById(userAnswer.testId).populate(
@@ -203,6 +232,69 @@ router.get('/answers/user/:userId', async (req, res) => {
 		res
 			.status(500)
 			.json({ message: 'Ошибка при получении пройденных викторин' });
+	}
+});
+
+router.post('/', upload.single('background'), async (req, res) => {
+	try {
+		const { title, description, createdBy } = req.body;
+		const tags = JSON.parse(req.body.tags);
+		const questions = JSON.parse(req.body.questions);
+
+		if (!title || !questions || !createdBy) {
+			return res.status(400).json({ message: 'Missing required fields' });
+		}
+
+		if (!Array.isArray(questions) || questions.length === 0) {
+			return res.status(400).json({ message: 'Invalid questions format' });
+		}
+
+		if (!Array.isArray(tags)) {
+			return res.status(400).json({ message: 'Invalid tags format' });
+		}
+
+		const background = req.file
+			? `/api/quizzes/uploads/quizzesBackground/${req.file.filename}`
+			: null;
+
+		const savedQuestions = await Promise.all(
+			questions.map(async (question) => {
+				if (!question.text || !question.type) {
+					throw new Error('Invalid question format');
+				}
+
+				const newQuestion = new Question({
+					questionText: question.text,
+					type: question.type,
+					options: question.answers || [],
+					correctAnswer: question.correctAnswer,
+				});
+				return await newQuestion.save();
+			})
+		);
+
+		const test = new Test({
+			title,
+			description: description || '',
+			background,
+			tags: tags.filter((tag) => tag.trim()),
+			questionIds: savedQuestions.map((q) => q._id),
+			createdBy,
+		});
+
+		await test.save();
+
+		res.status(201).json({
+			message: 'Quiz created successfully',
+			testId: test._id,
+		});
+	} catch (error) {
+		console.error('Error creating quiz:', error);
+		if (error instanceof SyntaxError) {
+			res.status(400).json({ message: 'Invalid data format' });
+		} else {
+			res.status(500).json({ message: 'Error creating quiz' });
+		}
 	}
 });
 

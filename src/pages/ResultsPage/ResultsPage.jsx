@@ -50,7 +50,7 @@ export const ResultsPage = () => {
 
 			if (!question) return;
 
-			total++; // Count all questions in total
+			total++; 
 
 			if (question.type === 'trueFalse') {
 				const userAnswerBool = answer.selected[0] === 'true';

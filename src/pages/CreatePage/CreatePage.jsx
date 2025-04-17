@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 import './CreatePage.css';
 import { PlusIcon } from './icons/PlusIcon';
 import { TimerIcon } from './icons/TimerIcon';
@@ -16,6 +18,10 @@ export const CreatePage = () => {
 	const [questions, setQuestions] = useState([]);
 	const [quizTitle, setQuizTitle] = useState('');
 	const [tags, setTags] = useState(['', '', '']);
+	const [description, setDescription] = useState('');
+	const [backgroundFile, setBackgroundFile] = useState(null);
+	const navigate = useNavigate();
+	const [error, setError] = useState('');
 
 	const coverRef = useRef(null);
 	const menuQuestionsRef = useRef(null);
@@ -42,8 +48,9 @@ export const CreatePage = () => {
 	}, [hours, minutes]);
 
 	const handleSetBackground = (evt) => {
-		let file = evt.target.files[0];
+		const file = evt.target.files[0];
 		if (file) {
+			setBackgroundFile(file);
 			let reader = new FileReader();
 			reader.onload = function (e) {
 				setBackgroundImage(e.target.result);
@@ -54,6 +61,7 @@ export const CreatePage = () => {
 
 	const handleRemoveBackground = () => {
 		setBackgroundImage(null);
+		setBackgroundFile(null);
 		if (coverRef.current) {
 			coverRef.current.value = null;
 		}
@@ -168,6 +176,10 @@ export const CreatePage = () => {
 		setTags(newTags);
 	};
 
+	const handleDescriptionChange = (evt) => {
+		setDescription(evt.target.value);
+	};
+
 	const isQuizValid = () => {
 		if (!quizTitle.trim()) return false;
 
@@ -192,6 +204,67 @@ export const CreatePage = () => {
 					return false;
 			}
 		});
+	};
+
+	const handleSubmit = async (evt) => {
+		evt.preventDefault();
+		setError('');
+
+		if (!isQuizValid()) {
+			setError('Пожалуйста, заполните все обязательные поля');
+			return;
+		}
+
+		try {
+			const userData = JSON.parse(Cookies.get('user'));
+			if (!userData?.id) {
+				setError('Ошибка авторизации. Пожалуйста, войдите снова.');
+				return;
+			}
+
+			const formData = new FormData();
+			formData.append('title', quizTitle);
+			formData.append('description', description.trim() || '');
+			if (backgroundFile) {
+				formData.append('background', backgroundFile);
+			}
+			formData.append('tags', JSON.stringify(tags.filter((tag) => tag.trim())));
+			formData.append(
+				'questions',
+				JSON.stringify(
+					questions.map((q) => ({
+						text: q.text,
+						type: q.type,
+						answers: q.answers,
+						correctAnswer: q.correctAnswer,
+					}))
+				)
+			);
+			formData.append('createdBy', userData.id);
+
+			const response = await axios.post(
+				'http://localhost:3000/api/quizzes',
+				formData,
+				{
+					headers: {
+						'Content-Type': 'multipart/form-data',
+					},
+				}
+			);
+
+			if (response.data.testId) {
+				navigate(`/quiz/${response.data.testId}`);
+			}
+		} catch (error) {
+			console.error('Error saving quiz:', error);
+			if (error.response) {
+				setError(
+					error.response.data.message || 'Ошибка при сохранении викторины'
+				);
+			} else {
+				setError('Ошибка соединения с сервером');
+			}
+		}
 	};
 
 	const renderQuestion = (question, index) => {
@@ -301,7 +374,8 @@ export const CreatePage = () => {
 	return (
 		<div>
 			<main id="CreatePage">
-				<form>
+				{error && <div className="error-message">{error}</div>}
+				<form onSubmit={handleSubmit}>
 					<section id="info" className="card card-outline">
 						<div id="heading">
 							<h2>О викторине</h2>
@@ -350,7 +424,11 @@ export const CreatePage = () => {
 								value={quizTitle}
 								onChange={handleQuizTitleChange}
 							/>
-							<textarea placeholder="Описание (необязательно)"></textarea>
+							<textarea
+								placeholder="Описание (необязательно)"
+								value={description}
+								onChange={handleDescriptionChange}
+							></textarea>
 							<div id="tags">
 								{tags.map((tag, index) => (
 									<input

@@ -180,7 +180,7 @@ export const UserPage = () => {
 
 			if (!question) return;
 
-			total++; // Count all questions in total
+			total++;
 
 			if (question.type === 'trueFalse') {
 				const userAnswerBool = answer.selected[0] === 'true';
@@ -287,7 +287,7 @@ export const UserPage = () => {
 										title={quiz.title}
 										questionsCount={quiz.questionIds.length}
 										tags={quiz.tags}
-										imageUrl={quiz.background}
+										background={quiz.background}
 										type="created"
 									/>
 								))
@@ -304,7 +304,7 @@ export const UserPage = () => {
 									title={quiz.testId.title}
 									questionsCount={quiz.testId.questionIds.length}
 									tags={quiz.testId.tags}
-									imageUrl={quiz.testId.background}
+									background={quiz.testId.background}
 									type="completed"
 									correctAnswers={calculateScore(quiz).correct}
 									totalAnswers={calculateScore(quiz).total}

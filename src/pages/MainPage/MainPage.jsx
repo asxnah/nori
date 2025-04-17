@@ -2,17 +2,17 @@
 import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-import { SearchIcon } from '../../uikit/SearchIcon/SearchIcon';
-import './MainPage.css';
-
 import QuizCard from '../../components/QuizCard';
 import { Banner } from '../../components/Banner/Banner';
+import { SearchIcon } from '../../uikit/SearchIcon/SearchIcon';
+import './MainPage.css';
 
 export const MainPage = () => {
 	const [isBannerVisible, setBannerVisible] = useState(true);
 	const [quizzes, setQuizzes] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	const [searchTerm, setSearchTerm] = useState('');
 
 	useEffect(() => {
 		if (Cookies.get('banner_hidden') === 'true') {
@@ -41,12 +41,31 @@ export const MainPage = () => {
 		setBannerVisible(false);
 	};
 
+	const handleSearch = (e) => {
+		setSearchTerm(e.target.value.toLowerCase());
+	};
+
+	const filteredQuizzes = quizzes.filter((quiz) => {
+		const searchLower = searchTerm.toLowerCase();
+		const titleMatch = quiz.title.toLowerCase().includes(searchLower);
+		const tagsMatch = quiz.tags.some((tag) =>
+			tag.toLowerCase().includes(searchLower)
+		);
+		return titleMatch || tagsMatch;
+	});
+
 	return (
 		<main id="MainPage">
 			{isBannerVisible && <Banner onRemove={removeBanner} />}
 			<section id="quizzes">
 				<div id="search" className="btn">
-					<input type="text" id="searchbar" placeholder="JavaScript" />
+					<input
+						type="text"
+						id="searchbar"
+						placeholder="Введите название или тег"
+						value={searchTerm}
+						onChange={handleSearch}
+					/>
 					<button id="go">
 						<SearchIcon />
 					</button>
@@ -58,14 +77,14 @@ export const MainPage = () => {
 					<p>{error}</p>
 				) : (
 					<div id="quizzes-list">
-						{quizzes.map((quiz) => (
+						{filteredQuizzes.map((quiz) => (
 							<QuizCard
 								key={quiz._id}
 								id={quiz._id}
 								title={quiz.title}
 								questionsCount={quiz.questionIds.length}
 								tags={quiz.tags}
-								imageUrl={quiz.background}
+								background={quiz.background}
 							/>
 						))}
 					</div>

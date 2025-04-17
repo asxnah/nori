@@ -177,6 +177,10 @@ h4 {
 }
 
 .quiz {
+	display: flex;
+	justify-content: space-between;
+	gap: 4rem;
+
 	background-color: var(--color-primary);
 }
 
@@ -211,11 +215,9 @@ h4 {
 }
 
 .quiz .content {
-	margin-top: 1rem;
-	margin-bottom: 4rem;
-
 	display: flex;
 	flex-direction: column;
+	gap: 0.5rem;
 }
 
 .quiz h1 {

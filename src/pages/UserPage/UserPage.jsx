@@ -4,10 +4,9 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import axios from 'axios';
 import { CrossIcon } from '../../uikit/CrossIcon/CrossIcon';
+import QuizCard from '../../components/QuizCard';
 
 import './UserPage.css';
-
-import QuizCard from '../../components/QuizCard';
 
 export const UserPage = () => {
 	const navigate = useNavigate();
@@ -208,6 +207,8 @@ export const UserPage = () => {
 
 		return { correct, total };
 	};
+
+	console.log(createdQuizzes);
 
 	return (
 		<div id="UserPage">

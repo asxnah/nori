@@ -18,7 +18,7 @@ export const QuizCard = ({
 }) => {
 	const style = {
 		background: background
-			? `linear-gradient(to left, var(--black-high), var(--black-high)), url(${background})`
+			? `linear-gradient(to left, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(${background})`
 			: 'var(--color-primary)',
 		backgroundSize: 'cover',
 		backgroundRepeat: 'no-repeat',

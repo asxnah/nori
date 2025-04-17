@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, path.join(__dirname, '../uploads/quizzesBackground'));
+		cb(null, path.join(process.cwd(), 'uploads/quizzesBackground'));
 	},
 	filename: function (req, file, cb) {
 		const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -30,11 +30,6 @@ const upload = multer({
 });
 
 const router = express.Router();
-
-router.use(
-	'/uploads/quizzesBackground',
-	express.static(path.join(__dirname, '../uploads/quizzesBackground'))
-);
 
 router.get('/', async (req, res) => {
 	try {
@@ -103,18 +98,14 @@ router.get('/:testId', async (req, res) => {
 router.get('/:testId/questions', async (req, res) => {
 	try {
 		const { testId } = req.params;
-		console.log('Fetching questions for test ID:', testId);
 
 		const test = await Test.findById(testId);
-		console.log('Found test:', test);
 
 		if (!test) {
-			console.log('Test not found');
 			return res.status(404).json({ message: 'Тест не найден' });
 		}
 
 		const questions = await Question.find({ _id: { $in: test.questionIds } });
-		console.log('Found questions:', questions);
 
 		res.json(questions);
 	} catch (error) {
@@ -254,7 +245,7 @@ router.post('/', upload.single('background'), async (req, res) => {
 		}
 
 		const background = req.file
-			? `/api/quizzes/uploads/quizzesBackground/${req.file.filename}`
+			? `http://localhost:3000/uploads/quizzesBackground/${req.file.filename}`
 			: null;
 
 		const savedQuestions = await Promise.all(

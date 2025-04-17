@@ -253,7 +253,7 @@ export const CreatePage = () => {
 			);
 
 			if (response.data.testId) {
-				navigate(`/quiz/${response.data.testId}`);
+				navigate(`/quiz?id=${response.data.testId}`);
 			}
 		} catch (error) {
 			console.error('Error saving quiz:', error);

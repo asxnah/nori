@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { UserIcon } from '../../uikit/UserIcon/UserIcon';
 import './Header.css';
 
 export const Header = () => {
@@ -27,7 +28,7 @@ export const Header = () => {
 						title="профиль пользователя (личный кабинет)"
 						aria-labelledby="ссылка на профиль пользователя (личный кабинет)"
 					>
-						&#128100;
+						<UserIcon />
 					</Link>
 				)}
 			</nav>

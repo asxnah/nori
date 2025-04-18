@@ -7,7 +7,7 @@ header {
 	top: 0;
 	left: 0;
 	/* 99 для popup */
-	z-index: 98; 
+	z-index: 98;
 
 	display: flex;
 	align-items: center;
@@ -16,8 +16,10 @@ header {
 	background-color: var(--white-full);
 }
 
-header nav {
+header nav,
+header a {
 	display: flex;
+	align-items: center;
 	gap: 1rem;
 }
 

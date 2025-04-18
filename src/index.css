@@ -406,14 +406,6 @@ hr {
 		gap: 0.75rem;
 	}
 
-	header {
-		padding: 1rem;
-	}
-
-	header a.btn {
-		display: none;
-	}
-
 	footer {
 		padding: 2rem 1rem;
 	}
@@ -438,6 +430,18 @@ hr {
 	.popup .group {
 		flex-direction: column;
 		gap: 0.5rem;
+	}
+}
+
+@media (width < 700px) {
+	header {
+		padding: 0.5rem;
+	}
+}
+
+@media (width < 300px) {
+	header a.btn {
+		display: none;
 	}
 }
 

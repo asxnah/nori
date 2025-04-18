@@ -246,7 +246,9 @@ router.post('/', upload.single('background'), async (req, res) => {
 		}
 
 		const background = req.file
-			? `http://localhost:3000/uploads/quizzesBackground/${req.file.filename}`
+			? `${import.meta.env.VITE_API_URL}/uploads/quizzesBackground/${
+					req.file.filename
+			  }`
 			: null;
 
 		const savedQuestions = await Promise.all(

@@ -52,7 +52,7 @@ export const UserPage = () => {
 
 			try {
 				const response = await axios.get(
-					`http://localhost:3000/api/quizzes/user/${user.id}`
+					`${import.meta.env.VITE_API_URL}/api/quizzes/user/${user.id}`
 				);
 				setCreatedQuizzes(Array.isArray(response.data) ? response.data : []);
 				setLoading(false);
@@ -72,7 +72,7 @@ export const UserPage = () => {
 
 			try {
 				const response = await axios.get(
-					`http://localhost:3000/api/quizzes/answers/user/${user.id}`
+					`${import.meta.env.VITE_API_URL}/api/quizzes/answers/user/${user.id}`
 				);
 				setCompletedQuizzes(Array.isArray(response.data) ? response.data : []);
 				setCompletedLoading(false);
@@ -138,7 +138,7 @@ export const UserPage = () => {
 		}
 
 		try {
-			await axios.post('http://localhost:3000/api/update-profile', {
+			await axios.post(`${import.meta.env.VITE_API_URL}/api/update-profile`, {
 				...formData,
 				current_username: user.username,
 			});

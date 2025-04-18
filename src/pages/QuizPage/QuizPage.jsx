@@ -26,7 +26,7 @@ export const QuizPage = () => {
 		const fetchTest = async () => {
 			try {
 				const response = await axios.get(
-					`http://localhost:3000/api/quizzes/${testId}`
+					`${import.meta.env.VITE_API_URL}/api/quizzes/${testId}`
 				);
 				setTest(response.data);
 				setLoading(false);
@@ -74,7 +74,7 @@ export const QuizPage = () => {
 			);
 
 			const response = await axios.post(
-				`http://localhost:3000/api/quizzes/${testId}/answers`,
+				`${import.meta.env.VITE_API_URL}/api/quizzes/${testId}/answers`,
 				{
 					userId,
 					answers: formattedAnswers,

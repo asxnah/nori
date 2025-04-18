@@ -243,7 +243,7 @@ export const CreatePage = () => {
 			formData.append('createdBy', userData.id);
 
 			const response = await axios.post(
-				`http://localhost:3000/api/quizzes`,
+				`${import.meta.env.VITE_API_URL}/api/quizzes`,
 				formData,
 				{
 					headers: {

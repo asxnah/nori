@@ -34,7 +34,7 @@ export const AnswersPage = () => {
 				}
 
 				const quizResponse = await axios.get(
-					`http://localhost:3000/api/quizzes/${quizId}`
+					`${import.meta.env.VITE_API_URL}/api/quizzes/${quizId}`
 				);
 				setQuiz(quizResponse.data);
 
@@ -45,7 +45,7 @@ export const AnswersPage = () => {
 				}
 
 				const answersResponse = await axios.get(
-					`http://localhost:3000/api/quizzes/${quizId}/answers`
+					`${import.meta.env.VITE_API_URL}/api/quizzes/${quizId}/answers`
 				);
 				setUserAnswers(answersResponse.data);
 				setLoading(false);

@@ -16,12 +16,14 @@ export const ResultsPage = () => {
 		const fetchResults = async () => {
 			try {
 				const answersResponse = await axios.get(
-					`http://localhost:3000/api/quizzes/answers/${answerId}`
+					`${import.meta.env.VITE_API_URL}/api/quizzes/answers/${answerId}`
 				);
 				setUserAnswers(answersResponse.data);
 
 				const testResponse = await axios.get(
-					`http://localhost:3000/api/quizzes/${answersResponse.data.testId}`
+					`${import.meta.env.VITE_API_URL}/api/quizzes/${
+						answersResponse.data.testId
+					}`
 				);
 				setTest(testResponse.data);
 			} catch (err) {

@@ -21,7 +21,7 @@ export const QuizCard = ({
 	const handleDelete = async () => {
 		if (window.confirm('Вы уверены, что хотите удалить этот тест?')) {
 			try {
-				await axios.delete(`http://localhost:3000/api/quizzes/${id}`);
+				await axios.delete(`${import.meta.env.VITE_API_URL}/api/quizzes/${id}`);
 				if (onDelete) {
 					onDelete(id);
 				}
@@ -56,7 +56,7 @@ export const QuizCard = ({
 							</Link>
 							<button
 								onClick={() => {
-									const url = `http://localhost:3000/quiz?id=${id}`;
+									const url = `${import.meta.env.VITE_API_URL}/quiz?id=${id}`;
 									navigator.clipboard.writeText(url);
 								}}
 							>
@@ -77,7 +77,9 @@ export const QuizCard = ({
 							</Link>
 							<button
 								onClick={() => {
-									const url = `http://localhost:3000/quiz/results/${id}`;
+									const url = `${
+										import.meta.env.VITE_API_URL
+									}/quiz/results/${id}`;
 									navigator.clipboard.writeText(url);
 								}}
 							>
@@ -96,7 +98,7 @@ export const QuizCard = ({
 							</Link>
 							<button
 								onClick={() => {
-									const url = `http://localhost:3000/quiz?id=${id}`;
+									const url = `${import.meta.env.VITE_API_URL}/quiz?id=${id}`;
 									navigator.clipboard.writeText(url);
 								}}
 							>

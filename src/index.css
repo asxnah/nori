@@ -435,7 +435,7 @@ hr {
 
 @media (width < 700px) {
 	header {
-		padding: 0.5rem;
+		padding: 0.5rem 1rem;
 	}
 }
 

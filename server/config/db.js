@@ -8,10 +8,7 @@ const connectDB = async () => {
 	try {
 		const mongoURI =
 			process.env.MONGODB_URI || 'mongodb://localhost:27017/nori';
-		await mongoose.connect(mongoURI, {
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-		});
+		await mongoose.connect(mongoURI);
 		console.debug('База данных подключена');
 	} catch (err) {
 		console.error('Ошибка при подключении к базе данных: ' + err);

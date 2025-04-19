@@ -49,9 +49,9 @@ export const QuizCard = ({
 					<div className="quiz-header">
 						<p>Количество вопросов: {questionsCount}</p>
 						<div className="group">
-							<button>
+							<Link to={`/create?id=${id}`}>
 								<EditIcon />
-							</button>
+							</Link>
 							<Link to={`/quiz?id=${id}`}>
 								<OpenIcon />
 							</Link>

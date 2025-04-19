@@ -5,11 +5,11 @@ import UserAnswer from '../models/UserAnswer.js';
 import multer from 'multer';
 import path from 'path';
 import process from 'process';
-import { fileURLToPath } from 'url';
+// import { fileURLToPath } from 'url';
 import fs from 'fs';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -329,6 +329,87 @@ router.delete('/:testId', async (req, res) => {
 	} catch (error) {
 		console.error('Error deleting quiz:', error);
 		res.status(500).json({ message: 'Ошибка при удалении теста' });
+	}
+});
+
+router.put('/:testId', upload.single('background'), async (req, res) => {
+	try {
+		const { testId } = req.params;
+		const { title, description, createdBy } = req.body;
+		const tags = JSON.parse(req.body.tags);
+		const questions = JSON.parse(req.body.questions);
+
+		if (!title || !questions || !createdBy) {
+			return res.status(400).json({ message: 'Missing required fields' });
+		}
+
+		// Find existing test
+		const existingTest = await Test.findById(testId);
+		if (!existingTest) {
+			return res.status(404).json({ message: 'Quiz not found' });
+		}
+
+		// Delete old questions
+		await Question.deleteMany({ _id: { $in: existingTest.questionIds } });
+
+		// Create new questions
+		const savedQuestions = await Promise.all(
+			questions.map(async (question) => {
+				const newQuestion = new Question({
+					questionText: question.text,
+					type: question.type,
+					options: question.answers || [],
+					correctAnswers: question.correctAnswers,
+				});
+				return await newQuestion.save();
+			})
+		);
+
+		// Handle background image
+		let background = existingTest.background;
+		if (req.file) {
+			// Delete old background if exists
+			if (existingTest.background) {
+				const oldPath = existingTest.background.split(
+					'/uploads/quizzesBackground/'
+				)[1];
+				if (oldPath) {
+					const fullPath = path.join(
+						process.cwd(),
+						'uploads',
+						'quizzesBackground',
+						oldPath
+					);
+					if (fs.existsSync(fullPath)) {
+						fs.unlinkSync(fullPath);
+					}
+				}
+			}
+			background = `${import.meta.env.VITE_API_URL}/uploads/quizzesBackground/${
+				req.file.filename
+			}`;
+		}
+
+		// Update test
+		const updatedTest = await Test.findByIdAndUpdate(
+			testId,
+			{
+				title,
+				description: description || '',
+				background,
+				tags: tags.filter((tag) => tag.trim()),
+				questionIds: savedQuestions.map((q) => q._id),
+			},
+			{ new: true }
+		);
+
+		res.json({
+			message: 'Quiz updated successfully',
+			testId: updatedTest._id,
+		});
+	} catch (error) {
+		console.error('Error updating quiz:', error);
+		res.status(500).json({ message: 'Error updating quiz' });
 	}
 });
 

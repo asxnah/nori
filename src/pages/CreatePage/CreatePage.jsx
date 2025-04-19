@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import './CreatePage.css';
@@ -22,6 +22,8 @@ export const CreatePage = () => {
 	const [backgroundFile, setBackgroundFile] = useState(null);
 	const navigate = useNavigate();
 	const [error, setError] = useState('');
+	const [searchParams] = useSearchParams();
+	const [isLoading, setIsLoading] = useState(false);
 
 	const coverRef = useRef(null);
 	const menuQuestionsRef = useRef(null);
@@ -206,19 +208,63 @@ export const CreatePage = () => {
 		});
 	};
 
+	useEffect(() => {
+		const quizId = searchParams.get('id');
+		if (quizId) {
+			fetchQuizData(quizId);
+		}
+	}, [searchParams]);
+
+	const fetchQuizData = async (quizId) => {
+		setIsLoading(true);
+		setError('');
+		try {
+			const response = await axios.get(
+				`${import.meta.env.VITE_API_URL}/api/quizzes/${quizId}`
+			);
+			const quiz = response.data;
+
+			setQuizTitle(quiz.title);
+			setDescription(quiz.description || '');
+			setTags(
+				quiz.tags.length
+					? [...quiz.tags, ...Array(3 - quiz.tags.length).fill('')]
+					: ['', '', '']
+			);
+
+			if (quiz.background) {
+				setBackgroundImage(quiz.background);
+			}
+
+			const mappedQuestions = quiz.questionIds.map((q) => ({
+				id: q._id,
+				type: q.type,
+				text: q.questionText,
+				answers: q.type === 'multipleChoice' ? q.options : [],
+				correctAnswers: q.correctAnswers,
+			}));
+			setQuestions(mappedQuestions);
+		} catch (error) {
+			console.error('Error fetching quiz:', error);
+			setError('Failed to load quiz data');
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	const handleSubmit = async (evt) => {
 		evt.preventDefault();
 		setError('');
 
 		if (!isQuizValid()) {
-			setError('Пожалуйста, заполните все обязательные поля');
+			setError('Please fill in all required fields');
 			return;
 		}
 
 		try {
 			const userData = JSON.parse(Cookies.get('user'));
 			if (!userData?.id) {
-				setError('Ошибка авторизации. Пожалуйста, войдите снова.');
+				setError('Authentication error. Please login again.');
 				return;
 			}
 
@@ -242,28 +288,22 @@ export const CreatePage = () => {
 			);
 			formData.append('createdBy', userData.id);
 
-			const response = await axios.post(
-				`${import.meta.env.VITE_API_URL}/api/quizzes`,
-				formData,
-				{
-					headers: {
-						'Content-Type': 'multipart/form-data',
-					},
-				}
-			);
+			const quizId = searchParams.get('id');
+			const url = `${import.meta.env.VITE_API_URL}/api/quizzes${
+				quizId ? `/${quizId}` : ''
+			}`;
+			const method = quizId ? 'put' : 'post';
 
-			if (response.data.testId) {
-				navigate(`/quiz?id=${response.data.testId}`);
-			}
+			const response = await axios[method](url, formData, {
+				headers: {
+					'Content-Type': 'multipart/form-data',
+				},
+			});
+
+			navigate(`/quiz?id=${quizId || response.data.testId}`);
 		} catch (error) {
 			console.error('Error saving quiz:', error);
-			if (error.response) {
-				setError(
-					error.response.data.message || 'Ошибка при сохранении викторины'
-				);
-			} else {
-				setError('Ошибка соединения с сервером');
-			}
+			setError(error.response?.data?.message || 'Error saving quiz');
 		}
 	};
 
@@ -374,175 +414,186 @@ export const CreatePage = () => {
 	return (
 		<div>
 			<main id="CreatePage">
-				{error && <div className="error-message">{error}</div>}
-				<form onSubmit={handleSubmit}>
-					<section id="info" className="card card-outline">
-						<div id="heading">
-							<h2>О викторине</h2>
-							<button
-								type="button"
-								className="btn btn-secondary"
-								onClick={handleRemoveBackground}
-							>
-								Удалить фон
-							</button>
-						</div>
-						<div
-							id="upload"
-							style={{
-								backgroundImage: backgroundImage
-									? `url(${backgroundImage})`
-									: '',
-								backgroundSize: 'cover',
-								backgroundPosition: 'center',
-							}}
-						>
-							<div id="upload-overlay">
-								<img
-									src="./assets/icons/UploadIcon.png"
-									id="upload-icon"
-									alt="иконка загрузки"
-								/>
-								<p>
-									Загрузить фон <br /> (необязательно)
-								</p>
-							</div>
-							<input
-								type="file"
-								name="cover"
-								id="cover"
-								accept="image/*"
-								ref={coverRef}
-								onChange={handleSetBackground}
-							/>
-						</div>
-						<div className="group">
-							<input
-								type="text"
-								className="btn"
-								placeholder="Название *"
-								value={quizTitle}
-								onChange={handleQuizTitleChange}
-							/>
-							<textarea
-								placeholder="Описание (необязательно)"
-								value={description}
-								onChange={handleDescriptionChange}
-							></textarea>
-							<div id="tags">
-								{tags.map((tag, index) => (
+				{isLoading ? (
+					<div className="loading">Loading quiz data...</div>
+				) : (
+					<>
+						{error && <div className="error-message">{error}</div>}
+						<form onSubmit={handleSubmit}>
+							<section id="info" className="card card-outline">
+								<div id="heading">
+									<h2>О викторине</h2>
+									<button
+										type="button"
+										className="btn btn-secondary"
+										onClick={handleRemoveBackground}
+									>
+										Удалить фон
+									</button>
+								</div>
+								<div
+									id="upload"
+									style={{
+										backgroundImage: backgroundImage
+											? `url(${backgroundImage})`
+											: '',
+										backgroundSize: 'cover',
+										backgroundPosition: 'center',
+									}}
+								>
+									<div id="upload-overlay">
+										<img
+											src="./assets/icons/UploadIcon.png"
+											id="upload-icon"
+											alt="иконка загрузки"
+										/>
+										<p>
+											Загрузить фон <br /> (необязательно)
+										</p>
+									</div>
 									<input
-										key={index}
-										type="text"
-										className="tag btn"
-										placeholder="Тег *"
-										value={tag}
-										onChange={(e) => handleTagChange(index, e.target.value)}
+										type="file"
+										name="cover"
+										id="cover"
+										accept="image/*"
+										ref={coverRef}
+										onChange={handleSetBackground}
 									/>
-								))}
-							</div>
-						</div>
-					</section>
-
-					<section id="quiz">
-						<div id="quizzes-heading">
-							<h2>Вопросы</h2>
-							<menu id="menu-pc">
-								<button
-									type="button"
-									className="btn btn-secondary"
-									onClick={() => addQuestion('multipleChoice')}
-								>
-									<PlusIcon />
-									<span>Выбор</span>
-								</button>
-								<button
-									type="button"
-									className="btn btn-secondary"
-									onClick={() => addQuestion('trueFalse')}
-								>
-									<PlusIcon />
-									<span>Истинно / Ложно</span>
-								</button>
-								<button
-									type="button"
-									className="btn btn-secondary"
-									onClick={() => addQuestion('openText')}
-								>
-									<PlusIcon />
-									<span>Открытый вопрос</span>
-								</button>
-								<button
-									type="button"
-									className="btn btn-secondary"
-									onClick={handleTimerButtonClick}
-								>
-									<TimerIcon />
-									<span>{timerValue}</span>
-								</button>
-							</menu>
-
-							<menu id="menu-mobile">
-								<div
-									id="dropdown-button"
-									className="btn btn-secondary"
-									ref={dropdownButtonRef}
-									onClick={toggleDropdown}
-								>
-									<PlusIcon />
 								</div>
-								<div
-									id="menu-questions"
-									className={`dropdown-content ${isDropdownOpen ? 'show' : ''}`}
-									ref={menuQuestionsRef}
-								>
-									<button
-										type="button"
-										onClick={() => addQuestion('multipleChoice')}
-									>
-										<PlusIcon />
-										<span>Выбор</span>
-									</button>
-									<button
-										type="button"
-										onClick={() => addQuestion('trueFalse')}
-									>
-										<PlusIcon />
-										<span>Истинно / Ложно</span>
-									</button>
-									<button type="button" onClick={() => addQuestion('openText')}>
-										<PlusIcon />
-										<span>Открытый вопрос</span>
-									</button>
-									<button type="button" onClick={handleTimerButtonClick}>
-										<TimerIcon />
-										<span>{timerValue}</span>
-									</button>
+								<div className="group">
+									<input
+										type="text"
+										className="btn"
+										placeholder="Название *"
+										value={quizTitle}
+										onChange={handleQuizTitleChange}
+									/>
+									<textarea
+										placeholder="Описание (необязательно)"
+										value={description}
+										onChange={handleDescriptionChange}
+									></textarea>
+									<div id="tags">
+										{tags.map((tag, index) => (
+											<input
+												key={index}
+												type="text"
+												className="tag btn"
+												placeholder="Тег *"
+												value={tag}
+												onChange={(e) => handleTagChange(index, e.target.value)}
+											/>
+										))}
+									</div>
 								</div>
-							</menu>
-						</div>
+							</section>
 
-						<div id="quiz-list">
-							{questions.map((question, index) =>
-								renderQuestion(question, index)
-							)}
-						</div>
+							<section id="quiz">
+								<div id="quizzes-heading">
+									<h2>Вопросы</h2>
+									<menu id="menu-pc">
+										<button
+											type="button"
+											className="btn btn-secondary"
+											onClick={() => addQuestion('multipleChoice')}
+										>
+											<PlusIcon />
+											<span>Выбор</span>
+										</button>
+										<button
+											type="button"
+											className="btn btn-secondary"
+											onClick={() => addQuestion('trueFalse')}
+										>
+											<PlusIcon />
+											<span>Истинно / Ложно</span>
+										</button>
+										<button
+											type="button"
+											className="btn btn-secondary"
+											onClick={() => addQuestion('openText')}
+										>
+											<PlusIcon />
+											<span>Открытый вопрос</span>
+										</button>
+										<button
+											type="button"
+											className="btn btn-secondary"
+											onClick={handleTimerButtonClick}
+										>
+											<TimerIcon />
+											<span>{timerValue}</span>
+										</button>
+									</menu>
 
-						<div className="group">
-							<button
-								type="submit"
-								className="btn btn-primary"
-								disabled={!isQuizValid()}
-							>
-								Создать
-							</button>
-							<Link to="/" className="btn btn-secondary">
-								<span>Скачать</span>
-								<span>DOCX</span>
-							</Link>
-						</div>
-					</section>
-				</form>
+									<menu id="menu-mobile">
+										<div
+											id="dropdown-button"
+											className="btn btn-secondary"
+											ref={dropdownButtonRef}
+											onClick={toggleDropdown}
+										>
+											<PlusIcon />
+										</div>
+										<div
+											id="menu-questions"
+											className={`dropdown-content ${
+												isDropdownOpen ? 'show' : ''
+											}`}
+											ref={menuQuestionsRef}
+										>
+											<button
+												type="button"
+												onClick={() => addQuestion('multipleChoice')}
+											>
+												<PlusIcon />
+												<span>Выбор</span>
+											</button>
+											<button
+												type="button"
+												onClick={() => addQuestion('trueFalse')}
+											>
+												<PlusIcon />
+												<span>Истинно / Ложно</span>
+											</button>
+											<button
+												type="button"
+												onClick={() => addQuestion('openText')}
+											>
+												<PlusIcon />
+												<span>Открытый вопрос</span>
+											</button>
+											<button type="button" onClick={handleTimerButtonClick}>
+												<TimerIcon />
+												<span>{timerValue}</span>
+											</button>
+										</div>
+									</menu>
+								</div>
+
+								<div id="quiz-list">
+									{questions.map((question, index) =>
+										renderQuestion(question, index)
+									)}
+								</div>
+
+								<div className="group">
+									<button
+										type="submit"
+										className="btn btn-primary"
+										disabled={!isQuizValid()}
+									>
+										{searchParams.get('id') ? 'Сохранить изменения' : 'Создать'}
+									</button>
+									<Link to="/" className="btn btn-secondary">
+										<span>Скачать</span>
+										<span>DOCX</span>
+									</Link>
+								</div>
+							</section>
+						</form>
+					</>
+				)}
 			</main>
 
 			<section

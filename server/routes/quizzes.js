@@ -4,6 +4,7 @@ import Question from '../models/Question.js';
 import UserAnswer from '../models/UserAnswer.js';
 import multer from 'multer';
 import path from 'path';
+import process from 'process';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 
@@ -296,13 +297,11 @@ router.delete('/:testId', async (req, res) => {
 	try {
 		const { testId } = req.params;
 
-		// Delete the test and all associated questions
 		const test = await Test.findById(testId);
 		if (!test) {
 			return res.status(404).json({ message: 'Тест не найден' });
 		}
 
-		// Delete background image if it exists
 		if (test.background) {
 			const backgroundPath = test.background.split(
 				'/uploads/quizzesBackground/'
@@ -320,13 +319,10 @@ router.delete('/:testId', async (req, res) => {
 			}
 		}
 
-		// Delete all questions associated with this test
 		await Question.deleteMany({ _id: { $in: test.questionIds } });
 
-		// Delete all user answers for this test
 		await UserAnswer.deleteMany({ testId });
 
-		// Finally delete the test itself
 		await Test.findByIdAndDelete(testId);
 
 		res.json({ message: 'Тест успешно удален' });

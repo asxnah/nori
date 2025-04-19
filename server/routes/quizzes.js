@@ -261,7 +261,7 @@ router.post('/', upload.single('background'), async (req, res) => {
 					questionText: question.text,
 					type: question.type,
 					options: question.answers || [],
-					correctAnswer: question.correctAnswer,
+					correctAnswers: question.correctAnswers,
 				});
 				return await newQuestion.save();
 			})

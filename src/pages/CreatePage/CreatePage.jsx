@@ -93,7 +93,7 @@ export const CreatePage = () => {
 			type,
 			text: '',
 			answers: type === 'multipleChoice' ? ['', ''] : [],
-			correctAnswer:
+			correctAnswers:
 				type === 'trueFalse' ? true : type === 'multipleChoice' ? [] : '',
 		};
 		setQuestions([...questions, newQuestion]);
@@ -122,18 +122,18 @@ export const CreatePage = () => {
 			questions.map((q) => {
 				if (q.id === questionId) {
 					if (q.type === 'multipleChoice') {
-						const newCorrectAnswers = [...(q.correctAnswer || [])];
+						const newCorrectAnswers = [...(q.correctAnswers || [])];
 						const index = newCorrectAnswers.indexOf(answerIndex);
 						if (index === -1) {
 							newCorrectAnswers.push(answerIndex);
 						} else {
 							newCorrectAnswers.splice(index, 1);
 						}
-						return { ...q, correctAnswer: newCorrectAnswers };
+						return { ...q, correctAnswers: newCorrectAnswers };
 					} else if (q.type === 'trueFalse') {
-						return { ...q, correctAnswer: answerIndex };
+						return { ...q, correctAnswers: answerIndex };
 					} else {
-						return { ...q, correctAnswer: answerIndex };
+						return { ...q, correctAnswers: answerIndex };
 					}
 				}
 				return q;
@@ -192,14 +192,14 @@ export const CreatePage = () => {
 
 			switch (question.type) {
 				case 'openText':
-					return question.correctAnswer.trim() !== '';
+					return question.correctAnswers.trim() !== '';
 				case 'multipleChoice':
 					return (
 						question.answers.length >= 2 &&
 						question.answers.every((answer) => answer.trim())
 					);
 				case 'trueFalse':
-					return typeof question.correctAnswer === 'boolean';
+					return typeof question.correctAnswers === 'boolean';
 				default:
 					return false;
 			}
@@ -236,7 +236,7 @@ export const CreatePage = () => {
 						text: q.text,
 						type: q.type,
 						answers: q.answers,
-						correctAnswer: q.correctAnswer,
+						correctAnswers: q.correctAnswers,
 					}))
 				)
 			);
@@ -297,7 +297,7 @@ export const CreatePage = () => {
 									<label className="custom-checkbox">
 										<input
 											type="checkbox"
-											checked={question.correctAnswer?.includes(i) || false}
+											checked={question.correctAnswers?.includes(i) || false}
 											onChange={() => handleCorrectAnswerChange(question.id, i)}
 										/>
 										<span className="checkmark"></span>
@@ -336,7 +336,7 @@ export const CreatePage = () => {
 							<input
 								type="radio"
 								name={`trueFalse-${question.id}`}
-								checked={question.correctAnswer === true}
+								checked={question.correctAnswers === true}
 								onChange={() => handleCorrectAnswerChange(question.id, true)}
 							/>
 							<label>
@@ -347,7 +347,7 @@ export const CreatePage = () => {
 							<input
 								type="radio"
 								name={`trueFalse-${question.id}`}
-								checked={question.correctAnswer === false}
+								checked={question.correctAnswers === false}
 								onChange={() => handleCorrectAnswerChange(question.id, false)}
 							/>
 							<label>
@@ -360,7 +360,7 @@ export const CreatePage = () => {
 					<div className="answers openText">
 						<textarea
 							placeholder="Правильный ответ"
-							value={question.correctAnswer}
+							value={question.correctAnswers}
 							onChange={(e) =>
 								handleCorrectAnswerChange(question.id, e.target.value)
 							}

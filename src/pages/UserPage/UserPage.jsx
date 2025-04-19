@@ -185,13 +185,13 @@ export const UserPage = () => {
 
 			if (question.type === 'trueFalse') {
 				const userAnswerBool = answer.selected[0] === 'true';
-				const isCorrect = userAnswerBool === question.correctAnswer;
+				const isCorrect = userAnswerBool === question.correctAnswers;
 
 				if (isCorrect) {
 					correct++;
 				}
 			} else if (question.type === 'multipleChoice') {
-				const isCorrect = answer.selected[0] === question.correctAnswer;
+				const isCorrect = answer.selected[0] === question.correctAnswers;
 
 				if (isCorrect) {
 					correct++;
@@ -199,7 +199,7 @@ export const UserPage = () => {
 			} else if (question.type === 'openText') {
 				const isCorrect =
 					answer.selected[0].toLowerCase().trim() ===
-					question.correctAnswer.toLowerCase().trim();
+					question.correctAnswers.toLowerCase().trim();
 
 				if (isCorrect) {
 					correct++;

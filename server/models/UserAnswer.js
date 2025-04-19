@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const answerSchema = new mongoose.Schema({
 	questionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Question' },
-	selected: [String],
+	selected: [mongoose.Schema.Types.Mixed],
 });
 
 const userAnswerSchema = new mongoose.Schema({

@@ -41,10 +41,10 @@ export const QuizPage = () => {
 	}, [testId]);
 
 	const handleAnswer = (questionId, answer) => {
-		setAnswers((prev) => ({
-			...prev,
-			[questionId]: answer,
-		}));
+		setAnswers((prevAnswers) => {
+			const newAnswers = { ...prevAnswers, [questionId]: answer };
+			return newAnswers;
+		});
 	};
 
 	const handleSubmit = async (e) => {
@@ -66,12 +66,31 @@ export const QuizPage = () => {
 				return;
 			}
 
-			const formattedAnswers = Object.entries(answers).map(
-				([questionId, answer]) => ({
-					questionId,
-					selected: answer,
-				})
-			);
+			const formattedAnswers = Object.entries(answers)
+				.filter(([key]) => !key.endsWith('_index'))
+				.map(([questionId, answer]) => {
+					const question = test.questionIds.find((q) => q._id === questionId);
+					let formattedAnswer;
+
+					switch (question.type) {
+						case 'multipleChoice':
+							formattedAnswer = [Number(answer)];
+							break;
+						case 'trueFalse':
+							formattedAnswer = answer;
+							break;
+						case 'openText':
+							formattedAnswer = answer;
+							break;
+						default:
+							formattedAnswer = answer;
+					}
+
+					return {
+						questionId,
+						selected: formattedAnswer,
+					};
+				});
 
 			const response = await axios.post(
 				`${import.meta.env.VITE_API_URL}/api/quizzes/${testId}/answers`,
@@ -104,11 +123,11 @@ export const QuizPage = () => {
 									key={i}
 									type="button"
 									className={`btn ${
-										answers[question._id] === option
+										answers[question._id] === i
 											? 'btn-primary'
 											: 'btn-secondary'
 									}`}
-									onClick={() => handleAnswer(question._id, option)}
+									onClick={() => handleAnswer(question._id, i)}
 								>
 									{option}
 								</button>
@@ -179,7 +198,10 @@ export const QuizPage = () => {
 					<div>
 						<p>
 							{Math.round(
-								(Object.keys(answers).length / test.questionIds.length) * 100
+								(Object.keys(answers).filter((key) => !key.endsWith('_index'))
+									.length /
+									test.questionIds.length) *
+									100
 							)}
 							% пройдено
 						</p>
@@ -196,7 +218,8 @@ export const QuizPage = () => {
 						className="btn btn-primary"
 						disabled={
 							submitting ||
-							Object.keys(answers).length !== test.questionIds.length
+							Object.keys(answers).filter((key) => !key.endsWith('_index'))
+								.length !== test.questionIds.length
 						}
 					>
 						{submitting ? 'Сохранение...' : 'Завершить прохождение'}

@@ -8,7 +8,7 @@ const questionSchema = new mongoose.Schema({
 		required: true,
 	},
 	options: [String],
-	correctAnswer: mongoose.Schema.Types.Mixed,
+	correctAnswers: mongoose.Schema.Types.Mixed,
 });
 
 const Question = mongoose.model('Question', questionSchema);

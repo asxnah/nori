@@ -44,37 +44,51 @@ export const ResultsPage = () => {
 	const calculateScore = () => {
 		let correct = 0;
 		let total = 0;
+		let selectedNumber,
+			userAnswer,
+			correctAnswers,
+			normalizeText,
+			userText,
+			correctText;
 
 		userAnswers.answers.forEach((answer) => {
-			const question = test.questionIds.find((q) => {
-				return q._id === answer.questionId._id;
-			});
-
+			const question = test.questionIds.find(
+				(q) => q._id === answer.questionId._id
+			);
 			if (!question) return;
-
 			total++;
 
-			if (question.type === 'trueFalse') {
-				const userAnswerBool = answer.selected[0] === 'true';
-				const isCorrect = userAnswerBool === question.correctAnswer;
-
-				if (isCorrect) {
-					correct++;
-				}
-			} else if (question.type === 'multipleChoice') {
-				const isCorrect = answer.selected[0] === question.correctAnswer;
-
-				if (isCorrect) {
-					correct++;
-				}
-			} else if (question.type === 'openText') {
-				const isCorrect =
-					answer.selected[0].toLowerCase().trim() ===
-					question.correctAnswer.toLowerCase().trim();
-
-				if (isCorrect) {
-					correct++;
-				}
+			switch (question.type) {
+				case 'multipleChoice':
+					selectedNumber = Number(answer.selected[0]);
+					if (selectedNumber === Number(question.correctAnswers)) {
+						correct++;
+					}
+					break;
+				case 'trueFalse':
+					userAnswer =
+						answer.selected === true ||
+						answer.selected[0] === true ||
+						answer.selected === 'true' ||
+						answer.selected[0] === 'true';
+					correctAnswers =
+						question.correctAnswers === true ||
+						question.correctAnswers === 'true';
+					if (userAnswer === correctAnswers) {
+						correct++;
+					}
+					break;
+				case 'openText':
+					normalizeText = (text) => {
+						if (!text) return '';
+						return text.toString().toLowerCase().trim().replace(/\s+/g, ' ');
+					};
+					userText = normalizeText(answer.selected[0] || answer.selected);
+					correctText = normalizeText(question.correctAnswers);
+					if (userText === correctText) {
+						correct++;
+					}
+					break;
 			}
 		});
 
@@ -85,12 +99,11 @@ export const ResultsPage = () => {
 
 	const renderQuestion = (question, index) => {
 		const userAnswer = userAnswers.answers[index];
-		const isCorrect =
-			JSON.stringify(userAnswer.selected) ===
-			JSON.stringify(question.correctAnswer);
+		let selectedIndex, userBool, correctBool;
 
 		switch (question.type) {
 			case 'multipleChoice':
+				selectedIndex = Number(userAnswer.selected[0]);
 				return (
 					<div className="question" key={question._id}>
 						<div className="question-text">
@@ -102,9 +115,9 @@ export const ResultsPage = () => {
 								<button
 									key={i}
 									className={`btn ${
-										option === question.correctAnswer
+										i === Number(question.correctAnswers)
 											? 'correct'
-											: userAnswer.selected.includes(option)
+											: i === selectedIndex
 											? 'incorrect'
 											: 'btn-secondary'
 									}`}
@@ -117,6 +130,9 @@ export const ResultsPage = () => {
 					</div>
 				);
 			case 'trueFalse':
+				userBool =
+					userAnswer.selected === true || userAnswer.selected[0] === true;
+				correctBool = question.correctAnswers === true;
 				return (
 					<div className="question" key={question._id}>
 						<div className="question-text">
@@ -127,9 +143,9 @@ export const ResultsPage = () => {
 							<button>
 								<TrueIcon
 									fill={
-										question.correctAnswer === true
+										correctBool
 											? '#2dc653'
-											: userAnswer.selected[0] === 'true' && !isCorrect
+											: userBool && !correctBool
 											? '#eb0000'
 											: '#323232'
 									}
@@ -138,9 +154,9 @@ export const ResultsPage = () => {
 							<button>
 								<FalseIcon
 									fill={
-										question.correctAnswer === false
+										!correctBool
 											? '#2dc653'
-											: userAnswer.selected[0] === 'false' && !isCorrect
+											: !userBool && correctBool
 											? '#eb0000'
 											: '#323232'
 									}
@@ -166,7 +182,7 @@ export const ResultsPage = () => {
 							<tbody>
 								<tr>
 									<td>{userAnswer.selected[0]}</td>
-									<td>{question.correctAnswer}</td>
+									<td>{question.correctAnswers}</td>
 								</tr>
 							</tbody>
 						</table>

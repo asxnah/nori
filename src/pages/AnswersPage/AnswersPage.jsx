@@ -79,17 +79,17 @@ export const AnswersPage = () => {
 
 			if (question.type === 'trueFalse') {
 				const userAnswerBool = userAnswer.selected[0] === 'true';
-				if (userAnswerBool === question.correctAnswer) {
+				if (userAnswerBool === question.correctAnswers) {
 					correct++;
 				}
 			} else if (question.type === 'multipleChoice') {
-				if (userAnswer.selected[0] === question.correctAnswer) {
+				if (userAnswer.selected[0] === question.correctAnswers) {
 					correct++;
 				}
 			} else if (question.type === 'openText') {
 				if (
 					userAnswer.selected[0].toLowerCase().trim() ===
-					question.correctAnswer.toLowerCase().trim()
+					question.correctAnswers.toLowerCase().trim()
 				) {
 					correct++;
 				}

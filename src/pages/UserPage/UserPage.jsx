@@ -313,6 +313,7 @@ export const UserPage = () => {
 									background={quiz.testId.background}
 									type="completed"
 									correctAnswers={calculateScore(quiz).correct}
+									link={quiz._id}
 									totalAnswers={calculateScore(quiz).total}
 								/>
 							))

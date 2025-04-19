@@ -17,6 +17,7 @@ export const QuizCard = ({
 	correctAnswers,
 	totalAnswers,
 	onDelete,
+	link,
 }) => {
 	const handleDelete = async () => {
 		if (window.confirm('Вы уверены, что хотите удалить этот тест?')) {
@@ -72,7 +73,7 @@ export const QuizCard = ({
 							Правильных ответов: {correctAnswers} из {totalAnswers}
 						</p>
 						<div className="group">
-							<Link to={`/quiz/results/${id}`}>
+							<Link to={`/quiz/results/${link}`}>
 								<OpenIcon />
 							</Link>
 							<button

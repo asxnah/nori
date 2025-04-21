@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { ArrowUpIcon } from '../../uikit/ArrowUpIcon/ArrowUpIcon';
 import './Footer.css';
 
 export const Footer = () => {
@@ -8,8 +9,9 @@ export const Footer = () => {
 				id="top"
 				aria-labelledby="кнопка пролистать наверх"
 				title="пролистать наверх"
+				onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
 			>
-				&#8593;
+				<ArrowUpIcon />
 			</button>
 			<Link to="/about">О платформе</Link>
 			<small>

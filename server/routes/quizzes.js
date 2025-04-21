@@ -65,7 +65,9 @@ router.get('/user/:userId', async (req, res) => {
 				tags: 1,
 				questionIds: 1,
 			}
-		).populate('questionIds');
+		)
+			.sort({ createdAt: -1 })
+			.populate('questionIds');
 
 		res.json(quizzes);
 	} catch (error) {
@@ -197,6 +199,7 @@ router.get('/answers/user/:userId', async (req, res) => {
 		const { userId } = req.params;
 
 		const userAnswers = await UserAnswer.find({ userId })
+			.sort({ createdAt: -1 })
 			.populate('testId', 'title tags background')
 			.populate('answers.questionId');
 

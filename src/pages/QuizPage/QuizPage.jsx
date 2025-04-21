@@ -81,7 +81,7 @@ export const QuizPage = () => {
 
 					switch (question.type) {
 						case 'multipleChoice':
-							formattedAnswer = answer.map(Number); // Convert array elements to numbers
+							formattedAnswer = answer.map(Number); 
 							break;
 						case 'trueFalse':
 							formattedAnswer = answer;

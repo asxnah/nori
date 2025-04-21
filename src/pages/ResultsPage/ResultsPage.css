@@ -114,6 +114,11 @@
 		border-radius: 1rem;
 	}
 
+	.multipleChoice .correct-border {
+		border: 0.1rem solid var(--green) !important;
+		color: var(--green) !important;
+	}
+
 	.trueFalse {
 		display: flex;
 		align-items: center;

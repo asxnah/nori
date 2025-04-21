@@ -44,12 +44,7 @@ export const ResultsPage = () => {
 	const calculateScore = () => {
 		let correct = 0;
 		let total = 0;
-		let selectedNumber,
-			userAnswer,
-			correctAnswers,
-			normalizeText,
-			userText,
-			correctText;
+		let userAnswer, correctAnswers, normalizeText, userText, correctText;
 
 		userAnswers.answers.forEach((answer) => {
 			const question = test.questionIds.find(
@@ -59,13 +54,27 @@ export const ResultsPage = () => {
 			total++;
 
 			switch (question.type) {
-				case 'multipleChoice':
-					selectedNumber = Number(answer.selected[0]);
-					if (selectedNumber === Number(question.correctAnswers)) {
+				case 'multipleChoice': {
+					const selectedAnswers = new Set(
+						(Array.isArray(answer.selected)
+							? answer.selected
+							: [answer.selected]
+						).map(Number)
+					);
+					const correctAnswersArray = Array.isArray(question.correctAnswers)
+						? question.correctAnswers
+						: [question.correctAnswers];
+					const correctAnswersSet = new Set(correctAnswersArray.map(Number));
+
+					if (
+						selectedAnswers.size === correctAnswersSet.size &&
+						[...selectedAnswers].every((ans) => correctAnswersSet.has(ans))
+					) {
 						correct++;
 					}
 					break;
-				case 'trueFalse':
+				}
+				case 'trueFalse': {
 					userAnswer =
 						answer.selected === true ||
 						answer.selected[0] === true ||
@@ -78,7 +87,8 @@ export const ResultsPage = () => {
 						correct++;
 					}
 					break;
-				case 'openText':
+				}
+				case 'openText': {
 					normalizeText = (text) => {
 						if (!text) return '';
 						return text.toString().toLowerCase().trim().replace(/\s+/g, ' ');
@@ -89,6 +99,7 @@ export const ResultsPage = () => {
 						correct++;
 					}
 					break;
+				}
 			}
 		});
 
@@ -99,11 +110,23 @@ export const ResultsPage = () => {
 
 	const renderQuestion = (question, index) => {
 		const userAnswer = userAnswers.answers[index];
-		let selectedIndex, userBool, correctBool;
+		let userBool, correctBool;
 
 		switch (question.type) {
-			case 'multipleChoice':
-				selectedIndex = Number(userAnswer.selected[0]);
+			case 'multipleChoice': {
+				const selectedAnswers = new Set(
+					(Array.isArray(userAnswer.selected)
+						? userAnswer.selected
+						: [userAnswer.selected]
+					).map(Number)
+				);
+				const correctAnswersSet = new Set(
+					(Array.isArray(question.correctAnswers)
+						? question.correctAnswers
+						: [question.correctAnswers]
+					).map(Number)
+				);
+
 				return (
 					<div className="question" key={question._id}>
 						<div className="question-text">
@@ -115,9 +138,11 @@ export const ResultsPage = () => {
 								<button
 									key={i}
 									className={`btn ${
-										i === Number(question.correctAnswers)
-											? 'correct'
-											: i === selectedIndex
+										correctAnswersSet.has(i)
+											? selectedAnswers.has(i)
+												? 'correct'
+												: 'correct-border btn-secondary'
+											: selectedAnswers.has(i)
 											? 'incorrect'
 											: 'btn-secondary'
 									}`}
@@ -129,7 +154,8 @@ export const ResultsPage = () => {
 						</div>
 					</div>
 				);
-			case 'trueFalse':
+			}
+			case 'trueFalse': {
 				userBool =
 					userAnswer.selected === true || userAnswer.selected[0] === true;
 				correctBool = question.correctAnswers === true;
@@ -165,7 +191,8 @@ export const ResultsPage = () => {
 						</div>
 					</div>
 				);
-			case 'openText':
+			}
+			case 'openText': {
 				return (
 					<div className="question" key={question._id}>
 						<div className="question-text">
@@ -188,6 +215,7 @@ export const ResultsPage = () => {
 						</table>
 					</div>
 				);
+			}
 			default:
 				return null;
 		}

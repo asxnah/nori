@@ -308,7 +308,6 @@ export const CreatePage = () => {
 		}
 	};
 
-	// Modify getQuestionErrors function
 	const getQuestionErrors = (question) => {
 		const errors = {
 			text: !question.text.trim(),

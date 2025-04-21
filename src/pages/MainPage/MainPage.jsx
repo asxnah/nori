@@ -42,8 +42,34 @@ export const MainPage = () => {
 	}, []);
 
 	const removeBanner = () => {
-		Cookies.set('banner_hidden', 'true', { expires: 30 });
-		setBannerVisible(false);
+		const startPosition = window.scrollY;
+		const targetElement = document.querySelector('#quizzes');
+		const targetPosition = targetElement.offsetTop;
+		const distance = targetPosition - startPosition - 50;
+		const duration = 1000;
+		const startTime = performance.now();
+
+		function scrollAnimation(currentTime) {
+			const elapsedTime = currentTime - startTime;
+			const progress = Math.min(elapsedTime / duration, 1);
+
+			const easeInOutCubic = (progress) => {
+				return progress < 0.5
+					? 4 * progress * progress * progress
+					: 1 - Math.pow(-2 * progress + 2, 3) / 2;
+			};
+
+			window.scrollTo(0, startPosition + distance * easeInOutCubic(progress));
+
+			if (progress < 1) {
+				requestAnimationFrame(scrollAnimation);
+			} else {
+				Cookies.set('banner_hidden', 'true', { expires: 30 });
+				setBannerVisible(false);
+			}
+		}
+
+		requestAnimationFrame(scrollAnimation);
 	};
 
 	const handleSearch = (e) => {

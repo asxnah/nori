@@ -210,18 +210,6 @@ export const UserPage = () => {
 		return { correct, total };
 	};
 
-	const handleDeleteQuiz = async (quizId) => {
-		try {
-			await axios.delete(
-				`${import.meta.env.VITE_API_URL}/api/quizzes/${quizId}`
-			);
-			setCreatedQuizzes((prev) => prev.filter((quiz) => quiz._id !== quizId));
-			window.page.reload();
-		} catch (error) {
-			console.error('Error deleting quiz >> ', error);
-		}
-	};
-
 	return (
 		<div id="UserPage">
 			<main>
@@ -302,7 +290,6 @@ export const UserPage = () => {
 										tags={quiz.tags}
 										background={quiz.background}
 										type="created"
-										onDelete={handleDeleteQuiz}
 									/>
 								))
 							)

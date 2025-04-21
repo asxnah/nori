@@ -16,16 +16,12 @@ export const QuizCard = ({
 	type = 'default',
 	correctAnswers,
 	totalAnswers,
-	onDelete,
 	link,
 }) => {
 	const handleDelete = async () => {
 		if (window.confirm('Вы уверены, что хотите удалить этот тест?')) {
 			try {
 				await axios.delete(`${import.meta.env.VITE_API_URL}/api/quizzes/${id}`);
-				if (onDelete) {
-					onDelete(id);
-				}
 			} catch (error) {
 				console.error('Error deleting quiz >> ', error);
 				alert('Ошибка при удалении теста');

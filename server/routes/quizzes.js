@@ -39,10 +39,9 @@ router.get('/', async (req, res) => {
 				background: 1,
 				tags: 1,
 				questionIds: 1,
-				createdAt: 1,
 			}
 		)
-			.sort({ createdAt: -1 })
+			.sort({ _id: -1 }) // Add this line to sort by latest
 			.limit(10)
 			.populate('questionIds');
 

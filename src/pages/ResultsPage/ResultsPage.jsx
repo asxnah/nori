@@ -27,7 +27,7 @@ export const ResultsPage = () => {
 				);
 				setTest(testResponse.data);
 			} catch (err) {
-				console.error('Error fetching results:', err);
+				console.error('Error fetching results >> ', err);
 				setError('Ошибка при загрузке результатов');
 			} finally {
 				setLoading(false);

@@ -245,7 +245,7 @@ export const CreatePage = () => {
 			}));
 			setQuestions(mappedQuestions);
 		} catch (error) {
-			console.error('Error fetching quiz:', error);
+			console.error('Error fetching quiz >> ', error);
 			setError('Failed to load quiz data');
 		} finally {
 			setIsLoading(false);
@@ -302,7 +302,7 @@ export const CreatePage = () => {
 
 			navigate(`/quiz?id=${quizId || response.data.testId}`);
 		} catch (error) {
-			console.error('Error saving quiz:', error);
+			console.error('Server responded with error >> ', error.response.data);
 			setError(error.response?.data?.message || 'Error saving quiz');
 		}
 	};

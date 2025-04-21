@@ -41,7 +41,7 @@ if (process.env.NODE_ENV === 'production') {
 	console.log('Running in development mode, not serving frontend.');
 }
 
-console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('NODE_ENV >> ', process.env.NODE_ENV);
 
 app.listen(port, '0.0.0.0', () => {
 	console.log(`Server is running on port ${port}`);

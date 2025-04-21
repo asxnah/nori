@@ -57,7 +57,7 @@ export const UserPage = () => {
 				setCreatedQuizzes(Array.isArray(response.data) ? response.data : []);
 				setLoading(false);
 			} catch (error) {
-				console.error('Error fetching user quizzes:', error);
+				console.error('Error fetching user quizzes >> ', error);
 				setCreatedQuizzes([]);
 				setLoading(false);
 			}
@@ -77,7 +77,7 @@ export const UserPage = () => {
 				setCompletedQuizzes(Array.isArray(response.data) ? response.data : []);
 				setCompletedLoading(false);
 			} catch (error) {
-				console.error('Error fetching completed quizzes:', error);
+				console.error('Error fetching completed quizzes >> ', error);
 				setCompletedQuizzes([]);
 				setCompletedLoading(false);
 			}
@@ -210,8 +210,16 @@ export const UserPage = () => {
 		return { correct, total };
 	};
 
-	const handleDeleteQuiz = (quizId) => {
-		setCreatedQuizzes(createdQuizzes.filter((quiz) => quiz._id !== quizId));
+	const handleDeleteQuiz = async (quizId) => {
+		try {
+			await axios.delete(
+				`${import.meta.env.VITE_API_URL}/api/quizzes/${quizId}`
+			);
+			setCreatedQuizzes((prev) => prev.filter((quiz) => quiz._id !== quizId));
+			window.page.reload();
+		} catch (error) {
+			console.error('Error deleting quiz >> ', error);
+		}
 	};
 
 	return (

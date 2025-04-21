@@ -50,7 +50,7 @@ export const AnswersPage = () => {
 				setUserAnswers(answersResponse.data);
 				setLoading(false);
 			} catch (err) {
-				console.error('Error fetching quiz data:', err);
+				console.error('Error fetching quiz data >> ', err);
 				setError('Ошибка при загрузке данных');
 				setLoading(false);
 			}

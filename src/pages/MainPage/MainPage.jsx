@@ -29,7 +29,7 @@ export const MainPage = () => {
 				setQuizzes(response.data);
 				setLoading(false);
 			} catch (error) {
-				console.error('Error fetching quizzes:', error);
+				console.error('Error fetching quizzes >> ', error);
 				setError('Ошибка при загрузке викторин');
 				setLoading(false);
 			}

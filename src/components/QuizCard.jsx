@@ -27,7 +27,7 @@ export const QuizCard = ({
 					onDelete(id);
 				}
 			} catch (error) {
-				console.error('Error deleting quiz:', error);
+				console.error('Error deleting quiz >> ', error);
 				alert('Ошибка при удалении теста');
 			}
 		}

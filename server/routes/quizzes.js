@@ -5,15 +5,11 @@ import UserAnswer from '../models/UserAnswer.js';
 import multer from 'multer';
 import path from 'path';
 import process from 'process';
-// import { fileURLToPath } from 'url';
 import fs from 'fs';
-
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, path.join(process.cwd(), 'uploads/quizzesBackground'));
+		cb(null, path.join(process.cwd(), 'uploads'));
 	},
 	filename: function (req, file, cb) {
 		const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -52,7 +48,7 @@ router.get('/', async (req, res) => {
 
 		res.json(quizzes);
 	} catch (error) {
-		console.error('Error fetching quizzes:', error);
+		console.error('Error fetching quizzes >> ', error);
 		res.status(500).json({ message: 'Error fetching quizzes' });
 	}
 });
@@ -74,7 +70,7 @@ router.get('/user/:userId', async (req, res) => {
 
 		res.json(quizzes);
 	} catch (error) {
-		console.error('Error fetching user quizzes:', error);
+		console.error('Error fetching user quizzes >> ', error);
 		res.status(500).json({ message: 'Error fetching user quizzes' });
 	}
 });
@@ -87,12 +83,12 @@ router.get('/:testId', async (req, res) => {
 			.populate('createdBy', 'username name');
 
 		if (!test) {
-			return res.status(404).json({ message: 'Тест не найден' });
+			return res.status(404).json({ message: 'Quiz not found' });
 		}
 
 		res.json(test);
 	} catch (error) {
-		console.error('Error fetching quiz:', error);
+		console.error('Error fetching quiz >> ', error);
 		res.status(500).json({ message: 'Error fetching quiz' });
 	}
 });
@@ -104,14 +100,14 @@ router.get('/:testId/questions', async (req, res) => {
 		const test = await Test.findById(testId);
 
 		if (!test) {
-			return res.status(404).json({ message: 'Тест не найден' });
+			return res.status(404).json({ message: 'Quiz not found' });
 		}
 
 		const questions = await Question.find({ _id: { $in: test.questionIds } });
 
 		res.json(questions);
 	} catch (error) {
-		console.error('Error details:', error);
+		console.error('Error details >> ', error);
 		res.status(500).json({
 			message: 'Error fetching quiz questions',
 			error: error.message,
@@ -136,10 +132,10 @@ router.post('/:testId/answers', async (req, res) => {
 		});
 
 		await userAnswer.save();
-		res.status(201).json({ message: 'Ответы успешно сохранены', userAnswer });
+		res.status(201).json({ message: 'Answers saved successfully', userAnswer });
 	} catch (error) {
-		console.error('Error saving answers:', error);
-		res.status(500).json({ message: 'Ошибка при сохранении ответов' });
+		console.error('Error saving answers >> ', error);
+		res.status(500).json({ message: 'Error saving answers' });
 	}
 });
 
@@ -153,13 +149,13 @@ router.get('/:testId/answers/:userId', async (req, res) => {
 		}).populate('answers.questionId');
 
 		if (!userAnswer) {
-			return res.status(404).json({ message: 'Ответы не найдены' });
+			return res.status(404).json({ message: 'Answers not found' });
 		}
 
 		res.json(userAnswer);
 	} catch (error) {
-		console.error('Error fetching user answers:', error);
-		res.status(500).json({ message: 'Ошибка при получении ответов' });
+		console.error('Error fetching user answers >> ', error);
+		res.status(500).json({ message: 'Error fetching answers' });
 	}
 });
 
@@ -173,10 +169,8 @@ router.get('/:testId/answers', async (req, res) => {
 
 		res.json(userAnswers);
 	} catch (error) {
-		console.error('Error fetching all user answers:', error);
-		res
-			.status(500)
-			.json({ message: 'Ошибка при получении ответов пользователей' });
+		console.error('Error fetching all user answers >> ', error);
+		res.status(500).json({ message: 'Error fetching all user answers' });
 	}
 });
 
@@ -189,13 +183,13 @@ router.get('/answers/:answerId', async (req, res) => {
 			.populate('userId', 'username name');
 
 		if (!userAnswer) {
-			return res.status(404).json({ message: 'Ответы не найдены' });
+			return res.status(404).json({ message: 'ОAnswers not found' });
 		}
 
 		res.json(userAnswer);
 	} catch (error) {
-		console.error('Error fetching user answer:', error);
-		res.status(500).json({ message: 'Ошибка при получении ответов' });
+		console.error('Error fetching user answer >> ', error);
+		res.status(500).json({ message: 'Error fetching user answer' });
 	}
 });
 
@@ -221,10 +215,8 @@ router.get('/answers/user/:userId', async (req, res) => {
 
 		res.json(completedQuizzes);
 	} catch (error) {
-		console.error('Error fetching user completed quizzes:', error);
-		res
-			.status(500)
-			.json({ message: 'Ошибка при получении пройденных викторин' });
+		console.error('Error fetching user completed quizzes >> ', error);
+		res.status(500).json({ message: 'Error fetching user completed quizzes' });
 	}
 });
 
@@ -247,9 +239,7 @@ router.post('/', upload.single('background'), async (req, res) => {
 		}
 
 		const background = req.file
-			? `${import.meta.env.VITE_API_URL}/uploads/quizzesBackground/${
-					req.file.filename
-			  }`
+			? `${process.env.VITE_API_URL}/uploads/${req.file.filename}`
 			: null;
 
 		const savedQuestions = await Promise.all(
@@ -284,11 +274,15 @@ router.post('/', upload.single('background'), async (req, res) => {
 			testId: test._id,
 		});
 	} catch (error) {
-		console.error('Error creating quiz:', error);
+		console.error('Error creating quiz >> ', error);
 		if (error instanceof SyntaxError) {
 			res.status(400).json({ message: 'Invalid data format' });
 		} else {
-			res.status(500).json({ message: 'Error creating quiz' });
+			res.status(500).json({
+				message: 'Error creating quiz',
+				error: error.message,
+				stack: error.stack,
+			});
 		}
 	}
 });
@@ -299,23 +293,25 @@ router.delete('/:testId', async (req, res) => {
 
 		const test = await Test.findById(testId);
 		if (!test) {
-			return res.status(404).json({ message: 'Тест не найден' });
+			return res.status(404).json({ message: 'Quiz not found' });
 		}
 
 		if (test.background) {
-			const backgroundPath = test.background.split(
-				'/uploads/quizzesBackground/'
-			)[1];
-			if (backgroundPath) {
+			try {
+				const url = new URL(test.background);
+				const backgroundFilename = path.basename(url.pathname);
+
 				const fullPath = path.join(
 					process.cwd(),
 					'uploads',
-					'quizzesBackground',
-					backgroundPath
+					backgroundFilename
 				);
+
 				if (fs.existsSync(fullPath)) {
 					fs.unlinkSync(fullPath);
 				}
+			} catch (err) {
+				console.error('Error deleting background >> ', err);
 			}
 		}
 
@@ -325,10 +321,10 @@ router.delete('/:testId', async (req, res) => {
 
 		await Test.findByIdAndDelete(testId);
 
-		res.json({ message: 'Тест успешно удален' });
+		res.json({ message: 'Quiz deleted successfully' });
 	} catch (error) {
-		console.error('Error deleting quiz:', error);
-		res.status(500).json({ message: 'Ошибка при удалении теста' });
+		console.error('Error deleting quiz >> ', error);
+		res.status(500).json({ message: 'Error deleting quiz' });
 	}
 });
 
@@ -343,16 +339,13 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 			return res.status(400).json({ message: 'Missing required fields' });
 		}
 
-		// Find existing test
 		const existingTest = await Test.findById(testId);
 		if (!existingTest) {
 			return res.status(404).json({ message: 'Quiz not found' });
 		}
 
-		// Delete old questions
 		await Question.deleteMany({ _id: { $in: existingTest.questionIds } });
 
-		// Create new questions
 		const savedQuestions = await Promise.all(
 			questions.map(async (question) => {
 				const newQuestion = new Question({
@@ -365,32 +358,20 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 			})
 		);
 
-		// Handle background image
 		let background = existingTest.background;
 		if (req.file) {
-			// Delete old background if exists
 			if (existingTest.background) {
-				const oldPath = existingTest.background.split(
-					'/uploads/quizzesBackground/'
-				)[1];
+				const oldPath = existingTest.background.split('/uploads/')[1];
 				if (oldPath) {
-					const fullPath = path.join(
-						process.cwd(),
-						'uploads',
-						'quizzesBackground',
-						oldPath
-					);
+					const fullPath = path.join(process.cwd(), 'uploads', oldPath);
 					if (fs.existsSync(fullPath)) {
 						fs.unlinkSync(fullPath);
 					}
 				}
 			}
-			background = `${import.meta.env.VITE_API_URL}/uploads/quizzesBackground/${
-				req.file.filename
-			}`;
+			background = `${process.env.VITE_API_URL}/uploads/${req.file.filename}`;
 		}
 
-		// Update test
 		const updatedTest = await Test.findByIdAndUpdate(
 			testId,
 			{
@@ -408,7 +389,7 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 			testId: updatedTest._id,
 		});
 	} catch (error) {
-		console.error('Error updating quiz:', error);
+		console.error('Error updating quiz >> ', error);
 		res.status(500).json({ message: 'Error updating quiz' });
 	}
 });

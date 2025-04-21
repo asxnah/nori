@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
 				questionIds: 1,
 			}
 		)
-			.sort({ _id: -1 }) // Add this line to sort by latest
+			.sort({ _id: -1 })
 			.limit(10)
 			.populate('questionIds');
 
@@ -314,11 +314,11 @@ router.delete('/:testId', async (req, res) => {
 			}
 		}
 
-		await Question.deleteMany({ _id: { $in: test.questionIds } });
-
-		await UserAnswer.deleteMany({ testId });
-
-		await Test.findByIdAndDelete(testId);
+		await Promise.all([
+			Question.deleteMany({ _id: { $in: test.questionIds } }),
+			UserAnswer.deleteMany({ testId }),
+			Test.findByIdAndDelete(testId),
+		]);
 
 		res.json({ message: 'Quiz deleted successfully' });
 	} catch (error) {

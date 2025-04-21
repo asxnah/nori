@@ -5,7 +5,6 @@ import { ShareIcon } from '../pages/UserPage/icons/ShareIcon';
 import { OpenIcon } from '../pages/UserPage/icons/OpenIcon';
 import { EditIcon } from '../pages/UserPage/icons/EditIcon';
 import { ArrowRightIcon } from '../uikit/ArrowRightIcon/ArrowRightIcon';
-import axios from 'axios';
 
 export const QuizCard = ({
 	id,
@@ -17,18 +16,8 @@ export const QuizCard = ({
 	correctAnswers,
 	totalAnswers,
 	link,
+	onDelete,
 }) => {
-	const handleDelete = async () => {
-		if (window.confirm('Вы уверены, что хотите удалить этот тест?')) {
-			try {
-				await axios.delete(`${import.meta.env.VITE_API_URL}/api/quizzes/${id}`);
-			} catch (error) {
-				console.error('Error deleting quiz >> ', error);
-				alert('Ошибка при удалении теста');
-			}
-		}
-	};
-
 	const style = {
 		background: background
 			? `linear-gradient(to left, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(${background})`
@@ -122,7 +111,7 @@ export const QuizCard = ({
 								<ArrowRightIcon />
 							</span>
 						</Link>
-						<button onClick={handleDelete}>Удалить</button>
+						<button onClick={() => onDelete(id)}>Удалить</button>
 					</div>
 				);
 			case 'completed':

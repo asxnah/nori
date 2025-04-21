@@ -42,8 +42,15 @@ export const QuizPage = () => {
 
 	const handleAnswer = (questionId, answer) => {
 		setAnswers((prevAnswers) => {
-			const newAnswers = { ...prevAnswers, [questionId]: answer };
-			return newAnswers;
+			const question = test.questionIds.find((q) => q._id === questionId);
+			if (question.type === 'multipleChoice') {
+				const currentAnswers = prevAnswers[questionId] || [];
+				const newAnswers = currentAnswers.includes(answer)
+					? currentAnswers.filter((a) => a !== answer)
+					: [...currentAnswers, answer];
+				return { ...prevAnswers, [questionId]: newAnswers };
+			}
+			return { ...prevAnswers, [questionId]: answer };
 		});
 	};
 
@@ -74,7 +81,7 @@ export const QuizPage = () => {
 
 					switch (question.type) {
 						case 'multipleChoice':
-							formattedAnswer = [Number(answer)];
+							formattedAnswer = answer.map(Number); // Convert array elements to numbers
 							break;
 						case 'trueFalse':
 							formattedAnswer = answer;
@@ -123,7 +130,7 @@ export const QuizPage = () => {
 									key={i}
 									type="button"
 									className={`btn ${
-										answers[question._id] === i
+										answers[question._id]?.includes(i)
 											? 'btn-primary'
 											: 'btn-secondary'
 									}`}
@@ -219,7 +226,15 @@ export const QuizPage = () => {
 						disabled={
 							submitting ||
 							Object.keys(answers).filter((key) => !key.endsWith('_index'))
-								.length !== test.questionIds.length
+								.length !== test.questionIds.length ||
+							Object.entries(answers).some(([questionId, answer]) => {
+								const question = test.questionIds.find(
+									(q) => q._id === questionId
+								);
+								return (
+									question?.type === 'multipleChoice' && answer.length === 0
+								);
+							})
 						}
 					>
 						{submitting ? 'Сохранение...' : 'Завершить прохождение'}

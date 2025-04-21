@@ -93,8 +93,8 @@
 	}
 
 	.custom-checkbox input:checked + .checkmark {
-		background-color: var(--green);
-		border-color: var(--green);
+		background-color: var(--color-primary);
+		border-color: var(--color-primary);
 	}
 
 	.custom-checkbox input:checked + .checkmark::after {
@@ -394,7 +394,7 @@
 	}
 
 	.custom-checkbox input:focus + .checkmark {
-		border-color: var(--green);
+		border-color: var(--color-primary);
 	}
 
 	@media (hover: hover) {
@@ -514,4 +514,13 @@
 	.answers.trueFalse input[type='radio']:checked + label svg rect {
 		fill: var(--color-primary);
 	}
+}
+
+.error {
+	border-color: var(--darkgrey) !important;
+}
+
+.error-message {
+	color: var(--red);
+	margin: 0.5rem 0;
 }

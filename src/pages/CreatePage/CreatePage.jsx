@@ -198,7 +198,8 @@ export const CreatePage = () => {
 				case 'multipleChoice':
 					return (
 						question.answers.length >= 2 &&
-						question.answers.every((answer) => answer.trim())
+						question.answers.every((answer) => answer.trim()) &&
+						question.correctAnswers?.length > 0
 					);
 				case 'trueFalse':
 					return typeof question.correctAnswers === 'boolean';
@@ -257,14 +258,14 @@ export const CreatePage = () => {
 		setError('');
 
 		if (!isQuizValid()) {
-			setError('Please fill in all required fields');
+			setError('Заполните все обязательные поля');
 			return;
 		}
 
 		try {
 			const userData = JSON.parse(Cookies.get('user'));
 			if (!userData?.id) {
-				setError('Authentication error. Please login again.');
+				setError('Ошибка входа. Попробуйте еще раз позже.');
 				return;
 			}
 
@@ -307,7 +308,24 @@ export const CreatePage = () => {
 		}
 	};
 
+	// Modify getQuestionErrors function
+	const getQuestionErrors = (question) => {
+		const errors = {
+			text: !question.text.trim(),
+			answers:
+				question.type === 'multipleChoice' &&
+				!question.answers.every((answer) => answer.trim()),
+			correctAnswers:
+				(question.type === 'multipleChoice' &&
+					!question.correctAnswers?.length) ||
+				(question.type === 'openText' && !question.correctAnswers?.trim()),
+		};
+		return errors;
+	};
+
 	const renderQuestion = (question, index) => {
+		const errors = getQuestionErrors(question);
+
 		return (
 			<div className="question" key={question.id}>
 				<div className="question-con">
@@ -321,7 +339,7 @@ export const CreatePage = () => {
 					<div className="question-number">{index + 1}</div>
 					<input
 						type="text"
-						className="question-text btn"
+						className={`question-text btn ${errors.text ? 'error' : ''}`}
 						placeholder="Вопрос"
 						value={question.text}
 						onChange={(e) =>
@@ -331,6 +349,11 @@ export const CreatePage = () => {
 				</div>
 				{question.type === 'multipleChoice' && (
 					<div className="multipleChoice">
+						{errors.correctAnswers && (
+							<div className="error-message">
+								Выберите хотя бы один правильный ответ
+							</div>
+						)}
 						<div className="answers">
 							{question.answers.map((answer, i) => (
 								<div className="answer-con" key={i}>
@@ -343,7 +366,7 @@ export const CreatePage = () => {
 										<span className="checkmark"></span>
 									</label>
 									<input
-										className="btn"
+										className={`btn ${errors.answers ? 'error' : ''}`}
 										placeholder="Ответ"
 										value={answer}
 										onChange={(e) =>
@@ -400,6 +423,7 @@ export const CreatePage = () => {
 					<div className="answers openText">
 						<textarea
 							placeholder="Правильный ответ"
+							className={errors.correctAnswers ? 'error' : ''}
 							value={question.correctAnswers}
 							onChange={(e) =>
 								handleCorrectAnswerChange(question.id, e.target.value)
@@ -415,7 +439,7 @@ export const CreatePage = () => {
 		<div>
 			<main id="CreatePage">
 				{isLoading ? (
-					<div className="loading">Loading quiz data...</div>
+					<div className="loading">Загрузка викторины...</div>
 				) : (
 					<>
 						{error && <div className="error-message">{error}</div>}
@@ -463,7 +487,7 @@ export const CreatePage = () => {
 								<div className="group">
 									<input
 										type="text"
-										className="btn"
+										className={`btn ${!quizTitle.trim() ? 'error' : ''}`}
 										placeholder="Название *"
 										value={quizTitle}
 										onChange={handleQuizTitleChange}
@@ -478,7 +502,7 @@ export const CreatePage = () => {
 											<input
 												key={index}
 												type="text"
-												className="tag btn"
+												className={`tag btn ${!tag.trim() ? 'error' : ''}`}
 												placeholder="Тег *"
 												value={tag}
 												onChange={(e) => handleTagChange(index, e.target.value)}
@@ -570,13 +594,11 @@ export const CreatePage = () => {
 										</div>
 									</menu>
 								</div>
-
 								<div id="quiz-list">
 									{questions.map((question, index) =>
 										renderQuestion(question, index)
 									)}
 								</div>
-
 								<div className="group">
 									<button
 										type="submit"

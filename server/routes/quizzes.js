@@ -31,18 +31,27 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
 	try {
-		const quizzes = await Test.find(
-			{},
-			{
-				title: 1,
-				description: 1,
-				background: 1,
-				tags: 1,
-				questionIds: 1,
-			}
-		)
-			.sort({ _id: -1 })
-			.limit(10)
+		const { search } = req.query;
+		let query = {};
+
+		if (search) {
+			query = {
+				$or: [
+					{ title: { $regex: search, $options: 'i' } },
+					{ tags: { $regex: search, $options: 'i' } },
+				],
+			};
+		}
+
+		const quizzes = await Test.find(query, {
+			title: 1,
+			description: 1,
+			background: 1,
+			tags: 1,
+			questionIds: 1,
+		})
+			.sort({ createdAt: -1 })
+			.limit(search ? 0 : 6)
 			.populate('questionIds');
 
 		res.json(quizzes);

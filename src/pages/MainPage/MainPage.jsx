@@ -14,26 +14,29 @@ export const MainPage = () => {
 	const [error, setError] = useState(null);
 	const [searchTerm, setSearchTerm] = useState('');
 
+	const fetchQuizzes = async (searchQuery = '') => {
+		try {
+			setLoading(true);
+			const response = await axios.get(
+				`${import.meta.env.VITE_API_URL}/api/quizzes${
+					searchQuery ? `?search=${searchQuery}` : ''
+				}`
+			);
+			setQuizzes(response.data);
+			setLoading(false);
+		} catch (error) {
+			console.error('Error fetching quizzes >> ', error);
+			setError('Ошибка при загрузке викторин');
+			setLoading(false);
+		}
+	};
+
 	useEffect(() => {
 		if (Cookies.get('banner_hidden') === 'true') {
 			setBannerVisible(false);
 		} else {
 			setBannerVisible(true);
 		}
-
-		const fetchQuizzes = async () => {
-			try {
-				const response = await axios.get(
-					`${import.meta.env.VITE_API_URL}/api/quizzes`
-				);
-				setQuizzes(response.data);
-				setLoading(false);
-			} catch (error) {
-				console.error('Error fetching quizzes >> ', error);
-				setError('Ошибка при загрузке викторин');
-				setLoading(false);
-			}
-		};
 
 		fetchQuizzes();
 	}, []);
@@ -44,17 +47,10 @@ export const MainPage = () => {
 	};
 
 	const handleSearch = (e) => {
-		setSearchTerm(e.target.value.toLowerCase());
+		const value = e.target.value.toLowerCase();
+		setSearchTerm(value);
+		fetchQuizzes(value);
 	};
-
-	const filteredQuizzes = quizzes.filter((quiz) => {
-		const searchLower = searchTerm.toLowerCase();
-		const titleMatch = quiz.title.toLowerCase().includes(searchLower);
-		const tagsMatch = quiz.tags.some((tag) =>
-			tag.toLowerCase().includes(searchLower)
-		);
-		return titleMatch || tagsMatch;
-	});
 
 	return (
 		<main id="MainPage">
@@ -79,7 +75,7 @@ export const MainPage = () => {
 					<p>{error}</p>
 				) : (
 					<div id="quizzes-list">
-						{filteredQuizzes.map((quiz) => (
+						{quizzes.map((quiz) => (
 							<QuizCard
 								key={quiz._id}
 								id={quiz._id}

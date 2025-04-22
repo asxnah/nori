@@ -5,7 +5,6 @@ import Cookies from 'js-cookie';
 import axios from 'axios';
 import { CrossIcon } from '../../uikit/CrossIcon/CrossIcon';
 import QuizCard from '../../components/QuizCard';
-
 import './UserPage.css';
 
 export const UserPage = () => {

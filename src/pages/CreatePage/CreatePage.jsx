@@ -608,7 +608,7 @@ export const CreatePage = () => {
 									</button>
 									<Link to="/" className="btn btn-secondary">
 										<span>Скачать</span>
-										<span>DOCX</span>
+										<span>PDF</span>
 									</Link>
 								</div>
 							</section>

@@ -5,6 +5,8 @@ import { ShareIcon } from '../pages/UserPage/icons/ShareIcon';
 import { OpenIcon } from '../pages/UserPage/icons/OpenIcon';
 import { EditIcon } from '../pages/UserPage/icons/EditIcon';
 import { ArrowRightIcon } from '../uikit/ArrowRightIcon/ArrowRightIcon';
+import axios from 'axios';
+import { generateQuizPDF } from '../utils/pdfGenerator';
 
 export const QuizCard = ({
 	id,
@@ -101,10 +103,23 @@ export const QuizCard = ({
 			case 'created':
 				return (
 					<div className="quiz-footer">
-						<Link to="/" className="btn btn-pure">
+						<button
+							className="btn btn-pure"
+							onClick={async () => {
+								try {
+									const response = await axios.get(
+										`${import.meta.env.VITE_API_URL}/api/quizzes/${id}`
+									);
+									await generateQuizPDF(response.data);
+								} catch (error) {
+									console.error('Error generating PDF:', error);
+									alert('Failed to generate PDF');
+								}
+							}}
+						>
 							<span>Скачать</span>
-							<span>DOCX</span>
-						</Link>
+							<span>PDF</span>
+						</button>
 						<Link to={`/answers?id=${id}`} className="btn btn-pure">
 							<span>Ответы пользователей</span>
 							<span>
@@ -119,7 +134,7 @@ export const QuizCard = ({
 					<div className="quiz-footer">
 						<Link to="/" className="btn btn-pure">
 							<span>Скачать</span>
-							<span>DOCX</span>
+							<span>PDF</span>
 						</Link>
 					</div>
 				);

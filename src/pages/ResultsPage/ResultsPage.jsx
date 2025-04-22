@@ -232,7 +232,7 @@ export const ResultsPage = () => {
 						<h1>{test.title}</h1>
 					</div>
 					<button>
-						Скачать<span>DOCX</span>
+						Скачать<span>PDF</span>
 					</button>
 				</section>
 

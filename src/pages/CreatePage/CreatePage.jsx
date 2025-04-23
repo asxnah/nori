@@ -340,6 +340,7 @@ export const CreatePage = () => {
 						type="text"
 						className={`question-text btn ${errors.text ? 'error' : ''}`}
 						placeholder="Вопрос"
+						maxLength={120}
 						value={question.text}
 						onChange={(e) =>
 							handleQuestionTextChange(question.id, e.target.value)
@@ -367,6 +368,7 @@ export const CreatePage = () => {
 									<input
 										className={`btn ${errors.answers ? 'error' : ''}`}
 										placeholder="Ответ"
+										maxLength={120}
 										value={answer}
 										onChange={(e) =>
 											handleAnswerChange(question.id, i, e.target.value)
@@ -423,6 +425,7 @@ export const CreatePage = () => {
 						<textarea
 							placeholder="Правильный ответ"
 							className={errors.correctAnswers ? 'error' : ''}
+							maxLength={800}
 							value={question.correctAnswers}
 							onChange={(e) =>
 								handleCorrectAnswerChange(question.id, e.target.value)
@@ -489,11 +492,13 @@ export const CreatePage = () => {
 										className={`btn ${!quizTitle.trim() ? 'error' : ''}`}
 										placeholder="Название *"
 										value={quizTitle}
+										maxLength={80}
 										onChange={handleQuizTitleChange}
 									/>
 									<textarea
 										placeholder="Описание (необязательно)"
 										value={description}
+										maxLength={240}
 										onChange={handleDescriptionChange}
 									></textarea>
 									<div id="tags">
@@ -504,6 +509,7 @@ export const CreatePage = () => {
 												className={`tag btn ${!tag.trim() ? 'error' : ''}`}
 												placeholder="Тег *"
 												value={tag}
+												maxLength={30}
 												onChange={(e) => handleTagChange(index, e.target.value)}
 											/>
 										))}

@@ -201,6 +201,7 @@ export const QuizPage = () => {
 							<p>{question.questionText}</p>
 						</div>
 						<textarea
+							maxLength={800}
 							value={answers[question._id] || ''}
 							onChange={(e) => handleAnswer(question._id, e.target.value)}
 							placeholder="Введите ваш ответ"

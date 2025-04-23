@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -15,6 +15,31 @@ export const QuizPage = () => {
 	const [error, setError] = useState('');
 	const [answers, setAnswers] = useState({});
 	const [submitting, setSubmitting] = useState(false);
+	const [remainingSeconds, setRemainingSeconds] = useState(null);
+
+	const hasSubmittedRef = useRef(false);
+
+	useEffect(() => {
+		if (test?.timer && (test.timer.hours || test.timer.minutes)) {
+			const totalSeconds =
+				parseInt(test.timer.hours || 0) * 3600 +
+				parseInt(test.timer.minutes || 0) * 60;
+			setRemainingSeconds(totalSeconds);
+
+			const intervalId = setInterval(() => {
+				setRemainingSeconds((prev) => {
+					if (prev <= 1) {
+						clearInterval(intervalId);
+						handleSubmit();
+						return 0;
+					}
+					return prev - 1;
+				});
+			}, 1000);
+
+			return () => clearInterval(intervalId);
+		}
+	}, [test?.timer]);
 
 	useEffect(() => {
 		if (!testId) {
@@ -55,7 +80,10 @@ export const QuizPage = () => {
 	};
 
 	const handleSubmit = async (e) => {
-		e.preventDefault();
+		if (hasSubmittedRef.current) return;
+		hasSubmittedRef.current = true;
+
+		e?.preventDefault();
 		setSubmitting(true);
 
 		try {
@@ -73,31 +101,29 @@ export const QuizPage = () => {
 				return;
 			}
 
-			const formattedAnswers = Object.entries(answers)
-				.filter(([key]) => !key.endsWith('_index'))
-				.map(([questionId, answer]) => {
-					const question = test.questionIds.find((q) => q._id === questionId);
-					let formattedAnswer;
+			const formattedAnswers = test.questionIds.map((question) => {
+				const rawAnswer = answers[question._id];
+				let formattedAnswer;
 
-					switch (question.type) {
-						case 'multipleChoice':
-							formattedAnswer = answer.map(Number); 
-							break;
-						case 'trueFalse':
-							formattedAnswer = answer;
-							break;
-						case 'openText':
-							formattedAnswer = answer;
-							break;
-						default:
-							formattedAnswer = answer;
-					}
+				switch (question.type) {
+					case 'multipleChoice':
+						formattedAnswer = Array.isArray(rawAnswer)
+							? rawAnswer.map(Number)
+							: null;
+						break;
+					case 'trueFalse':
+					case 'openText':
+						formattedAnswer = rawAnswer ?? null;
+						break;
+					default:
+						formattedAnswer = rawAnswer ?? null;
+				}
 
-					return {
-						questionId,
-						selected: formattedAnswer,
-					};
-				});
+				return {
+					questionId: question._id,
+					selected: formattedAnswer,
+				};
+			});
 
 			const response = await axios.post(
 				`${import.meta.env.VITE_API_URL}/api/quizzes/${testId}/answers`,
@@ -186,6 +212,16 @@ export const QuizPage = () => {
 		}
 	};
 
+	const formatRemainingTime = (totalSeconds) => {
+		const hours = Math.floor(totalSeconds / 3600);
+		const minutes = Math.floor((totalSeconds % 3600) / 60);
+		const seconds = totalSeconds % 60;
+
+		return `${hours ? `${hours} ч ` : ''}${
+			minutes ? `${minutes} мин ` : ''
+		}${seconds} сек`;
+	};
+
 	if (loading) {
 		return <div>Загрузка теста...</div>;
 	}
@@ -211,6 +247,9 @@ export const QuizPage = () => {
 									100
 							)}
 							% пройдено
+							{test.timer && (
+								<>, времени осталось: {formatRemainingTime(remainingSeconds)}</>
+							)}
 						</p>
 						<h1>{test.title}</h1>
 					</div>

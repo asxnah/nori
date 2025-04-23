@@ -6,6 +6,10 @@ const testSchema = new mongoose.Schema({
 	background: String,
 	tags: [String],
 	questionIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Question' }],
+	timer: {
+		type: Object,
+		default: null,
+	},
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 	createdAt: {
 		type: Date,

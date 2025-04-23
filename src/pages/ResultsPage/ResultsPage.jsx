@@ -44,7 +44,6 @@ export const ResultsPage = () => {
 	const calculateScore = () => {
 		let correct = 0;
 		let total = 0;
-		let userAnswer, correctAnswers, normalizeText, userText, correctText;
 
 		userAnswers.answers.forEach((answer) => {
 			const question = test.questionIds.find(
@@ -53,13 +52,23 @@ export const ResultsPage = () => {
 			if (!question) return;
 			total++;
 
+			const rawSelections = Array.isArray(answer.selected)
+				? answer.selected
+				: [answer.selected];
+
+			const isUnanswered = rawSelections.every(
+				(sel) => sel === null || sel === undefined
+			);
+			if (isUnanswered) {
+				return;
+			}
+
 			switch (question.type) {
 				case 'multipleChoice': {
 					const selectedAnswers = new Set(
-						(Array.isArray(answer.selected)
-							? answer.selected
-							: [answer.selected]
-						).map(Number)
+						rawSelections
+							.filter((sel) => sel !== null && sel !== undefined)
+							.map(Number)
 					);
 					const correctAnswersArray = Array.isArray(question.correctAnswers)
 						? question.correctAnswers
@@ -67,6 +76,7 @@ export const ResultsPage = () => {
 					const correctAnswersSet = new Set(correctAnswersArray.map(Number));
 
 					if (
+						selectedAnswers.size > 0 &&
 						selectedAnswers.size === correctAnswersSet.size &&
 						[...selectedAnswers].every((ans) => correctAnswersSet.has(ans))
 					) {
@@ -75,26 +85,30 @@ export const ResultsPage = () => {
 					break;
 				}
 				case 'trueFalse': {
-					userAnswer =
+					const userAnswer =
 						answer.selected === true ||
-						answer.selected[0] === true ||
+						(Array.isArray(answer.selected) && answer.selected[0] === true) ||
 						answer.selected === 'true' ||
-						answer.selected[0] === 'true';
-					correctAnswers =
+						(Array.isArray(answer.selected) && answer.selected[0] === 'true');
+					const correctAnswer =
 						question.correctAnswers === true ||
 						question.correctAnswers === 'true';
-					if (userAnswer === correctAnswers) {
+					if (userAnswer === correctAnswer) {
 						correct++;
 					}
 					break;
 				}
 				case 'openText': {
-					normalizeText = (text) => {
+					const normalizeText = (text) => {
 						if (!text) return '';
 						return text.toString().toLowerCase().trim().replace(/\s+/g, ' ');
 					};
-					userText = normalizeText(answer.selected[0] || answer.selected);
-					correctText = normalizeText(question.correctAnswers);
+					const userText = normalizeText(
+						Array.isArray(answer.selected)
+							? answer.selected[0]
+							: answer.selected
+					);
+					const correctText = normalizeText(question.correctAnswers);
 					if (userText === correctText) {
 						correct++;
 					}
@@ -110,7 +124,6 @@ export const ResultsPage = () => {
 
 	const renderQuestion = (question, index) => {
 		const userAnswer = userAnswers.answers[index];
-		let userBool, correctBool;
 
 		switch (question.type) {
 			case 'multipleChoice': {
@@ -118,7 +131,7 @@ export const ResultsPage = () => {
 					(Array.isArray(userAnswer.selected)
 						? userAnswer.selected
 						: [userAnswer.selected]
-					).map(Number)
+					).map((item) => (item === null ? null : Number(item)))
 				);
 				const correctAnswersSet = new Set(
 					(Array.isArray(question.correctAnswers)
@@ -156,9 +169,19 @@ export const ResultsPage = () => {
 				);
 			}
 			case 'trueFalse': {
-				userBool =
-					userAnswer.selected === true || userAnswer.selected[0] === true;
-				correctBool = question.correctAnswers === true;
+				const selectedValue = Array.isArray(userAnswer.selected)
+					? userAnswer.selected[0]
+					: userAnswer.selected;
+
+				const userBool =
+					selectedValue === null || selectedValue === undefined
+						? null
+						: selectedValue === true || selectedValue === 'true';
+
+				const correctBool =
+					question.correctAnswers === true ||
+					question.correctAnswers === 'true';
+
 				return (
 					<div className="question" key={question._id}>
 						<div className="question-text">
@@ -169,7 +192,11 @@ export const ResultsPage = () => {
 							<button>
 								<TrueIcon
 									fill={
-										correctBool
+										userBool === null
+											? correctBool
+												? '#2dc653'
+												: '#323232'
+											: correctBool
 											? '#2dc653'
 											: userBool && !correctBool
 											? '#eb0000'
@@ -180,7 +207,11 @@ export const ResultsPage = () => {
 							<button>
 								<FalseIcon
 									fill={
-										!correctBool
+										userBool === null
+											? !correctBool
+												? '#2dc653'
+												: '#323232'
+											: !correctBool
 											? '#2dc653'
 											: !userBool && correctBool
 											? '#eb0000'
@@ -208,7 +239,11 @@ export const ResultsPage = () => {
 							</thead>
 							<tbody>
 								<tr>
-									<td>{userAnswer.selected[0]}</td>
+									<td>
+										{userAnswer.selected[0] === null
+											? '-'
+											: userAnswer.selected[0]}
+									</td>
 									<td>{question.correctAnswers}</td>
 								</tr>
 							</tbody>

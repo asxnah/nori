@@ -182,25 +182,55 @@ export const UserPage = () => {
 
 			total++;
 
-			if (question.type === 'trueFalse') {
-				const userAnswerBool = answer.selected[0] === 'true';
-				const isCorrect = userAnswerBool === question.correctAnswers;
+			const rawSelections = Array.isArray(answer.selected)
+				? answer.selected
+				: [answer.selected];
 
-				if (isCorrect) {
+			const isUnanswered = rawSelections.every(
+				(sel) => sel === null || sel === undefined
+			);
+			if (isUnanswered) return;
+
+			if (question.type === 'trueFalse') {
+				const userAnswer =
+					answer.selected === true ||
+					(Array.isArray(answer.selected) && answer.selected[0] === true) ||
+					answer.selected === 'true' ||
+					(Array.isArray(answer.selected) && answer.selected[0] === 'true');
+				const correctAnswer =
+					question.correctAnswers === true ||
+					question.correctAnswers === 'true';
+				if (userAnswer === correctAnswer) {
 					correct++;
 				}
 			} else if (question.type === 'multipleChoice') {
-				const isCorrect = answer.selected[0] === question.correctAnswers;
+				const selectedAnswers = new Set(
+					rawSelections
+						.filter((sel) => sel !== null && sel !== undefined)
+						.map(Number)
+				);
+				const correctAnswersArray = Array.isArray(question.correctAnswers)
+					? question.correctAnswers
+					: [question.correctAnswers];
+				const correctAnswersSet = new Set(correctAnswersArray.map(Number));
 
-				if (isCorrect) {
+				if (
+					selectedAnswers.size > 0 &&
+					selectedAnswers.size === correctAnswersSet.size &&
+					[...selectedAnswers].every((ans) => correctAnswersSet.has(ans))
+				) {
 					correct++;
 				}
 			} else if (question.type === 'openText') {
-				const isCorrect =
-					answer.selected[0].toLowerCase().trim() ===
-					question.correctAnswers.toLowerCase().trim();
-
-				if (isCorrect) {
+				const normalizeText = (text) => {
+					if (!text) return '';
+					return text.toString().toLowerCase().trim().replace(/\s+/g, ' ');
+				};
+				const userText = normalizeText(
+					Array.isArray(answer.selected) ? answer.selected[0] : answer.selected
+				);
+				const correctText = normalizeText(question.correctAnswers);
+				if (userText === correctText) {
 					correct++;
 				}
 			}
@@ -216,6 +246,9 @@ export const UserPage = () => {
 					`${import.meta.env.VITE_API_URL}/api/quizzes/${quizId}`
 				);
 				setCreatedQuizzes((prevQuizzes) =>
+					prevQuizzes.filter((quiz) => quiz._id !== quizId)
+				);
+				setCompletedQuizzes((prevQuizzes) =>
 					prevQuizzes.filter((quiz) => quiz._id !== quizId)
 				);
 			} catch (error) {

@@ -236,6 +236,7 @@ router.post('/', upload.single('background'), async (req, res) => {
 		const { title, description, createdBy } = req.body;
 		const tags = JSON.parse(req.body.tags);
 		const questions = JSON.parse(req.body.questions);
+		const timer = req.body.timer === 'null' ? null : JSON.parse(req.body.timer);
 
 		if (!title || !questions || !createdBy) {
 			return res.status(400).json({ message: 'Missing required fields' });
@@ -275,6 +276,7 @@ router.post('/', upload.single('background'), async (req, res) => {
 			background,
 			tags: tags.filter((tag) => tag.trim()),
 			questionIds: savedQuestions.map((q) => q._id),
+			timer,
 			createdBy,
 		});
 
@@ -345,6 +347,7 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 		const { title, description, createdBy } = req.body;
 		const tags = JSON.parse(req.body.tags);
 		const questions = JSON.parse(req.body.questions);
+		const timer = req.body.timer === 'null' ? null : JSON.parse(req.body.timer);
 
 		if (!title || !questions || !createdBy) {
 			return res.status(400).json({ message: 'Missing required fields' });
@@ -391,6 +394,7 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 				background,
 				tags: tags.filter((tag) => tag.trim()),
 				questionIds: savedQuestions.map((q) => q._id),
+				timer,
 			},
 			{ new: true }
 		);

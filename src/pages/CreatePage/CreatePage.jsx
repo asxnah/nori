@@ -24,6 +24,7 @@ export const CreatePage = () => {
 	const [error, setError] = useState('');
 	const [searchParams] = useSearchParams();
 	const [isLoading, setIsLoading] = useState(false);
+	const [timerObject, setTimerObject] = useState(null);
 
 	const coverRef = useRef(null);
 	const menuQuestionsRef = useRef(null);
@@ -34,18 +35,16 @@ export const CreatePage = () => {
 	useEffect(() => {
 		if (hours && minutes) {
 			setTimerValue(`${hours} ч ${minutes} мин`);
-		}
-
-		if (hours && !minutes) {
+			setTimerObject({ hours, minutes });
+		} else if (hours && !minutes) {
 			setTimerValue(`${hours} ч`);
-		}
-
-		if (!hours && minutes) {
+			setTimerObject({ hours, minutes: 0 });
+		} else if (!hours && minutes) {
 			setTimerValue(`${minutes} мин`);
-		}
-
-		if (!hours && !minutes) {
+			setTimerObject({ hours: 0, minutes });
+		} else {
 			setTimerValue('Таймер');
+			setTimerObject(null);
 		}
 	}, [hours, minutes]);
 
@@ -287,6 +286,7 @@ export const CreatePage = () => {
 					}))
 				)
 			);
+			formData.append('timer', JSON.stringify(timerObject));
 			formData.append('createdBy', userData.id);
 
 			const quizId = searchParams.get('id');

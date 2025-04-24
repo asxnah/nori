@@ -1,8 +1,10 @@
 import express from 'express';
+import bcrypt from 'bcrypt';
 import User from '../models/User.js';
 import { validateUsername, validatePassword } from '../utils/validators.js';
 
 const router = express.Router();
+const SALT_ROUNDS = 10;
 
 router.post('/login', async (req, res) => {
 	try {
@@ -13,7 +15,9 @@ router.post('/login', async (req, res) => {
 			return res.status(401).json({ message: 'Пользователь не существует' });
 		}
 
-		if (user.password !== password) {
+		// 'await' has no effect on the type of this expression.
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) {
 			return res.status(401).json({ message: 'Неверный пароль' });
 		}
 
@@ -37,7 +41,9 @@ router.post('/register', async (req, res) => {
 
 		const existingUser = await User.findOne({ username });
 		if (existingUser) {
-			if (existingUser.password === password) {
+			// 'await' has no effect on the type of this expression.
+			const isMatch = await bcrypt.compare(password, existingUser.password);
+			if (isMatch) {
 				return res.json({
 					message: 'Успешный вход',
 					user: {
@@ -64,10 +70,12 @@ router.post('/register', async (req, res) => {
 			});
 		}
 
+		const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+
 		const user = new User({
 			name: username,
 			username,
-			password,
+			password: hashedPassword,
 		});
 
 		await user.save();
@@ -100,7 +108,9 @@ router.post('/update-profile', async (req, res) => {
 			return res.status(404).json({ message: 'Пользователь не найден' });
 		}
 
-		if (user.password !== current_password) {
+		// 'await' has no effect on the type of this expression.
+		const isMatch = await bcrypt.compare(current_password, user.password);
+		if (!isMatch) {
 			return res.status(401).json({ message: 'Неверный текущий пароль' });
 		}
 
@@ -128,7 +138,11 @@ router.post('/update-profile', async (req, res) => {
 		const updateData = {};
 		if (new_username) updateData.username = new_username;
 		if (new_name) updateData.name = new_name;
-		if (new_password) updateData.password = new_password;
+		if (new_password) {
+			// good await
+			const hashedNewPassword = await bcrypt.hash(new_password, SALT_ROUNDS);
+			updateData.password = hashedNewPassword;
+		}
 
 		await User.updateOne({ username: current_username }, updateData);
 

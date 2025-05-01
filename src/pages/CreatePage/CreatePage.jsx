@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import './CreatePage.css';
@@ -93,6 +93,7 @@ export const CreatePage = () => {
 			id: Date.now(),
 			type,
 			text: '',
+			points: '',
 			answers: type === 'multipleChoice' ? ['', ''] : [],
 			correctAnswers:
 				type === 'trueFalse' ? true : type === 'multipleChoice' ? [] : '',
@@ -245,8 +246,8 @@ export const CreatePage = () => {
 			}));
 			setQuestions(mappedQuestions);
 		} catch (error) {
-			console.error('Error fetching quiz >> ', error);
-			setError('Failed to load quiz data');
+			console.error('CATCH Ошибка загрузки данных викторины >> ', error);
+			setError('Ошибка загрузки данных викторины');
 		} finally {
 			setIsLoading(false);
 		}
@@ -281,6 +282,7 @@ export const CreatePage = () => {
 					questions.map((q) => ({
 						text: q.text,
 						type: q.type,
+						points: q.points === '' ? 0 : q.points,
 						answers: q.answers,
 						correctAnswers: q.correctAnswers,
 					}))
@@ -303,8 +305,11 @@ export const CreatePage = () => {
 
 			navigate(`/quiz?id=${quizId || response.data.testId}`);
 		} catch (error) {
-			console.error('Server responded with error >> ', error.response.data);
-			setError(error.response?.data?.message || 'Error saving quiz');
+			console.error('CATCH ОШИБКА СЕРВЕРА >> ', error.response.data);
+			setError(
+				error.response?.data?.message ||
+					'Ошибка при сохранении викторины. Попробуйте еще раз.'
+			);
 		}
 	};
 
@@ -322,6 +327,14 @@ export const CreatePage = () => {
 		return errors;
 	};
 
+	const handlePointsChange = (questionId, value) => {
+		const points =
+			value === '' ? '' : Math.max(1, Math.min(parseInt(value) || 1, 100));
+		setQuestions(
+			questions.map((q) => (q.id === questionId ? { ...q, points } : q))
+		);
+	};
+
 	const renderQuestion = (question, index) => {
 		const errors = getQuestionErrors(question);
 
@@ -336,16 +349,27 @@ export const CreatePage = () => {
 						<CrossIcon width={18} height={18} />
 					</button>
 					<div className="question-number">{index + 1}</div>
-					<input
-						type="text"
-						className={`question-text btn ${errors.text ? 'error' : ''}`}
-						placeholder="Вопрос"
-						maxLength={120}
-						value={question.text}
-						onChange={(e) =>
-							handleQuestionTextChange(question.id, e.target.value)
-						}
-					/>
+					<div className="inputs">
+						<input
+							type="text"
+							className={`question-text btn ${errors.text ? 'error' : ''}`}
+							placeholder="Вопрос"
+							maxLength={120}
+							value={question.text}
+							onChange={(e) =>
+								handleQuestionTextChange(question.id, e.target.value)
+							}
+						/>
+						<input
+							type="number"
+							className="question-text btn"
+							placeholder="Балл"
+							min="1"
+							max="100"
+							value={question.points}
+							onChange={(e) => handlePointsChange(question.id, e.target.value)}
+						/>
+					</div>
 				</div>
 				{question.type === 'multipleChoice' && (
 					<div className="multipleChoice">
@@ -604,19 +628,13 @@ export const CreatePage = () => {
 										renderQuestion(question, index)
 									)}
 								</div>
-								<div className="group">
-									<button
-										type="submit"
-										className="btn btn-primary"
-										disabled={!isQuizValid()}
-									>
-										{searchParams.get('id') ? 'Сохранить изменения' : 'Создать'}
-									</button>
-									<Link to="/" className="btn btn-secondary">
-										<span>Скачать</span>
-										<span>PDF</span>
-									</Link>
-								</div>
+								<button
+									type="submit"
+									className="btn btn-primary"
+									disabled={!isQuizValid()}
+								>
+									{searchParams.get('id') ? 'Сохранить изменения' : 'Создать'}
+								</button>
 							</section>
 						</form>
 					</>

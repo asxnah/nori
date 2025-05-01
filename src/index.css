@@ -242,7 +242,7 @@ h4 {
 
 .quiz-footer .btn span:last-child {
 	font-size: 0.75rem;
-	color: var(--white-medium);
+	opacity: 0.75;
 }
 
 .quiz-footer button {
@@ -250,7 +250,7 @@ h4 {
 }
 
 main {
-	min-height: 80vh;
+	min-height: 100vh;
 }
 
 hr {

@@ -95,6 +95,11 @@
 		gap: 1rem;
 	}
 
+	.question-text span {
+		font-style: italic;
+		color: var(--darkgrey);
+	}
+
 	.question-number {
 		font-weight: 700;
 		font-size: 1.25rem;

@@ -22,7 +22,7 @@ export const generateQuizPDF = async (quiz) => {
         color: #787878;
       }
       .heading h1 {
-        font-family: 'Montserrat Alternates', , system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Montserrat Alternates', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         font-weight: 700;
         color: #323232;
         font-size: 1.5rem;
@@ -58,6 +58,9 @@ export const generateQuizPDF = async (quiz) => {
         text-align: left;
         font-weight: 500;
       }
+      .option.selected {
+        border: 2px solid #323232;
+      }
       .true-false {
         display: flex;
         align-items: center;
@@ -71,6 +74,10 @@ export const generateQuizPDF = async (quiz) => {
         align-items: center;
         justify-content: center;
       }
+      .true-false-option.selected {
+        border: 2px solid #323232;
+        border-radius: 50%;
+      }
       .open-text {
         padding: 2rem;
         width: 100%;
@@ -79,23 +86,8 @@ export const generateQuizPDF = async (quiz) => {
         border-radius: 2rem;
         position: relative;
       }
-      .open-text::before {
-        content: '';
-        position: absolute;
-        top: 2rem;
-        left: 2rem;
-        color: #787878;
-      }
-        text-align: center;
-        line-height: 4.75rem;
-        font-weight: 500;
-      }
-      .open-text {
-        padding: 2rem;
-        width: 100%;
-        height: 12rem;
-        border: 0.1rem solid #DEDEDE;
-        border-radius: 2rem;
+      .open-text.has-answer {
+        border: 2px solid #323232;
       }
     </style>
     <div class="quiz-page">
@@ -117,19 +109,33 @@ export const generateQuizPDF = async (quiz) => {
 								? `<div class="multiple-choice">
                   ${question.options
 										.map(
-											(option) => `
-                    <div class="option">☐ ${option}</div>
+											(option, i) => `
+                    <div class="option ${
+											question.userAnswer?.includes(i) ? 'selected' : ''
+										}">
+                      ${question.userAnswer?.includes(i) ? '☑' : '☐'} ${option}
+                    </div>
                   `
 										)
 										.join('')}
                 </div>`
 								: question.type === 'trueFalse'
 								? `<div class="true-false">
-                    <div class="true-false-option">
+                    <div class="true-false-option ${
+											question.userAnswer === true ? 'selected' : ''
+										}">
                       <svg width="60" height="60" viewBox="0 0 52 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clipPath="url(#clip0_310_29)">
-                          <rect x="41.6785" width="12" height="62" rx="6" transform="rotate(26.5973 41.6785 0)" fill="#323232"></rect>
-                          <rect x="0.697632" y="28.9199" width="12" height="37.2388" rx="6" transform="rotate(-29.5603 0.697632 28.9199)" fill="#323232"></rect>
+                          <rect x="41.6785" width="12" height="62" rx="6" transform="rotate(26.5973 41.6785 0)" fill="${
+														question.userAnswer === true
+															? 'var(--color-primary)'
+															: '#323232'
+													}"></rect>
+                          <rect x="0.697632" y="28.9199" width="12" height="37.2388" rx="6" transform="rotate(-29.5603 0.697632 28.9199)" fill="${
+														question.userAnswer === true
+															? 'var(--color-primary)'
+															: '#323232'
+													}"></rect>
                         </g>
                         <defs>
                           <clipPath id="clip0_310_29">
@@ -138,11 +144,21 @@ export const generateQuizPDF = async (quiz) => {
                         </defs>
                       </svg>
                     </div>
-                    <div class="true-false-option">
+                    <div class="true-false-option ${
+											question.userAnswer === false ? 'selected' : ''
+										}">
                       <svg width="60" height="60" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clipPath="url(#clip0_310_33)">
-                          <rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="#323232"></rect>
-                          <rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="#323232"></rect>
+                          <rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="${
+														question.userAnswer === false
+															? 'var(--color-primary)'
+															: '#323232'
+													}"></rect>
+                          <rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="${
+														question.userAnswer === false
+															? 'var(--color-primary)'
+															: '#323232'
+													}"></rect>
                         </g>
                         <defs>
                           <clipPath id="clip0_310_33">
@@ -152,7 +168,9 @@ export const generateQuizPDF = async (quiz) => {
                       </svg>
                     </div>
                   </div>`
-								: `<div class="open-text"></div>`
+								: `<div class="open-text ${
+										question.userAnswer ? 'has-answer' : ''
+								  }">${question.userAnswer || ''}</div>`
 						}
           </div>
         `

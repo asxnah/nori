@@ -11,7 +11,7 @@ const connectDB = async () => {
 		await mongoose.connect(mongoURI);
 		console.debug('База данных подключена');
 	} catch (err) {
-		console.error('Ошибка при подключении к базе данных: ' + err);
+		console.error('CATCH Ошибка при подключении к базе данных: ' + err);
 		process.exit(1);
 	}
 };

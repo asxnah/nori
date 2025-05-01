@@ -19,6 +19,12 @@
 		gap: 0.5rem;
 	}
 
+	a {
+		margin: auto;
+		margin-top: 2rem;
+		width: fit-content;
+	}
+
 	#info * {
 		text-align: right;
 	}

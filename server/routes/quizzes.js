@@ -56,8 +56,8 @@ router.get('/', async (req, res) => {
 
 		res.json(quizzes);
 	} catch (error) {
-		console.error('Error fetching quizzes >> ', error);
-		res.status(500).json({ message: 'Error fetching quizzes' });
+		console.error('CATCH Ошибка загрузки викторин >> ', error);
+		res.status(500).json({ message: 'Ошибка загрузки викторин' });
 	}
 });
 
@@ -80,8 +80,8 @@ router.get('/user/:userId', async (req, res) => {
 
 		res.json(quizzes);
 	} catch (error) {
-		console.error('Error fetching user quizzes >> ', error);
-		res.status(500).json({ message: 'Error fetching user quizzes' });
+		console.error('CATCH Ошибка загрузки викторин пользователя >> ', error);
+		res.status(500).json({ message: 'Ошибка загрузки викторин пользователя' });
 	}
 });
 
@@ -98,8 +98,8 @@ router.get('/:testId', async (req, res) => {
 
 		res.json(test);
 	} catch (error) {
-		console.error('Error fetching quiz >> ', error);
-		res.status(500).json({ message: 'Error fetching quiz' });
+		console.error('CATCH Ошибка загрузки викторины >> ', error);
+		res.status(500).json({ message: 'Ошибка загрузки викторины' });
 	}
 });
 
@@ -117,9 +117,9 @@ router.get('/:testId/questions', async (req, res) => {
 
 		res.json(questions);
 	} catch (error) {
-		console.error('Error details >> ', error);
+		console.error('CATCH Ошибка загрузки вопросов викторины >> ', error);
 		res.status(500).json({
-			message: 'Error fetching quiz questions',
+			message: 'Ошибка загрузки вопросов викторины',
 			error: error.message,
 		});
 	}
@@ -142,10 +142,10 @@ router.post('/:testId/answers', async (req, res) => {
 		});
 
 		await userAnswer.save();
-		res.status(201).json({ message: 'Answers saved successfully', userAnswer });
+		res.status(201).json({ message: 'Ответы успешно сохранены', userAnswer });
 	} catch (error) {
-		console.error('Error saving answers >> ', error);
-		res.status(500).json({ message: 'Error saving answers' });
+		console.error('CATCH Ошибка сохранения ответов >> ', error);
+		res.status(500).json({ message: 'Ошибка сохранения ответов' });
 	}
 });
 
@@ -164,8 +164,8 @@ router.get('/:testId/answers/:userId', async (req, res) => {
 
 		res.json(userAnswer);
 	} catch (error) {
-		console.error('Error fetching user answers >> ', error);
-		res.status(500).json({ message: 'Error fetching answers' });
+		console.error('CATCH Ошибка загрузки ответов пользователя >> ', error);
+		res.status(500).json({ message: 'Ошибка загрузки ответов пользователя' });
 	}
 });
 
@@ -179,8 +179,8 @@ router.get('/:testId/answers', async (req, res) => {
 
 		res.json(userAnswers);
 	} catch (error) {
-		console.error('Error fetching all user answers >> ', error);
-		res.status(500).json({ message: 'Error fetching all user answers' });
+		console.error('CATCH Ошибка загрузки ответов пользователей >> ', error);
+		res.status(500).json({ message: 'Ошибка загрузки ответов пользователей' });
 	}
 });
 
@@ -193,13 +193,13 @@ router.get('/answers/:answerId', async (req, res) => {
 			.populate('userId', 'username name');
 
 		if (!userAnswer) {
-			return res.status(404).json({ message: 'ОAnswers not found' });
+			return res.status(404).json({ message: 'Ответы не найдены' });
 		}
 
 		res.json(userAnswer);
 	} catch (error) {
-		console.error('Error fetching user answer >> ', error);
-		res.status(500).json({ message: 'Error fetching user answer' });
+		console.error('CATCH Ошибка загрузки ответов пользователя >> ', error);
+		res.status(500).json({ message: 'Ошибка загрузки ответов пользователя' });
 	}
 });
 
@@ -226,8 +226,8 @@ router.get('/answers/user/:userId', async (req, res) => {
 
 		res.json(completedQuizzes);
 	} catch (error) {
-		console.error('Error fetching user completed quizzes >> ', error);
-		res.status(500).json({ message: 'Error fetching user completed quizzes' });
+		console.error('CATCH Ошибка загрузки завершенных викторин >> ', error);
+		res.status(500).json({ message: 'Ошибка загрузки завершенных викторин' });
 	}
 });
 
@@ -265,6 +265,7 @@ router.post('/', upload.single('background'), async (req, res) => {
 					type: question.type,
 					options: question.answers || [],
 					correctAnswers: question.correctAnswers,
+					points: question.points || 0,
 				});
 				return await newQuestion.save();
 			})
@@ -287,12 +288,12 @@ router.post('/', upload.single('background'), async (req, res) => {
 			testId: test._id,
 		});
 	} catch (error) {
-		console.error('Error creating quiz >> ', error);
+		console.error('CATCH Ошибка создания викторины >> ', error);
 		if (error instanceof SyntaxError) {
-			res.status(400).json({ message: 'Invalid data format' });
+			res.status(400).json({ message: 'Неверный формат данных' });
 		} else {
 			res.status(500).json({
-				message: 'Error creating quiz',
+				message: 'Ошибка создания викторины',
 				error: error.message,
 				stack: error.stack,
 			});
@@ -324,7 +325,7 @@ router.delete('/:testId', async (req, res) => {
 					fs.unlinkSync(fullPath);
 				}
 			} catch (err) {
-				console.error('Error deleting background >> ', err);
+				console.error('CATCH Ошибка удаления фона >> ', err);
 			}
 		}
 
@@ -336,8 +337,8 @@ router.delete('/:testId', async (req, res) => {
 
 		res.json({ message: 'Quiz deleted successfully' });
 	} catch (error) {
-		console.error('Error deleting quiz >> ', error);
-		res.status(500).json({ message: 'Error deleting quiz' });
+		console.error('CATCH Ошибка удаления викторины >> ', error);
+		res.status(500).json({ message: 'Ошибка удаления викторины' });
 	}
 });
 
@@ -367,6 +368,7 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 					type: question.type,
 					options: question.answers || [],
 					correctAnswers: question.correctAnswers,
+					points: question.points || 0,
 				});
 				return await newQuestion.save();
 			})
@@ -404,8 +406,8 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 			testId: updatedTest._id,
 		});
 	} catch (error) {
-		console.error('Error updating quiz >> ', error);
-		res.status(500).json({ message: 'Error updating quiz' });
+		console.error('CATCH Ошибка обновления викторины >> ', error);
+		res.status(500).json({ message: 'Ошибка обновления викторины' });
 	}
 });
 

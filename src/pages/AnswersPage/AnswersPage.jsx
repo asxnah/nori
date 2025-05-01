@@ -50,7 +50,7 @@ export const AnswersPage = () => {
 				setUserAnswers(answersResponse.data);
 				setLoading(false);
 			} catch (err) {
-				console.error('Error fetching quiz data >> ', err);
+				console.error('CATCH Ошибка при загрузке данных >> ', err);
 				setError('Ошибка при загрузке данных');
 				setLoading(false);
 			}
@@ -64,39 +64,87 @@ export const AnswersPage = () => {
 		}
 	}, [quizId]);
 
-	const calculateScore = (answer) => {
-		let correct = 0;
-		let total = 0;
+	const calculateScore = (userAnswer) => {
+		let earnedPoints = 0;
+		let totalPoints = 0;
 
-		answer.answers.forEach((userAnswer) => {
+		userAnswer.answers.forEach((answer) => {
 			const question = quiz.questionIds.find(
-				(q) => q._id === userAnswer.questionId._id
+				(q) => q._id === answer.questionId._id
 			);
-
 			if (!question) return;
 
-			total++;
+			const questionPoints = question.points || 0;
+			if (questionPoints <= 0) return;
 
-			if (question.type === 'trueFalse') {
-				const userAnswerBool = userAnswer.selected[0] === 'true';
-				if (userAnswerBool === question.correctAnswers) {
-					correct++;
+			totalPoints += questionPoints;
+
+			const rawSelections = Array.isArray(answer.selected)
+				? answer.selected
+				: [answer.selected];
+
+			const isUnanswered = rawSelections.every(
+				(sel) => sel === null || sel === undefined
+			);
+			if (isUnanswered) {
+				return;
+			}
+
+			switch (question.type) {
+				case 'multipleChoice': {
+					const selectedAnswers = new Set(
+						rawSelections
+							.filter((sel) => sel !== null && sel !== undefined)
+							.map(Number)
+					);
+					const correctAnswersArray = Array.isArray(question.correctAnswers)
+						? question.correctAnswers
+						: [question.correctAnswers];
+					const correctAnswersSet = new Set(correctAnswersArray.map(Number));
+
+					if (
+						selectedAnswers.size > 0 &&
+						selectedAnswers.size === correctAnswersSet.size &&
+						[...selectedAnswers].every((ans) => correctAnswersSet.has(ans))
+					) {
+						earnedPoints += questionPoints;
+					}
+					break;
 				}
-			} else if (question.type === 'multipleChoice') {
-				if (userAnswer.selected[0] === question.correctAnswers) {
-					correct++;
+				case 'trueFalse': {
+					const userAnswer =
+						answer.selected === true ||
+						(Array.isArray(answer.selected) && answer.selected[0] === true) ||
+						answer.selected === 'true' ||
+						(Array.isArray(answer.selected) && answer.selected[0] === 'true');
+					const correctAnswer =
+						question.correctAnswers === true ||
+						question.correctAnswers === 'true';
+					if (userAnswer === correctAnswer) {
+						earnedPoints += questionPoints;
+					}
+					break;
 				}
-			} else if (question.type === 'openText') {
-				if (
-					userAnswer.selected[0].toLowerCase().trim() ===
-					question.correctAnswers.toLowerCase().trim()
-				) {
-					correct++;
+				case 'openText': {
+					const normalizeText = (text) => {
+						if (!text) return '';
+						return text.toString().toLowerCase().trim();
+					};
+					const userText = normalizeText(
+						Array.isArray(answer.selected)
+							? answer.selected[0]
+							: answer.selected
+					);
+					const correctText = normalizeText(question.correctAnswers);
+					if (userText === correctText) {
+						earnedPoints += questionPoints;
+					}
+					break;
 				}
 			}
 		});
 
-		return { correct, total };
+		return { earnedPoints, totalPoints };
 	};
 
 	const filteredAnswers = userAnswers.filter((answer) => {
@@ -141,7 +189,7 @@ export const AnswersPage = () => {
 
 				<div id="answers-list">
 					{filteredAnswers.map((answer) => {
-						const { correct, total } = calculateScore(answer);
+						const { earnedPoints, totalPoints } = calculateScore(answer);
 						return (
 							<Link
 								key={answer._id}
@@ -151,7 +199,7 @@ export const AnswersPage = () => {
 								<small>@{answer.userId.username}</small>
 								<h5>{answer.userId.name}</h5>
 								<p>
-									Верных ответов: {correct} из {total}
+									Набрано баллов: {earnedPoints} из {totalPoints}
 								</p>
 							</Link>
 						);

@@ -18,11 +18,11 @@ export const PreviewPage = () => {
 					Проект предназначен для учеников, студентов, учителей и
 					преподавателей, а также для личного использования
 				</p>
-			</section>
 
-			<Link to="/" className="btn btn-primary">
-				Перейти
-			</Link>
+				<Link to="/" className="btn btn-primary">
+					Перейти
+				</Link>
+			</section>
 
 			<section id="info">
 				<h3>Разработчик</h3>

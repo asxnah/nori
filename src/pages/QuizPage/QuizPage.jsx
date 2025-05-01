@@ -56,7 +56,7 @@ export const QuizPage = () => {
 				setTest(response.data);
 				setLoading(false);
 			} catch (err) {
-				console.error(err);
+				console.error(`CATCH Ошибка при загрузке теста >> ${err}`);
 				setError('Ошибка при загрузке теста');
 				setLoading(false);
 			}
@@ -135,7 +135,7 @@ export const QuizPage = () => {
 
 			navigate(`/quiz/results/${response.data.userAnswer._id}`);
 		} catch (err) {
-			console.error(err);
+			console.error(`CATCH Ошибка при сохранении ответов >> ${err}`);
 			setError('Ошибка при сохранении ответов');
 			setSubmitting(false);
 		}

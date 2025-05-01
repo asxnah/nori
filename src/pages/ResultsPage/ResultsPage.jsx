@@ -4,6 +4,7 @@ import axios from 'axios';
 import './ResultsPage.css';
 import { TrueIcon } from './icons/TrueIcon';
 import { FalseIcon } from './icons/FalseIcon';
+import { generateResultsPDF } from '../../utils/resultsGenerator';
 
 export const ResultsPage = () => {
 	const { answerId } = useParams();
@@ -27,7 +28,7 @@ export const ResultsPage = () => {
 				);
 				setTest(testResponse.data);
 			} catch (err) {
-				console.error('Error fetching results >> ', err);
+				console.error('CATCH Ошибка при загрузке результатов >> ', err);
 				setError('Ошибка при загрузке результатов');
 			} finally {
 				setLoading(false);
@@ -42,15 +43,19 @@ export const ResultsPage = () => {
 	if (!test || !userAnswers) return <div>Результаты не найдены</div>;
 
 	const calculateScore = () => {
-		let correct = 0;
-		let total = 0;
+		let earnedPoints = 0;
+		let totalPoints = 0;
 
 		userAnswers.answers.forEach((answer) => {
 			const question = test.questionIds.find(
 				(q) => q._id === answer.questionId._id
 			);
 			if (!question) return;
-			total++;
+
+			const questionPoints = question.points || 0;
+			if (questionPoints <= 0) return;
+
+			totalPoints += questionPoints;
 
 			const rawSelections = Array.isArray(answer.selected)
 				? answer.selected
@@ -80,7 +85,7 @@ export const ResultsPage = () => {
 						selectedAnswers.size === correctAnswersSet.size &&
 						[...selectedAnswers].every((ans) => correctAnswersSet.has(ans))
 					) {
-						correct++;
+						earnedPoints += questionPoints;
 					}
 					break;
 				}
@@ -94,14 +99,14 @@ export const ResultsPage = () => {
 						question.correctAnswers === true ||
 						question.correctAnswers === 'true';
 					if (userAnswer === correctAnswer) {
-						correct++;
+						earnedPoints += questionPoints;
 					}
 					break;
 				}
 				case 'openText': {
 					const normalizeText = (text) => {
 						if (!text) return '';
-						return text.toString().toLowerCase().trim().replace(/\s+/g, ' ');
+						return text.toString().toLowerCase().trim();
 					};
 					const userText = normalizeText(
 						Array.isArray(answer.selected)
@@ -110,17 +115,17 @@ export const ResultsPage = () => {
 					);
 					const correctText = normalizeText(question.correctAnswers);
 					if (userText === correctText) {
-						correct++;
+						earnedPoints += questionPoints;
 					}
 					break;
 				}
 			}
 		});
 
-		return { correct, total };
+		return { earnedPoints, totalPoints };
 	};
 
-	const { correct, total } = calculateScore();
+	const { earnedPoints, totalPoints } = calculateScore();
 
 	const renderQuestion = (question, index) => {
 		const userAnswer = userAnswers.answers[index];
@@ -144,7 +149,9 @@ export const ResultsPage = () => {
 					<div className="question" key={question._id}>
 						<div className="question-text">
 							<div className="question-number">{index + 1}</div>
-							<p>{question.questionText}</p>
+							<p>
+								<span>{question.points} б</span> | {question.questionText}
+							</p>
 						</div>
 						<div className="answers multipleChoice">
 							{question.options.map((option, i) => (
@@ -186,7 +193,9 @@ export const ResultsPage = () => {
 					<div className="question" key={question._id}>
 						<div className="question-text">
 							<div className="question-number">{index + 1}</div>
-							<p>{question.questionText}</p>
+							<p>
+								<span>{question.points} б</span> | {question.questionText}
+							</p>
 						</div>
 						<div className="answers trueFalse">
 							<button>
@@ -228,7 +237,9 @@ export const ResultsPage = () => {
 					<div className="question" key={question._id}>
 						<div className="question-text">
 							<div className="question-number">{index + 1}</div>
-							<p>{question.questionText}</p>
+							<p>
+								<span>{question.points} б</span> | {question.questionText}
+							</p>
 						</div>
 						<table>
 							<thead>
@@ -262,11 +273,15 @@ export const ResultsPage = () => {
 				<section id="heading">
 					<div>
 						<p>
-							Верных ответов: {correct} из {total}
+							Набрано баллов: {earnedPoints} из {totalPoints}
 						</p>
 						<h1>{test.title}</h1>
 					</div>
-					<button>
+					<button
+						onClick={() =>
+							generateResultsPDF(test, userAnswers, earnedPoints, totalPoints)
+						}
+					>
 						Скачать<span>PDF</span>
 					</button>
 				</section>

@@ -56,7 +56,7 @@ export const UserPage = () => {
 				setCreatedQuizzes(Array.isArray(response.data) ? response.data : []);
 				setLoading(false);
 			} catch (error) {
-				console.error('Error fetching user quizzes >> ', error);
+				console.error('CATCH Ошибка загрузки созданных викторин >> ', error);
 				setCreatedQuizzes([]);
 				setLoading(false);
 			}
@@ -76,7 +76,7 @@ export const UserPage = () => {
 				setCompletedQuizzes(Array.isArray(response.data) ? response.data : []);
 				setCompletedLoading(false);
 			} catch (error) {
-				console.error('Error fetching completed quizzes >> ', error);
+				console.error('CATCH Ошибка загрузки завершенных викторин >> ', error);
 				setCompletedQuizzes([]);
 				setCompletedLoading(false);
 			}
@@ -170,8 +170,8 @@ export const UserPage = () => {
 	};
 
 	const calculateScore = (quiz) => {
-		let correct = 0;
-		let total = 0;
+		let earnedPoints = 0;
+		let totalPoints = 0;
 
 		quiz.answers.forEach((answer) => {
 			const question = quiz.testId.questionIds.find((q) => {
@@ -180,7 +180,10 @@ export const UserPage = () => {
 
 			if (!question) return;
 
-			total++;
+			const questionPoints = question.points || 0;
+			if (questionPoints <= 0) return;
+
+			totalPoints += questionPoints;
 
 			const rawSelections = Array.isArray(answer.selected)
 				? answer.selected
@@ -201,7 +204,7 @@ export const UserPage = () => {
 					question.correctAnswers === true ||
 					question.correctAnswers === 'true';
 				if (userAnswer === correctAnswer) {
-					correct++;
+					earnedPoints += questionPoints;
 				}
 			} else if (question.type === 'multipleChoice') {
 				const selectedAnswers = new Set(
@@ -219,7 +222,7 @@ export const UserPage = () => {
 					selectedAnswers.size === correctAnswersSet.size &&
 					[...selectedAnswers].every((ans) => correctAnswersSet.has(ans))
 				) {
-					correct++;
+					earnedPoints += questionPoints;
 				}
 			} else if (question.type === 'openText') {
 				const normalizeText = (text) => {
@@ -231,12 +234,12 @@ export const UserPage = () => {
 				);
 				const correctText = normalizeText(question.correctAnswers);
 				if (userText === correctText) {
-					correct++;
+					earnedPoints += questionPoints;
 				}
 			}
 		});
 
-		return { correct, total };
+		return { correct: earnedPoints, total: totalPoints };
 	};
 
 	const handleDeleteQuiz = async (quizId) => {
@@ -252,7 +255,7 @@ export const UserPage = () => {
 					prevQuizzes.filter((quiz) => quiz._id !== quizId)
 				);
 			} catch (error) {
-				console.error('Error deleting quiz >> ', error);
+				console.error('CATCH Ошибка при удалении теста >> ', error);
 				alert('Ошибка при удалении теста');
 			}
 		}

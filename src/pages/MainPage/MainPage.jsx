@@ -25,7 +25,7 @@ export const MainPage = () => {
 			setQuizzes(response.data);
 			setLoading(false);
 		} catch (error) {
-			console.error('Error fetching quizzes >> ', error);
+			console.error('CATCH Ошибка при загрузке викторин >> ', error);
 			setError('Ошибка при загрузке викторин');
 			setLoading(false);
 		}

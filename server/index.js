@@ -28,7 +28,7 @@ app.use('/api', authRoutes);
 app.use('/api/quizzes', quizRoutes);
 
 app.get('/', (req, res) => {
-	res.send('server is running');
+	res.send('Сервер запущен.');
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -38,11 +38,9 @@ if (process.env.NODE_ENV === 'production') {
 		res.sendFile(path.resolve(__dirname, '../dist', 'index.html'));
 	});
 } else {
-	console.log('Running in development mode, not serving frontend.');
+	console.log('Работает в режиме разработки, не обслуживая фронтенд.');
 }
 
-console.log('NODE_ENV >> ', process.env.NODE_ENV);
-
 app.listen(port, '0.0.0.0', () => {
-	console.log(`Server is running on port ${port}`);
+	console.log(`Сервер запущен на порту ${port}.`);
 });

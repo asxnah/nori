@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 import 'react';
+// eslint-disable-next-line no-unused-vars
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ShareIcon } from '../pages/UserPage/icons/ShareIcon';
 import { OpenIcon } from '../pages/UserPage/icons/OpenIcon';
@@ -28,6 +30,7 @@ export const QuizCard = ({
 		backgroundRepeat: 'no-repeat',
 		backgroundPosition: 'center',
 	};
+	const [text, setText] = useState('Поделиться результатом');
 
 	const renderHeader = () => {
 		switch (type) {
@@ -57,23 +60,8 @@ export const QuizCard = ({
 				return (
 					<div className="quiz-header">
 						<p>
-							Правильных ответов: {correctAnswers} из {totalAnswers}
+							Набрано баллов: {correctAnswers} из {totalAnswers}
 						</p>
-						<div className="group">
-							<Link to={`/quiz/results/${link}`}>
-								<OpenIcon />
-							</Link>
-							<button
-								onClick={() => {
-									const url = `${
-										import.meta.env.VITE_API_URL
-									}/quiz/results/${id}`;
-									navigator.clipboard.writeText(url);
-								}}
-							>
-								<ShareIcon />
-							</button>
-						</div>
 					</div>
 				);
 			default:
@@ -112,8 +100,8 @@ export const QuizCard = ({
 									);
 									await generateQuizPDF(response.data);
 								} catch (error) {
-									console.error('Error generating PDF:', error);
-									alert('Failed to generate PDF');
+									console.error('CATCH Ошибка генерации PDF:', error);
+									alert('Ошибка генерации PDF');
 								}
 							}}
 						>
@@ -132,9 +120,29 @@ export const QuizCard = ({
 			case 'completed':
 				return (
 					<div className="quiz-footer">
-						<Link to="/" className="btn btn-pure">
-							<span>Скачать</span>
-							<span>PDF</span>
+						<button
+							className="btn btn-pure"
+							onClick={() => {
+								const url = `${
+									import.meta.env.VITE_API_URL
+								}/quiz/results/${id}`;
+								navigator.clipboard.writeText(url);
+								setText('Ссылка скопирована');
+								setTimeout(() => {
+									setText('Поделиться результатом');
+								}, 2000);
+							}}
+						>
+							<span>{text}</span>
+							<span>
+								<ShareIcon />
+							</span>
+						</button>
+						<Link className="btn btn-pure" to={`/quiz/results/${link}`}>
+							<span>Открыть</span>
+							<span>
+								<OpenIcon />
+							</span>
 						</Link>
 					</div>
 				);

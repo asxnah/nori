@@ -30,7 +30,7 @@ router.post('/login', async (req, res) => {
 			},
 		});
 	} catch (error) {
-		console.error('Login error >> ', error);
+		console.error('CATCH Ошибка входа >> ', error);
 		res.status(500).json({ message: 'Ошибка при входе' });
 	}
 });
@@ -88,7 +88,7 @@ router.post('/register', async (req, res) => {
 			},
 		});
 	} catch (error) {
-		console.error('Registration error >> ', error);
+		console.error('CATCH Ошибка регистрации >> ', error);
 		res.status(500).json({ message: 'Ошибка при регистрации пользователя' });
 	}
 });
@@ -154,7 +154,7 @@ router.post('/update-profile', async (req, res) => {
 			},
 		});
 	} catch (error) {
-		console.error('Update profile error >> ', error);
+		console.error('CATCH Ошибка обновления профиля >> ', error);
 		res.status(500).json({ message: 'Ошибка при обновлении профиля' });
 	}
 });

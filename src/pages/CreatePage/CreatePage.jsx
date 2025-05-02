@@ -282,7 +282,7 @@ export const CreatePage = () => {
 					questions.map((q) => ({
 						text: q.text,
 						type: q.type,
-						points: q.points === '' ? 0 : q.points,
+						points: q.points === '' ? 1 : q.points,
 						answers: q.answers,
 						correctAnswers: q.correctAnswers,
 					}))

@@ -265,7 +265,7 @@ router.post('/', upload.single('background'), async (req, res) => {
 					type: question.type,
 					options: question.answers || [],
 					correctAnswers: question.correctAnswers,
-					points: question.points || 0,
+					points: question.points || 1,
 				});
 				return await newQuestion.save();
 			})
@@ -368,7 +368,7 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 					type: question.type,
 					options: question.answers || [],
 					correctAnswers: question.correctAnswers,
-					points: question.points || 0,
+					points: question.points || 1,
 				});
 				return await newQuestion.save();
 			})

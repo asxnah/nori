@@ -364,7 +364,7 @@ export const CreatePage = () => {
 							type="number"
 							className="question-text btn"
 							placeholder="Балл"
-							min="1"
+							min="0"
 							max="100"
 							value={question.points}
 							onChange={(e) => handlePointsChange(question.id, e.target.value)}

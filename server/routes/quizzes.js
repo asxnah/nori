@@ -93,7 +93,7 @@ router.get('/:testId', async (req, res) => {
 			.populate('createdBy', 'username name');
 
 		if (!test) {
-			return res.status(404).json({ message: 'Quiz not found' });
+			return res.status(404).json({ message: 'Викторина не найдена' });
 		}
 
 		res.json(test);
@@ -110,7 +110,7 @@ router.get('/:testId/questions', async (req, res) => {
 		const test = await Test.findById(testId);
 
 		if (!test) {
-			return res.status(404).json({ message: 'Quiz not found' });
+			return res.status(404).json({ message: 'Викторина не найдена' });
 		}
 
 		const questions = await Question.find({ _id: { $in: test.questionIds } });
@@ -159,7 +159,7 @@ router.get('/:testId/answers/:userId', async (req, res) => {
 		}).populate('answers.questionId');
 
 		if (!userAnswer) {
-			return res.status(404).json({ message: 'Answers not found' });
+			return res.status(404).json({ message: 'Ответы не найдены' });
 		}
 
 		res.json(userAnswer);
@@ -239,15 +239,17 @@ router.post('/', upload.single('background'), async (req, res) => {
 		const timer = req.body.timer === 'null' ? null : JSON.parse(req.body.timer);
 
 		if (!title || !questions || !createdBy) {
-			return res.status(400).json({ message: 'Missing required fields' });
+			return res
+				.status(400)
+				.json({ message: 'Не все обязательные поля заполнены' });
 		}
 
 		if (!Array.isArray(questions) || questions.length === 0) {
-			return res.status(400).json({ message: 'Invalid questions format' });
+			return res.status(400).json({ message: 'Неверный формат вопросов' });
 		}
 
 		if (!Array.isArray(tags)) {
-			return res.status(400).json({ message: 'Invalid tags format' });
+			return res.status(400).json({ message: 'Неверный формат тегов' });
 		}
 
 		const background = req.file
@@ -284,7 +286,7 @@ router.post('/', upload.single('background'), async (req, res) => {
 		await test.save();
 
 		res.status(201).json({
-			message: 'Quiz created successfully',
+			message: 'Викторина создана',
 			testId: test._id,
 		});
 	} catch (error) {
@@ -307,7 +309,7 @@ router.delete('/:testId', async (req, res) => {
 
 		const test = await Test.findById(testId);
 		if (!test) {
-			return res.status(404).json({ message: 'Quiz not found' });
+			return res.status(404).json({ message: 'Викторина не найдена' });
 		}
 
 		if (test.background) {
@@ -335,7 +337,7 @@ router.delete('/:testId', async (req, res) => {
 			Test.findByIdAndDelete(testId),
 		]);
 
-		res.json({ message: 'Quiz deleted successfully' });
+		res.json({ message: 'Викторина удалена' });
 	} catch (error) {
 		console.error('CATCH Ошибка удаления викторины >> ', error);
 		res.status(500).json({ message: 'Ошибка удаления викторины' });
@@ -351,12 +353,14 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 		const timer = req.body.timer === 'null' ? null : JSON.parse(req.body.timer);
 
 		if (!title || !questions || !createdBy) {
-			return res.status(400).json({ message: 'Missing required fields' });
+			return res
+				.status(400)
+				.json({ message: 'Не все обязательные поля заполнены' });
 		}
 
 		const existingTest = await Test.findById(testId);
 		if (!existingTest) {
-			return res.status(404).json({ message: 'Quiz not found' });
+			return res.status(404).json({ message: 'Викторина не найдена' });
 		}
 
 		await Question.deleteMany({ _id: { $in: existingTest.questionIds } });
@@ -402,7 +406,7 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 		);
 
 		res.json({
-			message: 'Quiz updated successfully',
+			message: 'Викторина обновлена',
 			testId: updatedTest._id,
 		});
 	} catch (error) {

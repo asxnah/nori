@@ -2,6 +2,8 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import User from '../models/User.js';
 import { validateUsername, validatePassword } from '../utils/validators.js';
+import { retry } from '../utils/retry.js';
+import { isRetriableError } from '../utils/isRetriableError.js';
 
 const router = express.Router();
 const SALT_ROUNDS = 10;
@@ -10,15 +12,24 @@ router.post('/login', async (req, res) => {
 	try {
 		const { username, password } = req.body;
 
-		const user = await User.findOne({ username });
+		const user = await retry(
+			() => User.findOne({ username }),
+			3,
+			500,
+			isRetriableError
+		);
 		if (!user) {
-			return res.status(401).json({ message: 'Пользователь не существует' });
+			return res.status(401).json({ message: 'Неверный логин или пароль' });
 		}
 
-		// 'await' has no effect on the type of this expression.
-		const isMatch = await bcrypt.compare(password, user.password);
+		const isMatch = await retry(
+			() => bcrypt.compare(password, user.password),
+			2,
+			200,
+			isRetriableError
+		);
 		if (!isMatch) {
-			return res.status(401).json({ message: 'Неверный пароль' });
+			return res.status(401).json({ message: 'Неверный логин или пароль' });
 		}
 
 		res.json({
@@ -39,21 +50,14 @@ router.post('/register', async (req, res) => {
 	try {
 		const { username, password } = req.body;
 
-		const existingUser = await User.findOne({ username });
+		const existingUser = await retry(
+			() => User.findOne({ username }),
+			3,
+			500,
+			isRetriableError
+		);
 		if (existingUser) {
-			// 'await' has no effect on the type of this expression.
-			const isMatch = await bcrypt.compare(password, existingUser.password);
-			if (isMatch) {
-				return res.json({
-					message: 'Успешный вход',
-					user: {
-						username: existingUser.username,
-						name: existingUser.name,
-						id: existingUser._id,
-					},
-				});
-			}
-			return res.status(401).json({ message: 'Неверный пароль' });
+			return res.status(400).json({ message: 'Пользователь уже существует' });
 		}
 
 		if (!validateUsername(username)) {
@@ -70,7 +74,12 @@ router.post('/register', async (req, res) => {
 			});
 		}
 
-		const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+		const hashedPassword = await retry(
+			() => bcrypt.hash(password, SALT_ROUNDS),
+			2,
+			300,
+			isRetriableError
+		);
 
 		const user = new User({
 			name: username,
@@ -78,7 +87,8 @@ router.post('/register', async (req, res) => {
 			password: hashedPassword,
 		});
 
-		await user.save();
+		await retry(() => user.save(), 3, 500, isRetriableError);
+
 		res.json({
 			message: 'Пользователь успешно зарегистрирован',
 			user: {
@@ -103,13 +113,22 @@ router.post('/update-profile', async (req, res) => {
 			current_password,
 		} = req.body;
 
-		const user = await User.findOne({ username: current_username });
+		const user = await retry(
+			() => User.findOne({ username: current_username }),
+			3,
+			500,
+			isRetriableError
+		);
 		if (!user) {
 			return res.status(404).json({ message: 'Пользователь не найден' });
 		}
 
-		// 'await' has no effect on the type of this expression.
-		const isMatch = await bcrypt.compare(current_password, user.password);
+		const isMatch = await retry(
+			() => bcrypt.compare(current_password, user.password),
+			2,
+			200,
+			isRetriableError
+		);
 		if (!isMatch) {
 			return res.status(401).json({ message: 'Неверный текущий пароль' });
 		}
@@ -122,7 +141,12 @@ router.post('/update-profile', async (req, res) => {
 				});
 			}
 
-			const existingUser = await User.findOne({ username: new_username });
+			const existingUser = await retry(
+				() => User.findOne({ username: new_username }),
+				3,
+				500,
+				isRetriableError
+			);
 			if (existingUser) {
 				return res.status(400).json({ message: 'Этот логин уже занят' });
 			}
@@ -139,12 +163,21 @@ router.post('/update-profile', async (req, res) => {
 		if (new_username) updateData.username = new_username;
 		if (new_name) updateData.name = new_name;
 		if (new_password) {
-			// good await
-			const hashedNewPassword = await bcrypt.hash(new_password, SALT_ROUNDS);
+			const hashedNewPassword = await retry(
+				() => bcrypt.hash(new_password, SALT_ROUNDS),
+				2,
+				300,
+				isRetriableError
+			);
 			updateData.password = hashedNewPassword;
 		}
 
-		await User.updateOne({ username: current_username }, updateData);
+		await retry(
+			() => User.updateOne({ username: current_username }, updateData),
+			3,
+			500,
+			isRetriableError
+		);
 
 		res.json({
 			message: 'Профиль успешно обновлен',

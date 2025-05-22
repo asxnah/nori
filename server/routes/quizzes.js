@@ -7,6 +7,9 @@ import path from 'path';
 import process from 'process';
 import fs from 'fs';
 
+import { retry } from '../utils/retry.js';
+import { isRetriableError } from '../utils/isRetriableError.js';
+
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
 		cb(null, path.join(process.cwd(), 'uploads'));
@@ -43,16 +46,22 @@ router.get('/', async (req, res) => {
 			};
 		}
 
-		const quizzes = await Test.find(query, {
-			title: 1,
-			description: 1,
-			background: 1,
-			tags: 1,
-			questionIds: 1,
-		})
-			.sort({ createdAt: -1 })
-			.limit(search ? 0 : 6)
-			.populate('questionIds');
+		const quizzes = await retry(
+			() =>
+				Test.find(query, {
+					title: 1,
+					description: 1,
+					background: 1,
+					tags: 1,
+					questionIds: 1,
+				})
+					.sort({ createdAt: -1 })
+					.limit(search ? 0 : 6)
+					.populate('questionIds'),
+			3,
+			500,
+			isRetriableError
+		);
 
 		res.json(quizzes);
 	} catch (error) {
@@ -65,18 +74,24 @@ router.get('/user/:userId', async (req, res) => {
 	try {
 		const { userId } = req.params;
 
-		const quizzes = await Test.find(
-			{ createdBy: userId },
-			{
-				title: 1,
-				description: 1,
-				background: 1,
-				tags: 1,
-				questionIds: 1,
-			}
-		)
-			.sort({ createdAt: -1 })
-			.populate('questionIds');
+		const quizzes = await retry(
+			() =>
+				Test.find(
+					{ createdBy: userId },
+					{
+						title: 1,
+						description: 1,
+						background: 1,
+						tags: 1,
+						questionIds: 1,
+					}
+				)
+					.sort({ createdAt: -1 })
+					.populate('questionIds'),
+			3,
+			500,
+			isRetriableError
+		);
 
 		res.json(quizzes);
 	} catch (error) {
@@ -88,9 +103,15 @@ router.get('/user/:userId', async (req, res) => {
 router.get('/:testId', async (req, res) => {
 	try {
 		const { testId } = req.params;
-		const test = await Test.findById(testId)
-			.populate('questionIds')
-			.populate('createdBy', 'username name');
+		const test = await retry(
+			() =>
+				Test.findById(testId)
+					.populate('questionIds')
+					.populate('createdBy', 'username name'),
+			3,
+			500,
+			isRetriableError
+		);
 
 		if (!test) {
 			return res.status(404).json({ message: 'Викторина не найдена' });
@@ -107,13 +128,23 @@ router.get('/:testId/questions', async (req, res) => {
 	try {
 		const { testId } = req.params;
 
-		const test = await Test.findById(testId);
+		const test = await retry(
+			() => Test.findById(testId),
+			3,
+			500,
+			isRetriableError
+		);
 
 		if (!test) {
 			return res.status(404).json({ message: 'Викторина не найдена' });
 		}
 
-		const questions = await Question.find({ _id: { $in: test.questionIds } });
+		const questions = await retry(
+			() => Question.find({ _id: { $in: test.questionIds } }),
+			3,
+			500,
+			isRetriableError
+		);
 
 		res.json(questions);
 	} catch (error) {
@@ -141,7 +172,7 @@ router.post('/:testId/answers', async (req, res) => {
 			})),
 		});
 
-		await userAnswer.save();
+		await retry(() => userAnswer.save(), 3, 500, isRetriableError);
 		res.status(201).json({ message: 'Ответы успешно сохранены', userAnswer });
 	} catch (error) {
 		console.error('CATCH Ошибка сохранения ответов >> ', error);
@@ -153,10 +184,16 @@ router.get('/:testId/answers/:userId', async (req, res) => {
 	try {
 		const { testId, userId } = req.params;
 
-		const userAnswer = await UserAnswer.findOne({
-			testId,
-			userId,
-		}).populate('answers.questionId');
+		const userAnswer = await retry(
+			() =>
+				UserAnswer.findOne({
+					testId,
+					userId,
+				}).populate('answers.questionId'),
+			3,
+			500,
+			isRetriableError
+		);
 
 		if (!userAnswer) {
 			return res.status(404).json({ message: 'Ответы не найдены' });
@@ -173,9 +210,15 @@ router.get('/:testId/answers', async (req, res) => {
 	try {
 		const { testId } = req.params;
 
-		const userAnswers = await UserAnswer.find({ testId })
-			.populate('userId', 'username name')
-			.populate('answers.questionId');
+		const userAnswers = await retry(
+			() =>
+				UserAnswer.find({ testId })
+					.populate('userId', 'username name')
+					.populate('answers.questionId'),
+			3,
+			500,
+			isRetriableError
+		);
 
 		res.json(userAnswers);
 	} catch (error) {
@@ -188,9 +231,15 @@ router.get('/answers/:answerId', async (req, res) => {
 	try {
 		const { answerId } = req.params;
 
-		const userAnswer = await UserAnswer.findById(answerId)
-			.populate('answers.questionId')
-			.populate('userId', 'username name');
+		const userAnswer = await retry(
+			() =>
+				UserAnswer.findById(answerId)
+					.populate('answers.questionId')
+					.populate('userId', 'username name'),
+			3,
+			500,
+			isRetriableError
+		);
 
 		if (!userAnswer) {
 			return res.status(404).json({ message: 'Ответы не найдены' });
@@ -207,15 +256,24 @@ router.get('/answers/user/:userId', async (req, res) => {
 	try {
 		const { userId } = req.params;
 
-		const userAnswers = await UserAnswer.find({ userId })
-			.sort({ createdAt: -1 })
-			.populate('testId', 'title tags background')
-			.populate('answers.questionId');
+		const userAnswers = await retry(
+			() =>
+				UserAnswer.find({ userId })
+					.sort({ createdAt: -1 })
+					.populate('testId', 'title tags background')
+					.populate('answers.questionId'),
+			3,
+			500,
+			isRetriableError
+		);
 
 		const completedQuizzes = await Promise.all(
 			userAnswers.map(async (userAnswer) => {
-				const test = await Test.findById(userAnswer.testId).populate(
-					'questionIds'
+				const test = await retry(
+					() => Test.findById(userAnswer.testId).populate('questionIds'),
+					3,
+					500,
+					isRetriableError
 				);
 				return {
 					...userAnswer.toObject(),
@@ -257,20 +315,26 @@ router.post('/', upload.single('background'), async (req, res) => {
 			: null;
 
 		const savedQuestions = await Promise.all(
-			questions.map(async (question) => {
-				if (!question.text || !question.type) {
-					throw new Error('Invalid question format');
-				}
-
-				const newQuestion = new Question({
-					questionText: question.text,
-					type: question.type,
-					options: question.answers || [],
-					correctAnswers: question.correctAnswers,
-					points: question.points || 1,
-				});
-				return await newQuestion.save();
-			})
+			questions.map((question) =>
+				retry(
+					async () => {
+						if (!question.text || !question.type) {
+							throw new Error('Invalid question format');
+						}
+						const newQuestion = new Question({
+							questionText: question.text,
+							type: question.type,
+							options: question.answers || [],
+							correctAnswers: question.correctAnswers,
+							points: question.points || 1,
+						});
+						return await newQuestion.save();
+					},
+					3, // количество попыток
+					500, // задержка между попытками (мс)
+					isRetriableError
+				)
+			)
 		);
 
 		const test = new Test({
@@ -283,7 +347,7 @@ router.post('/', upload.single('background'), async (req, res) => {
 			createdBy,
 		});
 
-		await test.save();
+		await retry(() => test.save(), 3, 500, isRetriableError);
 
 		res.status(201).json({
 			message: 'Викторина создана',
@@ -307,7 +371,12 @@ router.delete('/:testId', async (req, res) => {
 	try {
 		const { testId } = req.params;
 
-		const test = await Test.findById(testId);
+		const test = await retry(
+			() => Test.findById(testId),
+			3,
+			500,
+			isRetriableError
+		);
 		if (!test) {
 			return res.status(404).json({ message: 'Викторина не найдена' });
 		}
@@ -331,11 +400,17 @@ router.delete('/:testId', async (req, res) => {
 			}
 		}
 
-		await Promise.all([
-			Question.deleteMany({ _id: { $in: test.questionIds } }),
-			UserAnswer.deleteMany({ testId }),
-			Test.findByIdAndDelete(testId),
-		]);
+		await retry(
+			() =>
+				Promise.all([
+					Question.deleteMany({ _id: { $in: test.questionIds } }),
+					UserAnswer.deleteMany({ testId }),
+					Test.findByIdAndDelete(testId),
+				]),
+			3,
+			500,
+			isRetriableError
+		);
 
 		res.json({ message: 'Викторина удалена' });
 	} catch (error) {
@@ -358,24 +433,41 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 				.json({ message: 'Не все обязательные поля заполнены' });
 		}
 
-		const existingTest = await Test.findById(testId);
+		const existingTest = await retry(
+			() => Test.findById(testId),
+			3,
+			500,
+			isRetriableError
+		);
 		if (!existingTest) {
 			return res.status(404).json({ message: 'Викторина не найдена' });
 		}
 
-		await Question.deleteMany({ _id: { $in: existingTest.questionIds } });
+		await retry(
+			() => Question.deleteMany({ _id: { $in: existingTest.questionIds } }),
+			3,
+			500,
+			isRetriableError
+		);
 
 		const savedQuestions = await Promise.all(
-			questions.map(async (question) => {
-				const newQuestion = new Question({
-					questionText: question.text,
-					type: question.type,
-					options: question.answers || [],
-					correctAnswers: question.correctAnswers,
-					points: question.points || 1,
-				});
-				return await newQuestion.save();
-			})
+			questions.map((question) =>
+				retry(
+					async () => {
+						const newQuestion = new Question({
+							questionText: question.text,
+							type: question.type,
+							options: question.answers || [],
+							correctAnswers: question.correctAnswers,
+							points: question.points || 1,
+						});
+						return await newQuestion.save();
+					},
+					3,
+					500,
+					isRetriableError
+				)
+			)
 		);
 
 		let background = existingTest.background;
@@ -392,17 +484,23 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 			background = `${process.env.VITE_API_URL}/uploads/${req.file.filename}`;
 		}
 
-		const updatedTest = await Test.findByIdAndUpdate(
-			testId,
-			{
-				title,
-				description: description || '',
-				background,
-				tags: tags.filter((tag) => tag.trim()),
-				questionIds: savedQuestions.map((q) => q._id),
-				timer,
-			},
-			{ new: true }
+		const updatedTest = await retry(
+			() =>
+				Test.findByIdAndUpdate(
+					testId,
+					{
+						title,
+						description: description || '',
+						background,
+						tags: tags.filter((tag) => tag.trim()),
+						questionIds: savedQuestions.map((q) => q._id),
+						timer,
+					},
+					{ new: true }
+				),
+			3,
+			500,
+			isRetriableError
 		);
 
 		res.json({

@@ -143,6 +143,7 @@ export const UserPage = () => {
 			});
 
 			const updatedUser = {
+				id: user.id,
 				name: formData.new_name || user.name,
 				username: formData.new_username || user.username,
 			};

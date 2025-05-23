@@ -329,7 +329,7 @@ export const CreatePage = () => {
 
 	const handlePointsChange = (questionId, value) => {
 		const points =
-			value === '' ? '' : Math.max(1, Math.min(parseInt(value) || 0, 100));
+			value === '' ? '' : Math.max(0, Math.min(parseInt(value) || 0, 100));
 		setQuestions(
 			questions.map((q) => (q.id === questionId ? { ...q, points } : q))
 		);

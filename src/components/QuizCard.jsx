@@ -32,6 +32,41 @@ export const QuizCard = ({
 	};
 	const [text, setText] = useState('Поделиться результатом');
 
+	function fallbackCopyTextToClipboard(text) {
+		const textArea = document.createElement('textarea');
+		textArea.value = text;
+		textArea.style.position = 'fixed';
+		textArea.style.top = 0;
+		textArea.style.left = 0;
+		document.body.appendChild(textArea);
+		textArea.focus();
+		textArea.select();
+
+		try {
+			const successful = document.execCommand('copy');
+			alert(
+				successful
+					? 'Скопировано через fallback!'
+					: 'Не удалось скопировать через fallback'
+			);
+		} catch (err) {
+			alert('Ошибка копирования: ' + err);
+		}
+
+		document.body.removeChild(textArea);
+	}
+
+	function copyText(text) {
+		if (navigator.clipboard) {
+			navigator.clipboard
+				.writeText(text)
+				.then(() => alert('Ссылка скопирована!'))
+				.catch(() => fallbackCopyTextToClipboard(text));
+		} else {
+			fallbackCopyTextToClipboard(text);
+		}
+	}
+
 	const renderHeader = () => {
 		switch (type) {
 			case 'created':
@@ -48,7 +83,7 @@ export const QuizCard = ({
 							<button
 								onClick={() => {
 									const url = `${import.meta.env.VITE_API_URL}/quiz?id=${id}`;
-									navigator.clipboard.writeText(url);
+									copyText(url);
 								}}
 							>
 								<ShareIcon />

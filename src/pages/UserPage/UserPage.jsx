@@ -251,6 +251,7 @@ export const UserPage = () => {
 			});
 		} catch (err) {
 			console.error(err);
+			console.debug(quiz.answers);
 		}
 
 		return { correct: earnedPoints, total: totalPoints };

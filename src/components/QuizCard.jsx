@@ -106,7 +106,7 @@ export const QuizCard = ({
 							<button
 								onClick={() => {
 									const url = `${import.meta.env.VITE_API_URL}/quiz?id=${id}`;
-									navigator.clipboard.writeText(url);
+									copyText(url);
 								}}
 							>
 								<ShareIcon />
@@ -157,7 +157,7 @@ export const QuizCard = ({
 								const url = `${
 									import.meta.env.VITE_API_URL
 								}/quiz/results/${id}`;
-								navigator.clipboard.writeText(url);
+								copyText(url);
 								setText('Ссылка скопирована');
 								setTimeout(() => {
 									setText('Поделиться результатом');

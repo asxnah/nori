@@ -70,9 +70,9 @@ export const QuizCard = ({
 					<div className="quiz-header">
 						<p>Количество вопросов: {questionsCount}</p>
 						<div className="group">
-							{/* <Link to={`/create?id=${id}`}>
+							<Link to={`/create?id=${id}`}>
 								<EditIcon />
-							</Link> */}
+							</Link>
 							<Link to={`/quiz?id=${id}`}>
 								<OpenIcon />
 							</Link>

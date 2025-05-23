@@ -188,7 +188,7 @@ export const AnswersPage = () => {
 				</div>
 
 				<div id="answers-list">
-					{filteredAnswers.map((answer) => {
+					{filteredAnswers.length>0 ? filteredAnswers.map((answer) => {
 						const { earnedPoints, totalPoints } = calculateScore(answer);
 						return (
 							<Link
@@ -203,7 +203,9 @@ export const AnswersPage = () => {
 								</p>
 							</Link>
 						);
-					})}
+					}) : (
+						<p>Ответов нет.</p>
+					)}
 				</div>
 			</section>
 		</main>

@@ -47,18 +47,19 @@ export const UserPage = () => {
 
 	useEffect(() => {
 		const fetchUserQuizzes = async () => {
-			if (!user.id) return;
-
-			try {
-				const response = await axios.get(
-					`${import.meta.env.VITE_API_URL}/api/quizzes/user/${user.id}`
-				);
-				setCreatedQuizzes(Array.isArray(response.data) ? response.data : []);
-				setLoading(false);
-			} catch (error) {
-				console.error('CATCH Ошибка загрузки созданных викторин >> ', error);
-				setCreatedQuizzes([]);
-				setLoading(false);
+			console.debug('fetchUserQuizzes' + user.id);
+			if (user.id) {
+				try {
+					const response = await axios.get(
+						`${import.meta.env.VITE_API_URL}/api/quizzes/user/${user.id}`
+					);
+					setCreatedQuizzes(Array.isArray(response.data) ? response.data : []);
+					setLoading(false);
+				} catch (error) {
+					console.error('CATCH Ошибка загрузки созданных викторин >> ', error);
+					setCreatedQuizzes([]);
+					setLoading(false);
+				}
 			}
 		};
 
@@ -67,6 +68,7 @@ export const UserPage = () => {
 
 	useEffect(() => {
 		const fetchCompletedQuizzes = async () => {
+			console.debug('fetchCompletedQuizzes' + user.id);
 			if (user.id) {
 				try {
 					const response = await axios.get(

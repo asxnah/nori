@@ -44,13 +44,9 @@ export const QuizCard = ({
 
 		try {
 			const successful = document.execCommand('copy');
-			alert(
-				successful
-					? 'Скопировано через fallback!'
-					: 'Не удалось скопировать через fallback'
-			);
+			alert(successful ? 'Скопировано' : 'Не удалось скопировать');
 		} catch (err) {
-			alert('Ошибка копирования: ' + err);
+			console.error('Ошибка копирования: ' + err);
 		}
 
 		document.body.removeChild(textArea);

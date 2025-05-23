@@ -7,6 +7,7 @@ import dotenv from 'dotenv';
 import process from 'process';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import expressListEndpoints from 'express-list-endpoints';
 
 dotenv.config();
 
@@ -58,4 +59,5 @@ if (process.env.NODE_ENV === 'production') {
 
 app.listen(port, '0.0.0.0', () => {
 	console.log(`Сервер запущен на порту ${port}.`);
+	console.log('Registered routes:', expressListEndpoints(app));
 });

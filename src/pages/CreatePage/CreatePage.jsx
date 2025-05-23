@@ -303,7 +303,7 @@ export const CreatePage = () => {
 				},
 			});
 
-			navigate(`/quiz?id=${quizId || response.data.testId}`);
+			// navigate(`/quiz?id=${quizId || response.data.testId}`);
 
 			console.debug(formData);
 		} catch (error) {

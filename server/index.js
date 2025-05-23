@@ -24,12 +24,25 @@ app.use('/uploads', express.static('uploads'));
 
 connectDB();
 
-app.use('/api', authRoutes);
-app.use('/api/quizzes', quizRoutes);
+try {
+	app.use('/api', authRoutes);
+} catch (err) {
+	console.log('authRoutes err', err);
+}
 
-app.get('/', (req, res) => {
-	res.send('Сервер запущен.');
-});
+try {
+	app.use('/api/quizzes', quizRoutes);
+} catch (err) {
+	console.log('quizRoutes err', err);
+}
+
+try {
+	app.get('/', (req, res) => {
+		res.send('Сервер запущен.');
+	});
+} catch (err) {
+	console.log('app.get / err', err);
+}
 
 if (process.env.NODE_ENV === 'production') {
 	app.use(express.static(path.resolve(__dirname, '../dist')));

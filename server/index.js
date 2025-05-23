@@ -11,8 +11,6 @@ import expressListEndpoints from 'express-list-endpoints';
 
 dotenv.config();
 
-console.log('ENV variables:', process.env);
-
 const app = express();
 const port = process.env.PORT || 3000;
 

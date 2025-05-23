@@ -24,10 +24,7 @@ app.use('/uploads', express.static('uploads'));
 
 connectDB();
 
-console.log('Mounting route /api');
 app.use('/api', authRoutes);
-
-console.log('Mounting route /api/quizzes');
 app.use('/api/quizzes', quizRoutes);
 
 app.get('/', (req, res) => {

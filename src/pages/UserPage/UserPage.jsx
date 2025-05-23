@@ -47,7 +47,6 @@ export const UserPage = () => {
 
 	useEffect(() => {
 		const fetchUserQuizzes = async () => {
-			console.debug('fetchUserQuizzes' + user.id);
 			if (user.id) {
 				try {
 					const response = await axios.get(
@@ -68,7 +67,6 @@ export const UserPage = () => {
 
 	useEffect(() => {
 		const fetchCompletedQuizzes = async () => {
-			console.debug('fetchCompletedQuizzes' + user.id);
 			if (user.id) {
 				try {
 					const response = await axios.get(
@@ -360,20 +358,24 @@ export const UserPage = () => {
 						) : completedQuizzes.length === 0 ? (
 							<p>У вас пока нет пройденных викторин</p>
 						) : (
-							completedQuizzes.map((quiz) => (
-								<QuizCard
-									key={quiz.testId._id}
-									id={quiz.testId._id}
-									title={quiz.testId.title}
-									questionsCount={quiz.testId.questionIds.length}
-									tags={quiz.testId.tags}
-									background={quiz.testId.background}
-									type="completed"
-									correctAnswers={calculateScore(quiz).correct}
-									link={quiz._id}
-									totalAnswers={calculateScore(quiz).total}
-								/>
-							))
+							completedQuizzes.map((quiz) => {
+								if (!quiz.testId) return <p key="0">Ошибка на сервере.</p>;
+
+								return (
+									<QuizCard
+										key={quiz.testId._id}
+										id={quiz.testId._id}
+										title={quiz.testId.title}
+										questionsCount={quiz.testId.questionIds.length}
+										tags={quiz.testId.tags}
+										background={quiz.testId.background}
+										type="completed"
+										correctAnswers={calculateScore(quiz).correct}
+										link={quiz._id}
+										totalAnswers={calculateScore(quiz).total}
+									/>
+								);
+							})
 						)}
 					</div>
 				</div>

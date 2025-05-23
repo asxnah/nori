@@ -181,71 +181,77 @@ export const UserPage = () => {
 		let earnedPoints = 0;
 		let totalPoints = 0;
 
-		quiz.answers.forEach((answer) => {
-			const question = quiz.testId.questionIds.find((q) => {
-				return q._id === answer.questionId._id;
+		try {
+			quiz.answers.forEach((answer) => {
+				const question = quiz.testId.questionIds.find((q) => {
+					return q._id === answer.questionId._id;
+				});
+
+				if (!question) return;
+
+				const questionPoints = question.points || 0;
+				if (questionPoints <= 0) return;
+
+				totalPoints += questionPoints;
+
+				const rawSelections = Array.isArray(answer.selected)
+					? answer.selected
+					: [answer.selected];
+
+				const isUnanswered = rawSelections.every(
+					(sel) => sel === null || sel === undefined
+				);
+				if (isUnanswered) return;
+
+				if (question.type === 'trueFalse') {
+					const userAnswer =
+						answer.selected === true ||
+						(Array.isArray(answer.selected) && answer.selected[0] === true) ||
+						answer.selected === 'true' ||
+						(Array.isArray(answer.selected) && answer.selected[0] === 'true');
+					const correctAnswer =
+						question.correctAnswers === true ||
+						question.correctAnswers === 'true';
+					if (userAnswer === correctAnswer) {
+						earnedPoints += questionPoints;
+					}
+				} else if (question.type === 'multipleChoice') {
+					const selectedAnswers = new Set(
+						rawSelections
+							.filter((sel) => sel !== null && sel !== undefined)
+							.map(Number)
+					);
+					const correctAnswersArray = Array.isArray(question.correctAnswers)
+						? question.correctAnswers
+						: [question.correctAnswers];
+					const correctAnswersSet = new Set(correctAnswersArray.map(Number));
+
+					if (
+						selectedAnswers.size > 0 &&
+						selectedAnswers.size === correctAnswersSet.size &&
+						[...selectedAnswers].every((ans) => correctAnswersSet.has(ans))
+					) {
+						earnedPoints += questionPoints;
+					}
+				} else if (question.type === 'openText') {
+					const normalizeText = (text) => {
+						if (!text) return '';
+						return text.toString().toLowerCase().trim().replace(/\s+/g, ' ');
+					};
+					const userText = normalizeText(
+						Array.isArray(answer.selected)
+							? answer.selected[0]
+							: answer.selected
+					);
+					const correctText = normalizeText(question.correctAnswers);
+					if (userText === correctText) {
+						earnedPoints += questionPoints;
+					}
+				}
 			});
-
-			if (!question) return;
-
-			const questionPoints = question.points || 0;
-			if (questionPoints <= 0) return;
-
-			totalPoints += questionPoints;
-
-			const rawSelections = Array.isArray(answer.selected)
-				? answer.selected
-				: [answer.selected];
-
-			const isUnanswered = rawSelections.every(
-				(sel) => sel === null || sel === undefined
-			);
-			if (isUnanswered) return;
-
-			if (question.type === 'trueFalse') {
-				const userAnswer =
-					answer.selected === true ||
-					(Array.isArray(answer.selected) && answer.selected[0] === true) ||
-					answer.selected === 'true' ||
-					(Array.isArray(answer.selected) && answer.selected[0] === 'true');
-				const correctAnswer =
-					question.correctAnswers === true ||
-					question.correctAnswers === 'true';
-				if (userAnswer === correctAnswer) {
-					earnedPoints += questionPoints;
-				}
-			} else if (question.type === 'multipleChoice') {
-				const selectedAnswers = new Set(
-					rawSelections
-						.filter((sel) => sel !== null && sel !== undefined)
-						.map(Number)
-				);
-				const correctAnswersArray = Array.isArray(question.correctAnswers)
-					? question.correctAnswers
-					: [question.correctAnswers];
-				const correctAnswersSet = new Set(correctAnswersArray.map(Number));
-
-				if (
-					selectedAnswers.size > 0 &&
-					selectedAnswers.size === correctAnswersSet.size &&
-					[...selectedAnswers].every((ans) => correctAnswersSet.has(ans))
-				) {
-					earnedPoints += questionPoints;
-				}
-			} else if (question.type === 'openText') {
-				const normalizeText = (text) => {
-					if (!text) return '';
-					return text.toString().toLowerCase().trim().replace(/\s+/g, ' ');
-				};
-				const userText = normalizeText(
-					Array.isArray(answer.selected) ? answer.selected[0] : answer.selected
-				);
-				const correctText = normalizeText(question.correctAnswers);
-				if (userText === correctText) {
-					earnedPoints += questionPoints;
-				}
-			}
-		});
+		} catch (err) {
+			console.error(err);
+		}
 
 		return { correct: earnedPoints, total: totalPoints };
 	};
@@ -358,24 +364,20 @@ export const UserPage = () => {
 						) : completedQuizzes.length === 0 ? (
 							<p>У вас пока нет пройденных викторин</p>
 						) : (
-							completedQuizzes.map((quiz) => {
-								if (!quiz.testId) return <p key="0">Ошибка на сервере.</p>;
-
-								return (
-									<QuizCard
-										key={quiz.testId._id}
-										id={quiz.testId._id}
-										title={quiz.testId.title}
-										questionsCount={quiz.testId.questionIds.length}
-										tags={quiz.testId.tags}
-										background={quiz.testId.background}
-										type="completed"
-										correctAnswers={calculateScore(quiz).correct}
-										link={quiz._id}
-										totalAnswers={calculateScore(quiz).total}
-									/>
-								);
-							})
+							completedQuizzes.map((quiz) => (
+								<QuizCard
+									key={quiz.testId._id}
+									id={quiz.testId._id}
+									title={quiz.testId.title}
+									questionsCount={quiz.testId.questionIds.length}
+									tags={quiz.testId.tags}
+									background={quiz.testId.background}
+									type="completed"
+									correctAnswers={calculateScore(quiz).correct}
+									link={quiz._id}
+									totalAnswers={calculateScore(quiz).total}
+								/>
+							))
 						)}
 					</div>
 				</div>

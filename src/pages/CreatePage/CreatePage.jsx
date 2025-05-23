@@ -303,9 +303,7 @@ export const CreatePage = () => {
 				},
 			});
 
-			// navigate(`/quiz?id=${quizId || response.data.testId}`);
-
-			console.debug(formData);
+			navigate(`/quiz?id=${quizId || response.data.testId}`);
 		} catch (error) {
 			console.error('CATCH ОШИБКА СЕРВЕРА >> ', error.response.data);
 			setError(

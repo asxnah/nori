@@ -101,7 +101,7 @@ export const MainPage = () => {
 					<p>{error}</p>
 				) : (
 					<div id="quizzes-list">
-						{quizzes.map((quiz) => (
+						{quizzes.length > 0 ? quizzes.map((quiz) => (
 							<QuizCard
 								key={quiz._id}
 								id={quiz._id}
@@ -110,7 +110,10 @@ export const MainPage = () => {
 								tags={quiz.tags}
 								background={quiz.background}
 							/>
-						))}
+						)) : 
+						(
+							<p>По данному запросу викторины не найдены.</p>
+						)}
 					</div>
 				)}
 			</section>

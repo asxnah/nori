@@ -67,18 +67,25 @@ export const UserPage = () => {
 
 	useEffect(() => {
 		const fetchCompletedQuizzes = async () => {
-			if (!user.id) return;
-
-			try {
-				const response = await axios.get(
-					`${import.meta.env.VITE_API_URL}/api/quizzes/answers/user/${user.id}`
-				);
-				setCompletedQuizzes(Array.isArray(response.data) ? response.data : []);
-				setCompletedLoading(false);
-			} catch (error) {
-				console.error('CATCH Ошибка загрузки завершенных викторин >> ', error);
-				setCompletedQuizzes([]);
-				setCompletedLoading(false);
+			if (user.id) {
+				try {
+					const response = await axios.get(
+						`${import.meta.env.VITE_API_URL}/api/quizzes/answers/user/${
+							user.id
+						}`
+					);
+					setCompletedQuizzes(
+						Array.isArray(response.data) ? response.data : []
+					);
+					setCompletedLoading(false);
+				} catch (error) {
+					console.error(
+						'CATCH Ошибка загрузки завершенных викторин >> ',
+						error
+					);
+					setCompletedQuizzes([]);
+					setCompletedLoading(false);
+				}
 			}
 		};
 

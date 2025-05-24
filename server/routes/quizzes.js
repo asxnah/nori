@@ -326,12 +326,17 @@ router.post('/', upload.single('background'), async (req, res) => {
 							type: question.type,
 							options: question.answers || [],
 							correctAnswers: question.correctAnswers,
-							points: question.points || 1,
+							points:
+								question.points === undefined ||
+								question.points === null ||
+								question.points === ''
+									? 1
+									: question.points,
 						});
 						return await newQuestion.save();
 					},
-					3, // количество попыток
-					500, // задержка между попытками (мс)
+					3,
+					500,
 					isRetriableError
 				)
 			)

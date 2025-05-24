@@ -272,9 +272,11 @@ export const ResultsPage = () => {
 			<main id="ResultsPage">
 				<section id="heading">
 					<div>
-						<p>
-							Набрано баллов: {earnedPoints} из {totalPoints}
-						</p>
+						{totalPoints !== 0 && (
+							<p>
+								Набрано баллов: {earnedPoints} из {totalPoints}
+							</p>
+						)}
 						<h1>{test.title}</h1>
 					</div>
 					<button

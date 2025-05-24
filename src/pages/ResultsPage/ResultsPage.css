@@ -10,6 +10,7 @@
 
 	table {
 		width: 100%;
+		table-layout: fixed;
 	}
 
 	table th,
@@ -114,9 +115,8 @@
 	.multipleChoice .btn {
 		width: 100%;
 
-		justify-content: flex-start;
-
 		border-radius: 1rem;
+		text-align: left;
 	}
 
 	.multipleChoice .correct-border {

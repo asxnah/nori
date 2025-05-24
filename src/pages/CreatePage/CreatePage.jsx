@@ -329,7 +329,7 @@ export const CreatePage = () => {
 
 	const handlePointsChange = (questionId, value) => {
 		const points =
-			value === '' ? '' : Math.max(0, Math.min(parseInt(value) || 0, 100));
+			value === '' ? 1 : Math.max(0, Math.min(parseInt(value) || 0, 100));
 		setQuestions(
 			questions.map((q) => (q.id === questionId ? { ...q, points } : q))
 		);
@@ -354,7 +354,7 @@ export const CreatePage = () => {
 							type="text"
 							className={`question-text btn ${errors.text ? 'error' : ''}`}
 							placeholder="Вопрос"
-							maxLength={120}
+							maxLength={320}
 							value={question.text}
 							onChange={(e) =>
 								handleQuestionTextChange(question.id, e.target.value)
@@ -392,7 +392,7 @@ export const CreatePage = () => {
 									<input
 										className={`btn ${errors.answers ? 'error' : ''}`}
 										placeholder="Ответ"
-										maxLength={120}
+										maxLength={320}
 										value={answer}
 										onChange={(e) =>
 											handleAnswerChange(question.id, i, e.target.value)
@@ -449,7 +449,7 @@ export const CreatePage = () => {
 						<textarea
 							placeholder="Правильный ответ"
 							className={errors.correctAnswers ? 'error' : ''}
-							maxLength={800}
+							maxLength={1000}
 							value={question.correctAnswers}
 							onChange={(e) =>
 								handleCorrectAnswerChange(question.id, e.target.value)

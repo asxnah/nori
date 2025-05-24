@@ -2,186 +2,104 @@ import html2pdf from 'html2pdf.js';
 
 export const generateQuizPDF = async (quiz) => {
 	const element = document.createElement('div');
+	const styles = `
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+    * {
+      font-family: "PT Serif", system-ui, -apple-system, BlinkMacSystemFont, serif;
+      color: #323232;
+    }
+    .heading {
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .heading h1 {
+      font-family: "PT Serif", system-ui, -apple-system, BlinkMacSystemFont, serif;
+      font-size: 1.05rem;
+    }
+    .heading p {
+      width: fit-content;
+    }
+    .question {
+      display: grid;
+      gap: 0.5rem;
+    }
+    .multiple-choice {
+      margin-bottom: 1rem;
+      display: grid;
+      gap: 0.25rem;
+    }
+    .multiple-choice span {
+      font-size: 1.5rem;
+    }
+    .option {
+      margin-left: 1rem;
+      width: fit-content;
+      text-align: left;
+    }
+    .booleans {
+      margin-bottom: 1rem;
+      margin-left: 1rem;
+      display: flex;
+      gap: 2rem;
+    }
+    .booleans .option {
+      font-size: 1.75rem;
+    }
+    .open-text {
+      margin-bottom: 1rem;
+      width: 100%;
+      height: 16rem;
+      border: 0.1rem solid #323232;
+      border-radius: 0.1rem;
+    }
+  </style>
+  `;
 	element.innerHTML = `
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:wght@700&family=Montserrat:wght@400;500;700&display=swap');
-      
-      .quiz-page {
-        padding: 1rem;
-        font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        color: #323232;
-      }
-      .heading {
-        margin-bottom: 4rem;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.5rem;
-      }
-      .heading p {
-        color: #787878;
-      }
-      .heading h1 {
-        font-family: 'Montserrat Alternates', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        font-weight: 700;
-        color: #323232;
-        font-size: 1.5rem;
-      }
-      .questions {
-        display: grid;
-        gap: 2rem;
-      }
-      .question {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-      .question-text {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-      }
-      .question-number {
-        font-weight: 700;
-        font-size: 1.25rem;
-        color: #787878;
-      }
-      .multiple-choice {
-        display: grid;
-        gap: 0.5rem;
-      }
-      .option {
-        padding: 1rem 2rem;
-        background-color: #F1F1F1;
-        border-radius: 4rem;
-        width: 100%;
-        text-align: left;
-        font-weight: 500;
-      }
-      .option.selected {
-        border: 2px solid #323232;
-      }
-      .true-false {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4rem;
-      }
-      .true-false-option {
-        width: 4rem;
-        height: 4rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .true-false-option.selected {
-        border: 2px solid #323232;
-        border-radius: 50%;
-      }
-      .open-text {
-        padding: 2rem;
-        width: 100%;
-        height: 12rem;
-        border: 0.1rem solid #DEDEDE;
-        border-radius: 2rem;
-        position: relative;
-      }
-      .open-text.has-answer {
-        border: 2px solid #323232;
-      }
-    </style>
+    ${styles}
     <div class="quiz-page">
       <section class="heading">
           <h1>${quiz.title}</h1>
         ${quiz.description ? `<p>${quiz.description}</p>` : ''}
       </section>
       <div class="questions">
+        <div class="question">
         ${quiz.questionIds
 					.map(
 						(question, index) => `
-          <div class="question">
-            <div class="question-text">
-              <div class="question-number">${index + 1}</div>
-              <p>${question.questionText}</p>
-            </div>
+              <p class="question-text">${index + 1}) ${
+							question.questionText
+						}</p>
             ${
 							question.type === 'multipleChoice'
 								? `<div class="multiple-choice">
                   ${question.options
 										.map(
-											(option, i) => `
-                    <div class="option ${
-											question.userAnswer?.includes(i) ? 'selected' : ''
-										}">
-                      ${question.userAnswer?.includes(i) ? '☑' : '☐'} ${option}
-                    </div>
+											(option) => `
+                    <p class="option"><span>☐</span> ${option}</p>
                   `
 										)
 										.join('')}
                 </div>`
 								: question.type === 'trueFalse'
-								? `<div class="true-false">
-                    <div class="true-false-option ${
-											question.userAnswer === true ? 'selected' : ''
-										}">
-                      <svg width="60" height="60" viewBox="0 0 52 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clipPath="url(#clip0_310_29)">
-                          <rect x="41.6785" width="12" height="62" rx="6" transform="rotate(26.5973 41.6785 0)" fill="${
-														question.userAnswer === true
-															? 'var(--color-primary)'
-															: '#323232'
-													}"></rect>
-                          <rect x="0.697632" y="28.9199" width="12" height="37.2388" rx="6" transform="rotate(-29.5603 0.697632 28.9199)" fill="${
-														question.userAnswer === true
-															? 'var(--color-primary)'
-															: '#323232'
-													}"></rect>
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_310_29">
-                            <rect width="60" height="60" fill="transparent" transform="translate(0.697632)"></rect>
-                          </clipPath>
-                        </defs>
-                      </svg>
-                    </div>
-                    <div class="true-false-option ${
-											question.userAnswer === false ? 'selected' : ''
-										}">
-                      <svg width="60" height="60" viewBox="0 0 61 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clipPath="url(#clip0_310_33)">
-                          <rect x="0.302307" y="8.48535" width="12" height="75.5977" rx="6" transform="rotate(-45 0.302307 8.48535)" fill="${
-														question.userAnswer === false
-															? 'var(--color-primary)'
-															: '#323232'
-													}"></rect>
-                          <rect x="53.7579" width="12" height="75.5977" rx="6" transform="rotate(45 53.7579 0)" fill="${
-														question.userAnswer === false
-															? 'var(--color-primary)'
-															: '#323232'
-													}"></rect>
-                        </g>
-                        <defs>
-                          <clipPath id="clip0_310_33">
-                            <rect width="60" height="60" fill="transparent" transform="translate(0.302307)"></rect>
-                          </clipPath>
-                        </defs>
-                      </svg>
-                    </div>
+								? `<div class="booleans">
+                    <p class="option boolean">✔</p>
+                    <p class="option boolean">✖</p>
                   </div>`
-								: `<div class="open-text ${
-										question.userAnswer ? 'has-answer' : ''
-								  }">${question.userAnswer || ''}</div>`
+								: `<div class="open-text">${''}</div>`
 						}
-          </div>
-        `
+          `
 					)
 					.join('')}
+        </div>
       </div>
     </div>
   `;
 
 	const opt = {
-		margin: [10, 10],
+		margin: [6, 6],
 		filename: `${quiz.title}.pdf`,
 		image: { type: 'jpeg', quality: 0.98 },
 		html2canvas: {

@@ -297,13 +297,14 @@ export const CreatePage = () => {
 			}`;
 			const method = quizId ? 'put' : 'post';
 
-			const response = await axios[method](url, formData, {
-				headers: {
-					'Content-Type': 'multipart/form-data',
-				},
-			});
-
-			navigate(`/quiz?id=${quizId || response.data.testId}`);
+			try {
+				const response = await axios[method](url, formData, {
+					headers: { 'Content-Type': 'multipart/form-data' },
+				});
+				navigate(`/quiz?id=${quizId || response.data.testId}`);
+			} catch (error) {
+				setError(error.response?.data?.message);
+			}
 		} catch (error) {
 			console.error('CATCH ОШИБКА СЕРВЕРА >> ', error.response.data);
 			setError(
@@ -468,7 +469,6 @@ export const CreatePage = () => {
 					<div className="loading">Загрузка викторины...</div>
 				) : (
 					<>
-						{error && <div className="error-message">{error}</div>}
 						<form onSubmit={handleSubmit}>
 							<section id="info" className="card card-outline">
 								<div id="heading">
@@ -628,6 +628,7 @@ export const CreatePage = () => {
 										renderQuestion(question, index)
 									)}
 								</div>
+								{error && <div className="error-message">{error}</div>}
 								<button
 									type="submit"
 									className="btn btn-primary"

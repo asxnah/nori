@@ -9,6 +9,13 @@ import fs from 'fs';
 
 import { retry } from '../utils/retry.js';
 import { isRetriableError } from '../utils/isRetriableError.js';
+import banWords from '../utils/banWords.js';
+
+function containsBanWord(text, banWords) {
+	if (!text) return false;
+	const lowerText = text.toLowerCase();
+	return banWords.some((word) => new RegExp(word, 'i').test(lowerText));
+}
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -161,6 +168,22 @@ router.post('/:testId/answers', async (req, res) => {
 		const { testId } = req.params;
 		const { userId, answers } = req.body;
 
+		for (const answer of answers) {
+			const selectedArr = Array.isArray(answer.selected)
+				? answer.selected
+				: [answer.selected];
+			for (const selected of selectedArr) {
+				if (
+					typeof selected === 'string' &&
+					containsBanWord(selected, banWords)
+				) {
+					return res
+						.status(400)
+						.json({ message: 'Ответы содержат недопустимые слова.' });
+				}
+			}
+		}
+
 		const userAnswer = new UserAnswer({
 			userId,
 			testId,
@@ -310,6 +333,35 @@ router.post('/', upload.single('background'), async (req, res) => {
 			return res.status(400).json({ message: 'Неверный формат тегов' });
 		}
 
+		if (
+			containsBanWord(title, banWords) ||
+			containsBanWord(description, banWords) ||
+			tags.some((tag) => containsBanWord(tag, banWords))
+		) {
+			return res.status(400).json({
+				message: 'В полях теста обнаружены недопустимые слова.',
+			});
+		}
+
+		for (const question of questions) {
+			if (
+				containsBanWord(question.text, banWords) ||
+				(Array.isArray(question.answers) &&
+					question.answers.some((opt) =>
+						typeof opt === 'string'
+							? containsBanWord(opt, banWords)
+							: opt &&
+							  typeof opt.text === 'string' &&
+							  containsBanWord(opt.text, banWords)
+					))
+			) {
+				return res.status(400).json({
+					message:
+						'В вопросах или вариантах ответов обнаружены недопустимые слова.',
+				});
+			}
+		}
+
 		const background = req.file
 			? `${process.env.VITE_API_URL}/uploads/${req.file.filename}`
 			: null;
@@ -436,6 +488,35 @@ router.put('/:testId', upload.single('background'), async (req, res) => {
 			return res
 				.status(400)
 				.json({ message: 'Не все обязательные поля заполнены' });
+		}
+
+		if (
+			containsBanWord(title, banWords) ||
+			containsBanWord(description, banWords) ||
+			tags.some((tag) => containsBanWord(tag, banWords))
+		) {
+			return res
+				.status(400)
+				.json({ message: 'В полях теста обнаружены недопустимые слова' });
+		}
+
+		for (const question of questions) {
+			if (
+				containsBanWord(question.text, banWords) ||
+				(Array.isArray(question.answers) &&
+					question.answers.some((opt) =>
+						typeof opt === 'string'
+							? containsBanWord(opt, banWords)
+							: opt &&
+							  typeof opt.text === 'string' &&
+							  containsBanWord(opt.text, banWords)
+					))
+			) {
+				return res.status(400).json({
+					message:
+						'В вопросах или вариантах ответов обнаружены недопустимые слова',
+				});
+			}
 		}
 
 		const existingTest = await retry(

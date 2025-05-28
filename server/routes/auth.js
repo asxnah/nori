@@ -1,12 +1,20 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import User from '../models/User.js';
+
 import { validateUsername, validatePassword } from '../utils/validators.js';
 import { retry } from '../utils/retry.js';
 import { isRetriableError } from '../utils/isRetriableError.js';
+import banWords from '../utils/banWords.js';
 
 const router = express.Router();
 const SALT_ROUNDS = 10;
+
+function containsBanWord(text, banWords) {
+	if (!text) return false;
+	const lowerText = text.toLowerCase();
+	return banWords.some((word) => lowerText.includes(word));
+}
 
 router.post('/login', async (req, res) => {
 	try {
@@ -49,6 +57,12 @@ router.post('/login', async (req, res) => {
 router.post('/register', async (req, res) => {
 	try {
 		const { username, password } = req.body;
+
+		if (containsBanWord(username, banWords)) {
+			return res
+				.status(400)
+				.json({ message: 'Недопустимые символы или слова в логине.' });
+		}
 
 		const existingUser = await retry(
 			() => User.findOne({ username }),
@@ -112,6 +126,16 @@ router.post('/update-profile', async (req, res) => {
 			new_password,
 			current_password,
 		} = req.body;
+
+		if (
+			(new_username && containsBanWord(new_username, banWords)) ||
+			(new_name && containsBanWord(new_name, banWords)) ||
+			(new_password && containsBanWord(new_password, banWords))
+		) {
+			return res.status(400).json({
+				message: 'В логине, имени или пароле обнаружены недопустимые слова.',
+			});
+		}
 
 		const user = await retry(
 			() => User.findOne({ username: current_username }),

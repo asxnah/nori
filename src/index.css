@@ -39,6 +39,8 @@
 	border: none;
 	background: none;
 	color: var(--black-full);
+	word-break: break-word;
+	overflow-wrap: anywhere;
 
 	transition: all 0.2s;
 }
